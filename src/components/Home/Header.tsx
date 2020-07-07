@@ -1,6 +1,6 @@
 import * as React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { SCREEN_WIDTH, STATUS_BAR } from "../../constants";
+import { SCREEN_WIDTH } from "../../constants";
 import Search from "../../assets/icons/search.svg";
 import Menu from "../../assets/icons/menu.svg";
 
@@ -29,10 +29,9 @@ const styles = StyleSheet.create({
     height: 180,
     borderBottomLeftRadius: 45,
     borderBottomRightRadius: 45,
-    marginTop: STATUS_BAR,
     position: "absolute",
     top: 0,
-    elevation: 1,
+    elevation: 1
   },
   bar: {
     width: SCREEN_WIDTH,

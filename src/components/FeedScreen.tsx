@@ -1,57 +1,64 @@
 import * as React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Left from "../assets/icons/left.svg";
 import Plus from "../assets/icons/plus.svg";
-import { STATUS_BAR } from "../constants";
+import TaskCard from "./TaskCard";
 
-interface Props {
-  screen: String;
-}
-
-export default function FeedScreen(props: Props) {
+export default function FeedScreen(props: any) {
   return (
     <View style={{ ...styles.container }}>
       <View style={{ ...styles.nav }}>
-        <Left color="white" />
-        <Plus color="white" />
+        <TouchableOpacity onPress={() => props.navigation.goBack()}>
+          <Left color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => props.navigation.navigate("CreateTask")}
+        >
+          <Plus color="white" />
+        </TouchableOpacity>
       </View>
       <View style={{ ...styles.headingContainer }}>
-        <Text style={{ ...styles.headingText }}>{props.screen}</Text>
+        <Text style={{ ...styles.headingText }}>
+          {props.route.params.screen}
+        </Text>
       </View>
-      <View>
-        <Text style={{ ...styles.headingMotivate }}>Giddy-up Captain!</Text>
+      <View style={{ marginHorizontal: 24, marginBottom: 3 }}>
+        <Text style={{ ...styles.headingMotivate }}>
+          {props.route.params.screenSub}
+        </Text>
       </View>
       <View style={{ height: "auto", paddingVertical: 12 }}>
-        <View
-          style={{
-            ...styles.taskContainer,
-            backgroundColor: "#6488e4",
-          }}
-        >
-          <Text style={{ ...styles.taskTitle }}>Chocholate cake</Text>
-          <Text style={{ ...styles.taskDesc }}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit ...
-          </Text>
-        </View>
-        <View
-          style={{
-            ...styles.taskContainer,
-            backgroundColor: "#E46472",
-          }}
-        >
-          <Text style={{ ...styles.taskTitle }}>Chocholate cake</Text>
-          <Text style={{ ...styles.taskDesc }}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit ...
-          </Text>
-        </View>
-        <View
-          style={{
-            ...styles.taskContainer,
-            backgroundColor: "#f9be7c",
-          }}
-        >
-          <Text style={{ ...styles.taskTitle }}>Chocholate cake</Text>
-        </View>
+        {props.route.params.screen !== "In progress" ? (
+          <>
+            <View
+              style={{
+                ...styles.taskContainer,
+                backgroundColor: "#6488e4",
+                marginHorizontal: 24,
+              }}
+            >
+              <Text style={{ ...styles.taskTitle }}>Chocholate cake</Text>
+              <Text style={{ ...styles.taskDesc }}>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit ...
+              </Text>
+            </View>
+          </>
+        ) : (
+          <>
+            <View
+              style={{
+                flexDirection: "row",
+                flexWrap: "wrap",
+                alignItems: "baseline",
+              }}
+            >
+              <TaskCard color="#6488e4" isCategory={true} />
+              <TaskCard color="#f9be7c" isCategory={true} />
+              <TaskCard color="#E46472" isCategory={true} />
+              <TaskCard color="#309397" isCategory={true} />
+            </View>
+          </>
+        )}
       </View>
     </View>
   );
@@ -60,20 +67,20 @@ export default function FeedScreen(props: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: STATUS_BAR,
-    marginHorizontal: 24,
   },
   nav: {
     height: 56,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    marginHorizontal: 24,
   },
   headingContainer: {
     height: 56,
     justifyContent: "flex-start",
     flexDirection: "row",
     alignItems: "center",
+    marginHorizontal: 24,
   },
   headingText: {
     fontFamily: "bold",

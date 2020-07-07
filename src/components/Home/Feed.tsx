@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { SCREEN_WIDTH } from "../../constants";
 import Plus from "../../assets/icons/plus.svg";
 import Calendar from "../../assets/icons/calendar.svg";
@@ -7,42 +7,72 @@ import Clock from "../../assets/icons/clock.svg";
 import Right from "../../assets/icons/right.svg";
 import Loader from "../../assets/icons/loader.svg";
 
-export default function Feed() {
+export default function Feed(props: any) {
   return (
     <View style={{ height: 260, width: SCREEN_WIDTH }}>
       <View style={{ ...styles.feedHeadingContainer }}>
         <Text style={{ ...styles.feedText }}>My tasks</Text>
         <View style={{ ...styles.feedEvents }}>
           <Calendar color="white" />
-          <Plus color="white" />
+          <TouchableOpacity
+            onPress={() => {
+              props.navigation.navigate("CreateTask");
+            }}
+          >
+            <Plus color="white" />
+          </TouchableOpacity>
         </View>
       </View>
       <View style={{ ...styles.feedsContainer }}>
         <View style={{ ...styles.feedIcon }}>
           <Clock color="white" />
         </View>
-        <View style={{ ...styles.feedDetails }}>
+        <TouchableOpacity
+          onPress={() => {
+            props.navigation.navigate("FeedScreen", {
+              screen: "To do.",
+              screenSub: "Giddy-up Captain!",
+            });
+          }}
+          style={{ ...styles.feedDetails }}
+        >
           <Text style={{ ...styles.feedText, fontSize: 16 }}>To do.</Text>
           <Text style={{ ...styles.feedDesc }}>5 tasks now - 1 started</Text>
-        </View>
+        </TouchableOpacity>
       </View>
       <View style={{ ...styles.feedsContainer }}>
         <View style={{ ...styles.feedIcon, backgroundColor: "#F9BE7C" }}>
           <Loader color="white" />
         </View>
-        <View style={{ ...styles.feedDetails }}>
+        <TouchableOpacity
+          onPress={() => {
+            props.navigation.navigate("FeedScreen", {
+              screen: "In progress",
+              screenSub: "Smells good! Something is cooking!",
+            });
+          }}
+          style={{ ...styles.feedDetails }}
+        >
           <Text style={{ ...styles.feedText, fontSize: 16 }}>In progess</Text>
           <Text style={{ ...styles.feedDesc }}>1 tasks now - 1 started</Text>
-        </View>
+        </TouchableOpacity>
       </View>
       <View style={{ ...styles.feedsContainer }}>
         <View style={{ ...styles.feedIcon, backgroundColor: "#6488E4" }}>
           <Right color="white" />
         </View>
-        <View style={{ ...styles.feedDetails }}>
+        <TouchableOpacity
+          onPress={() => {
+            props.navigation.navigate("FeedScreen", {
+              screen: "Done",
+              screenSub: "Feel good about yourself",
+            });
+          }}
+          style={{ ...styles.feedDetails }}
+        >
           <Text style={{ ...styles.feedText, fontSize: 16 }}>Done</Text>
           <Text style={{ ...styles.feedDesc }}>18 tasks now - 18 started</Text>
-        </View>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -91,7 +121,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "flex-start",
-    width: "auto",
+    flex: 1,
     marginLeft: 12,
   },
   feedDesc: {
