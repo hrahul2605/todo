@@ -1,24 +1,35 @@
 import * as React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../constants";
 
 interface Props {
   isCategory: boolean;
   color: string;
+  name: string;
+  desc: string;
+  navigation: StackNavigationProp<RootStackParamList>;
 }
 
 export default function TaskCard(props: Props) {
   return (
-    <View style={{ ...styles.cardContainer, backgroundColor: props.color }}>
-      <View style={{ marginVertical: 28 }}>
-        {props.isCategory ? (
-          <View style={{ ...styles.percentage }}></View>
-        ) : null}
-        <View style={{ ...styles.cardText }}>
-          <Text style={{ ...styles.cardTextHeading }}>ChatBot</Text>
-          <Text style={{ ...styles.cardTextDesc }}>Description</Text>
+    <TouchableOpacity
+      onPress={() =>
+        props.navigation.navigate("CategoryTask", { taskName: props.name })
+      }
+    >
+      <View style={{ ...styles.cardContainer, backgroundColor: props.color }}>
+        <View style={{ marginVertical: 28 }}>
+          {props.isCategory ? (
+            <View style={{ ...styles.percentage }}></View>
+          ) : null}
+          <View style={{ ...styles.cardText }}>
+            <Text style={{ ...styles.cardTextHeading }}>{props.name}</Text>
+            <Text style={{ ...styles.cardTextDesc }}>{props.desc}</Text>
+          </View>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 

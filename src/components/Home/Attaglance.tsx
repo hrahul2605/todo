@@ -1,8 +1,14 @@
 import * as React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import TaskCard from "../TaskCard";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../../constants";
 
-export default function Attaglance() {
+interface Props {
+  navigation: StackNavigationProp<RootStackParamList>;
+}
+
+export default function Attaglance({ navigation }: Props) {
   return (
     <View>
       <View style={{ ...styles.headingContainer }}>
@@ -15,10 +21,13 @@ export default function Attaglance() {
           alignItems: "baseline",
         }}
       >
-        <TaskCard isCategory={false} color="#309397" />
-        <TaskCard isCategory={true} color="#E46472" />
-        <TaskCard isCategory={true} color="#FFCC66" />
-        <TaskCard isCategory={true} color="#6488e4" />
+        <TaskCard
+          name="ChatBot"
+          desc="Lorem ipsum"
+          color="#6488e4"
+          isCategory={true}
+          navigation={navigation}
+        />
       </View>
     </View>
   );

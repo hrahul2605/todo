@@ -1,22 +1,96 @@
-import * as React from "react";
+import React, { FunctionComponent } from "react";
 import {
   View,
   TouchableOpacity,
   Text,
   TextInput,
   StyleSheet,
-  ScrollView,
+  Animated,
 } from "react-native";
 import Left from "../assets/icons/left.svg";
-import { SCREEN_WIDTH, month, day } from "../constants";
+import {
+  SCREEN_WIDTH,
+  month,
+  day,
+  RootStackParamList,
+  SCREEN_HEIGHT,
+} from "../constants";
 import Calendar from "../assets/icons/calendar.svg";
 import Edit from "../assets/icons/edit.svg";
+import Plus from "../assets/icons/plus.svg";
+import { StackNavigationProp } from "@react-navigation/stack";
+import AddCategory from "./AddCategory";
 
-export default function CreateTask(props: any) {
+interface Props {
+  navigation: StackNavigationProp<RootStackParamList, "CreateTask">;
+}
+
+const CreateTask: FunctionComponent<Props> = (props) => {
   const date = new Date();
+
+  const opacity = new Animated.Value(0);
+
+  const mainViewOpacity = opacity.interpolate({
+    inputRange: [0, 0.1, 1],
+    outputRange: [1, 1, 0.3],
+  });
+
+  const btnOpacity = opacity.interpolate({
+    inputRange: [0, 0.1, 1],
+    outputRange: [1, 1, 0],
+  });
+
+  const scale = opacity.interpolate({
+    inputRange: [0, 0.1, 1],
+    outputRange: [0.7, 0.7, 1],
+  });
+
+  const elevation = opacity.interpolate({
+    inputRange: [0, 0.1, 1],
+    outputRange: [-1, -1, 10],
+  });
+
+  const translateY = opacity.interpolate({
+    inputRange: [0, 0.1, 1],
+    outputRange: [0, -SCREEN_HEIGHT, -SCREEN_HEIGHT],
+  });
+
+  const animateModal = () => {
+    Animated.spring(opacity, {
+      toValue: 1,
+      useNativeDriver: true,
+      mass: 0.5,
+    }).start();
+  };
+
+  const closeModal = () => {
+    Animated.spring(opacity, {
+      toValue: 0,
+      useNativeDriver: true,
+      mass: 0.3,
+    }).start();
+  };
+
   return (
-    <View style={{ flex: 1 }}>
-      <View style={{ ...styles.headerContainer }}>
+    <>
+      <Animated.View
+        style={{
+          position: "absolute",
+          elevation,
+          opacity,
+          transform: [{ scale, translateY }],
+          justifyContent: "center",
+          alignItems: "center",
+          zIndex: 10,
+          top: SCREEN_HEIGHT,
+          height: SCREEN_HEIGHT,
+        }}
+      >
+        <AddCategory close={closeModal} />
+      </Animated.View>
+      <Animated.View
+        style={{ ...styles.headerContainer, opacity: mainViewOpacity }}
+      >
         <View style={{ ...styles.nav }}>
           <TouchableOpacity onPress={() => props.navigation.goBack()}>
             <Left color="black" />
@@ -52,10 +126,10 @@ export default function CreateTask(props: any) {
             </View>
           </View>
         </View>
-      </View>
-      <ScrollView
+      </Animated.View>
+      <Animated.ScrollView
         showsVerticalScrollIndicator={false}
-        style={{ width: SCREEN_WIDTH }}
+        style={{ width: SCREEN_WIDTH, opacity: mainViewOpacity }}
       >
         <View style={{ height: 315 }} />
         <View style={{ ...styles.timeContainer }}>
@@ -81,31 +155,28 @@ export default function CreateTask(props: any) {
         <View style={{ ...styles.descContainer }}>
           <View style={{ ...styles.descLayer }}>
             <Text style={{ ...styles.timeText }}>Description</Text>
-            <View style={{ overflow: "hidden" }}>
-              <TextInput
-                style={{ ...styles.descInput }}
-                placeholder="Lorem ipsum dolor sit amet"
-                placeholderTextColor="#FFFF"
-              />
-            </View>
+            <TextInput
+              style={{ ...styles.descInput }}
+              placeholder="Lorem ipsum dolor sit amet"
+              placeholderTextColor="#FFFF"
+            />
           </View>
         </View>
         <View style={{ ...styles.categoryContainer }}>
           <View style={{ height: "auto" }}>
-            <Text style={{ ...styles.timeText }}>Category</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Text style={{ ...styles.timeText }}>Category</Text>
+              <TouchableOpacity onPress={() => animateModal()}>
+                <Plus color="#FFFF" />
+              </TouchableOpacity>
+            </View>
             <View style={{ ...styles.categoryItemContainer }}>
-              <View style={{ ...styles.categoryItem }}>
-                <Text style={{ ...styles.categoryItemText }}>Lorem ipsum</Text>
-                <Edit width={12} color="white" />
-              </View>
-              <View style={{ ...styles.categoryItem }}>
-                <Text style={{ ...styles.categoryItemText }}>Lorem ipsum</Text>
-                <Edit width={12} color="white" />
-              </View>
-              <View style={{ ...styles.categoryItem }}>
-                <Text style={{ ...styles.categoryItemText }}>Lorem</Text>
-                <Edit width={12} color="white" />
-              </View>
               <View style={{ ...styles.categoryItem }}>
                 <Text style={{ ...styles.categoryItemText }}>Lorem ipsum</Text>
                 <Edit width={12} color="white" />
@@ -119,13 +190,17 @@ export default function CreateTask(props: any) {
             </View>
           </View>
         </View>
-      </ScrollView>
-      <View style={{ ...styles.createTaskContainer }}>
+      </Animated.ScrollView>
+      <Animated.View
+        style={{ ...styles.createTaskContainer, opacity: btnOpacity }}
+      >
         <Text style={{ ...styles.createTaskText }}>Create Task</Text>
-      </View>
-    </View>
+      </Animated.View>
+    </>
   );
-}
+};
+
+export default CreateTask;
 
 const styles = StyleSheet.create({
   headerContainer: {

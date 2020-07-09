@@ -1,9 +1,15 @@
-import React from 'react';
-import Main from './src/components/Main';
+import React from "react";
+import * as ScreenOrientation from "expo-screen-orientation";
+import Main from "./src/components/Main";
 
 export default function App() {
-  return (
-    <Main />
-  );
+  React.useEffect(() => {
+    async function changeScreenOrientation() {
+      await ScreenOrientation.lockAsync(
+        ScreenOrientation.OrientationLock.PORTRAIT
+      );
+    }
+    changeScreenOrientation();
+  }, []);
+  return <Main />;
 }
-

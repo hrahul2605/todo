@@ -1,9 +1,13 @@
 import * as React from "react";
-import { StyleSheet, Platform} from "react-native";
+import { StyleSheet, Platform } from "react-native";
 import * as Font from "expo-font";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { STATUS_BAR, BOTTOM_NAVBAR_HEIGHT } from "../constants";
+import {
+  STATUS_BAR,
+  BOTTOM_NAVBAR_HEIGHT,
+  RootStackParamList,
+} from "../constants";
 import { NavigationContainer } from "@react-navigation/native";
 import {
   createStackNavigator,
@@ -13,8 +17,11 @@ import {
 import Home from "./Home/Home";
 import FeedScreen from "./FeedScreen";
 import CreateTask from "./CreateTask";
+import CategoryTask from "./CategoryTask";
+import Loading from "./Loading";
+import Calender from "./Calender/Calender";
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<RootStackParamList>();
 
 export default function Main() {
   const [loaded, error] = Font.useFonts({
@@ -25,43 +32,59 @@ export default function Main() {
     light: require("../assets/fonts/Montserrat-Light.ttf"),
   });
   if (!loaded) {
-    return null;
+    return <Loading />;
+  } else {
+    return (
+      <>
+        <StatusBar backgroundColor="#FFCC66" />
+        <SafeAreaProvider
+          style={{ flex: 1, marginTop: STATUS_BAR, backgroundColor: "#282828" }}
+        >
+          <NavigationContainer>
+            <Stack.Navigator
+              initialRouteName="Home"
+              headerMode="none"
+              screenOptions={{ cardStyle: { backgroundColor: "#282828" } }}
+            >
+              <Stack.Screen name="Home" component={Home} />
+              <Stack.Screen
+                name="FeedScreen"
+                component={FeedScreen}
+                options={{
+                  cardStyleInterpolator:
+                    CardStyleInterpolators.forFadeFromBottomAndroid,
+                }}
+              />
+              <Stack.Screen
+                name="CreateTask"
+                component={CreateTask}
+                options={{
+                  cardStyleInterpolator:
+                    CardStyleInterpolators.forFadeFromBottomAndroid,
+                }}
+              />
+              <Stack.Screen
+                name="CategoryTask"
+                component={CategoryTask}
+                options={{
+                  cardStyleInterpolator:
+                    CardStyleInterpolators.forFadeFromBottomAndroid,
+                }}
+              />
+              <Stack.Screen
+                name="Calender"
+                component={Calender}
+                options={{
+                  cardStyleInterpolator:
+                    CardStyleInterpolators.forFadeFromBottomAndroid,
+                }}
+              />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </SafeAreaProvider>
+      </>
+    );
   }
-
-  return (
-    <>
-      <StatusBar backgroundColor="#FFCC66" />
-      <SafeAreaProvider
-        style={{ flex: 1, marginTop: STATUS_BAR, backgroundColor: "#343232" }}
-      >
-        <NavigationContainer>
-          <Stack.Navigator
-            initialRouteName="Home"
-            headerMode="none"
-            screenOptions={{ cardStyle: { backgroundColor: "#343232" } }}
-          >
-            <Stack.Screen name="Home" component={Home} />
-            <Stack.Screen
-              name="FeedScreen"
-              component={FeedScreen}
-              options={{
-                cardStyleInterpolator:
-                  CardStyleInterpolators.forFadeFromBottomAndroid,
-              }}
-            />
-            <Stack.Screen
-              name="CreateTask"
-              component={CreateTask}
-              options={{
-                cardStyleInterpolator:
-                  CardStyleInterpolators.forFadeFromBottomAndroid,
-              }}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </SafeAreaProvider>
-    </>
-  );
 }
 
 const styles = StyleSheet.create({

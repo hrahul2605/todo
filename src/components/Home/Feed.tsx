@@ -13,7 +13,11 @@ export default function Feed(props: any) {
       <View style={{ ...styles.feedHeadingContainer }}>
         <Text style={{ ...styles.feedText }}>My tasks</Text>
         <View style={{ ...styles.feedEvents }}>
-          <Calendar color="white" />
+          <TouchableOpacity
+            onPress={() => props.navigation.navigate("Calender")}
+          >
+            <Calendar color="white" />
+          </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
               props.navigation.navigate("CreateTask");

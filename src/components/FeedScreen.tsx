@@ -3,32 +3,36 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Left from "../assets/icons/left.svg";
 import Plus from "../assets/icons/plus.svg";
 import TaskCard from "./TaskCard";
+import { RouteProp } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../constants";
 
-export default function FeedScreen(props: any) {
+interface Props {
+  route: RouteProp<RootStackParamList, "FeedScreen">;
+  navigation: StackNavigationProp<RootStackParamList, "FeedScreen">;
+}
+
+const FeedScreen: React.FunctionComponent<Props> = ({ route, navigation }) => {
   return (
     <View style={{ ...styles.container }}>
       <View style={{ ...styles.nav }}>
-        <TouchableOpacity onPress={() => props.navigation.goBack()}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Left color="white" />
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => props.navigation.navigate("CreateTask")}
-        >
+        <TouchableOpacity onPress={() => navigation.navigate("CreateTask")}>
           <Plus color="white" />
         </TouchableOpacity>
       </View>
       <View style={{ ...styles.headingContainer }}>
-        <Text style={{ ...styles.headingText }}>
-          {props.route.params.screen}
-        </Text>
+        <Text style={{ ...styles.headingText }}>{route.params.screen}</Text>
       </View>
       <View style={{ marginHorizontal: 24, marginBottom: 3 }}>
         <Text style={{ ...styles.headingMotivate }}>
-          {props.route.params.screenSub}
+          {route.params.screenSub}
         </Text>
       </View>
       <View style={{ height: "auto", paddingVertical: 12 }}>
-        {props.route.params.screen !== "In progress" ? (
+        {route.params.screen !== "In progress" ? (
           <>
             <View
               style={{
@@ -52,17 +56,22 @@ export default function FeedScreen(props: any) {
                 alignItems: "baseline",
               }}
             >
-              <TaskCard color="#6488e4" isCategory={true} />
-              <TaskCard color="#f9be7c" isCategory={true} />
-              <TaskCard color="#E46472" isCategory={true} />
-              <TaskCard color="#309397" isCategory={true} />
+              <TaskCard
+                name="ChatBot"
+                desc="Lorem ipsum"
+                color="#6488e4"
+                isCategory={true}
+                navigation={navigation}
+              />
             </View>
           </>
         )}
       </View>
     </View>
   );
-}
+};
+
+export default FeedScreen;
 
 const styles = StyleSheet.create({
   container: {
