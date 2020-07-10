@@ -13,13 +13,20 @@ import { SCREEN_WIDTH, day, month } from "../../constants";
 interface Props {
   goBack(): void;
   animateDateOpen: () => void;
+  setTitle: React.Dispatch<React.SetStateAction<string>>;
+  title: string;
+  setDate: React.Dispatch<React.SetStateAction<string>>;
+  date: string;
 }
 
 const CreateTaskHeader: FunctionComponent<Props> = ({
   goBack,
   animateDateOpen,
+  title,
+  setTitle,
+  date,
 }) => {
-  const date = new Date();
+  const datee = new Date();
   return (
     <>
       <View style={{ ...styles.nav }}>
@@ -35,9 +42,11 @@ const CreateTaskHeader: FunctionComponent<Props> = ({
           <Text style={{ ...styles.titleText }}>Title</Text>
           <View style={{ ...styles.inputContainer }}>
             <TextInput
-              placeholder="Chocolate Cake"
+              placeholder="Task title"
               placeholderTextColor="#000000"
               style={{ ...styles.titleInput }}
+              value={title}
+              onChangeText={(text) => setTitle(text)}
             />
           </View>
         </View>
@@ -46,10 +55,11 @@ const CreateTaskHeader: FunctionComponent<Props> = ({
           <View style={{ flexDirection: "row" }}>
             <TextInput
               placeholderTextColor="#000000"
-              placeholder={`${day[date.getDay()]}, ${date.getDate()} ${
-                month[date.getMonth()].month
+              placeholder={`${day[datee.getDay()]}, ${datee.getDate()} ${
+                month[datee.getMonth()].month
               }`}
               style={{ ...styles.dateInput }}
+              value={date}
             />
             <TouchableOpacity
               style={{ ...styles.calenderIcon }}

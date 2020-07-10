@@ -1,5 +1,11 @@
-import React, { FunctionComponent, useRef } from "react";
-import { Text, StyleSheet, Animated, View } from "react-native";
+import React, { FunctionComponent, useRef, useState } from "react";
+import {
+  Text,
+  StyleSheet,
+  Animated,
+  View,
+  TouchableOpacity,
+} from "react-native";
 import {
   SCREEN_WIDTH,
   RootStackParamList,
@@ -10,12 +16,32 @@ import AddCategory from "./AddCategory";
 import CreateTaskDesc from "./CreateTaskDesc";
 import CreateTaskHeader from "./CreateTaskHeader";
 import DatePick from "../Calender/DatePick";
+import { addTask } from "../../redux/ActionCreator";
+import { connect } from "react-redux";
+import { getFormatedDate } from "../DatePicker";
 
+interface task {
+  category?: string;
+  title: string;
+  date: string;
+  desc?: string;
+  startTime?: string;
+  endTime?: string;
+}
 interface Props {
   navigation: StackNavigationProp<RootStackParamList, "CreateTask">;
+  addTask: (task: task) => void;
 }
 
-const CreateTask: FunctionComponent<Props> = ({ navigation }) => {
+const mapStateToProps = (state: { task: task }) => ({
+  task: state.task,
+});
+
+const mapDispatchToProps = (dispacth: any) => ({
+  addTask: (task: task) => dispacth(addTask(task)),
+});
+
+const CreateTask: FunctionComponent<Props> = ({ navigation, addTask }) => {
   const opacity = useRef(new Animated.Value(0)).current;
   const dateAnimate = useRef(new Animated.Value(0)).current;
   const mainViewOpacity = useRef(new Animated.Value(1)).current;
@@ -97,6 +123,8 @@ const CreateTask: FunctionComponent<Props> = ({ navigation }) => {
     outputRange: [0, SCREEN_HEIGHT, SCREEN_HEIGHT],
   });
 
+  const [title, setTitle] = useState("");
+  const [date, setDate] = useState(getFormatedDate(new Date(), "ddd, DD MMM"));
   return (
     <>
       <Animated.View
@@ -107,7 +135,7 @@ const CreateTask: FunctionComponent<Props> = ({ navigation }) => {
         }}
       >
         <View style={{ width: 332, height: 332 }}>
-          <DatePick close={animateDateClose} />
+          <DatePick close={animateDateClose} setDate={setDate} />
         </View>
       </Animated.View>
       <Animated.View
@@ -125,6 +153,10 @@ const CreateTask: FunctionComponent<Props> = ({ navigation }) => {
         <CreateTaskHeader
           goBack={navigation.goBack}
           animateDateOpen={animateDateOpen}
+          title={title}
+          setTitle={setTitle}
+          date={date}
+          setDate={setDate}
         />
       </Animated.View>
       <Animated.ScrollView
@@ -136,13 +168,15 @@ const CreateTask: FunctionComponent<Props> = ({ navigation }) => {
       <Animated.View
         style={{ ...styles.createTaskContainer, opacity: btnOpacity }}
       >
-        <Text style={{ ...styles.createTaskText }}>Create Task</Text>
+        <TouchableOpacity onPress={() => addTask({ date: date, title: title })}>
+          <Text style={{ ...styles.createTaskText }}>Create Task</Text>
+        </TouchableOpacity>
       </Animated.View>
     </>
   );
 };
 
-export default CreateTask;
+export default connect(mapStateToProps, mapDispatchToProps)(CreateTask);
 
 const styles = StyleSheet.create({
   addCategoryContainer: {

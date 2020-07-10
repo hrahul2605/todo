@@ -7,7 +7,7 @@ interface Props {
   isCategory: boolean;
   color: string;
   name: string;
-  desc: string;
+  desc?: string;
   navigation: StackNavigationProp<RootStackParamList>;
 }
 

@@ -2,7 +2,6 @@ import React, { FunctionComponent, useState, useRef } from "react";
 import {
   View,
   TouchableOpacity,
-  ScrollView,
   Text,
   Switch,
   StyleSheet,

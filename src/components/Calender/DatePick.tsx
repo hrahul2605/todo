@@ -1,9 +1,17 @@
 import React, { FunctionComponent } from "react";
-import DatePicker, { getToday } from "../DatePicker/index.js"
+import DatePicker, { getToday, getFormatedDate } from "../DatePicker/index.js";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { SCREEN_WIDTH } from "../../constants";
 
-const DatePick: FunctionComponent<{ close: () => void }> = ({ close }) => {
+interface Props {
+  close: () => void;
+  setDate: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const DatePick: FunctionComponent<Props> = ({ close, setDate }) => {
+  const dateChange = (date: Date) => {
+    setDate(getFormatedDate(date, "ddd DD, MMM"));
+  };
   return (
     <View style={{ ...styles.container }}>
       <DatePicker
@@ -25,6 +33,7 @@ const DatePick: FunctionComponent<{ close: () => void }> = ({ close }) => {
         style={{ borderRadius: 24 }}
         mode="calendar"
         selected={getToday()}
+        onDateChange={(date) => dateChange(date)}
       />
       <View style={{ ...styles.btnContainer }}>
         <TouchableOpacity

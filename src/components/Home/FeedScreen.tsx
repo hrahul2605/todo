@@ -6,13 +6,31 @@ import TaskCard from "../Task/TaskCard";
 import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../constants";
+import { connect } from "react-redux";
 
+interface task {
+  category?: string;
+  title: string;
+  date: string;
+  desc?: string;
+  startTime?: string;
+  endTime?: string;
+}
 interface Props {
   route: RouteProp<RootStackParamList, "FeedScreen">;
   navigation: StackNavigationProp<RootStackParamList, "FeedScreen">;
+  tasks: Array<task>;
 }
 
-const FeedScreen: React.FunctionComponent<Props> = ({ route, navigation }) => {
+const mapStateToProps = (state: { tasks: { tasks: task } }) => ({
+  tasks: state.tasks.tasks,
+});
+const FeedScreen: React.FunctionComponent<Props> = ({
+  route,
+  navigation,
+  tasks,
+}) => {
+  console.log(tasks);
   return (
     <View style={{ ...styles.container }}>
       <View style={{ ...styles.nav }}>
@@ -34,18 +52,21 @@ const FeedScreen: React.FunctionComponent<Props> = ({ route, navigation }) => {
       <View style={{ height: "auto", paddingVertical: 12 }}>
         {route.params.screen !== "In progress" ? (
           <>
-            <View
-              style={{
-                ...styles.taskContainer,
-                backgroundColor: "#6488e4",
-                marginHorizontal: 24,
-              }}
-            >
-              <Text style={{ ...styles.taskTitle }}>Chocholate cake</Text>
-              <Text style={{ ...styles.taskDesc }}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit ...
-              </Text>
-            </View>
+            {tasks.map((item, index) => (
+              <View
+                style={{
+                  ...styles.taskContainer,
+                  backgroundColor: "#6488e4",
+                  marginHorizontal: 24,
+                }}
+                key={index}
+              >
+                <Text style={{ ...styles.taskTitle }}>{item.title}</Text>
+                <Text style={{ ...styles.taskDesc }}>
+                  {item.date} {item.desc}
+                </Text>
+              </View>
+            ))}
           </>
         ) : (
           <>
@@ -71,7 +92,7 @@ const FeedScreen: React.FunctionComponent<Props> = ({ route, navigation }) => {
   );
 };
 
-export default FeedScreen;
+export default connect(mapStateToProps)(FeedScreen);
 
 const styles = StyleSheet.create({
   container: {
