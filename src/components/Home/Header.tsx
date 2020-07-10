@@ -1,9 +1,14 @@
 import * as React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { SCREEN_WIDTH } from "../../constants";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { SCREEN_WIDTH, RootStackParamList } from "../../constants";
 import Setting from "../../assets/icons/settings.svg";
+import { StackNavigationProp } from "@react-navigation/stack";
 
-export default function Header() {
+interface Props {
+  navigation: StackNavigationProp<RootStackParamList>;
+}
+
+const Header: React.FunctionComponent<Props> = ({ navigation }) => {
   return (
     <View style={{ ...styles.headerContainer }}>
       <View style={{ ...styles.detailContainer }}>
@@ -12,24 +17,17 @@ export default function Header() {
           <Text style={{ ...styles.userName }}>Dushtu Bunny</Text>
           <Text style={{ ...styles.userDesc }}>Captain Developer</Text>
         </View>
-        <View
-          style={{
-            width: 93,
-            height: 116,
-            paddingHorizontal: 24,
-            paddingTop: 16,
-            paddingBottom: 12,
-            justifyContent: "flex-end",
-            alignItems: "flex-start",
-            flexDirection: "row",
-          }}
-        >
-          <Setting color="#000000" width={24} />
+        <View style={{ ...styles.settingsContainer }}>
+          <TouchableOpacity onPress={() => navigation.navigate("Settings")}>
+            <Setting color="#000000" width={24} />
+          </TouchableOpacity>
         </View>
       </View>
     </View>
   );
-}
+};
+
+export default Header;
 
 const styles = StyleSheet.create({
   headerContainer: {
@@ -41,6 +39,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 0,
     elevation: 1,
+    zIndex: 1,
   },
   detailContainer: {
     height: 110,
@@ -73,5 +72,15 @@ const styles = StyleSheet.create({
     color: "#000000",
     fontSize: 14,
     fontFamily: "regular",
+  },
+  settingsContainer: {
+    width: 93,
+    height: 116,
+    paddingHorizontal: 24,
+    paddingTop: 16,
+    paddingBottom: 12,
+    justifyContent: "flex-end",
+    alignItems: "flex-start",
+    flexDirection: "row",
   },
 });

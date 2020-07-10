@@ -13,7 +13,7 @@ interface Props {
 const Home: React.FunctionComponent<Props> = ({ navigation }) => {
   return (
     <View style={{ flex: 1 }}>
-      <Header />
+      <Header navigation={navigation} />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ height: 120 }} />
         <Feed navigation={navigation} />

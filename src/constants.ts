@@ -63,5 +63,5 @@ export type RootStackParamList = {
   CreateTask: undefined;
   CategoryTask: { taskName: string };
   Calender: undefined;
+  Settings: undefined;
 };
-

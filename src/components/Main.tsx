@@ -11,7 +11,6 @@ import {
 import { NavigationContainer } from "@react-navigation/native";
 import {
   createStackNavigator,
-  CardStyleInterpolators,
 } from "@react-navigation/stack";
 
 import Home from "./Home/Home";
@@ -20,6 +19,7 @@ import CreateTask from "./Task/CreateTask";
 import CategoryTask from "./Task/CategoryTask";
 import Loading from "./Loading";
 import Calender from "./Calender/Calender";
+import Settings from "./Settings";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -50,34 +50,22 @@ export default function Main() {
               <Stack.Screen
                 name="FeedScreen"
                 component={FeedScreen}
-                options={{
-                  cardStyleInterpolator:
-                    CardStyleInterpolators.forFadeFromBottomAndroid,
-                }}
               />
               <Stack.Screen
                 name="CreateTask"
                 component={CreateTask}
-                options={{
-                  cardStyleInterpolator:
-                    CardStyleInterpolators.forFadeFromBottomAndroid,
-                }}
               />
               <Stack.Screen
                 name="CategoryTask"
                 component={CategoryTask}
-                options={{
-                  cardStyleInterpolator:
-                    CardStyleInterpolators.forFadeFromBottomAndroid,
-                }}
               />
               <Stack.Screen
                 name="Calender"
                 component={Calender}
-                options={{
-                  cardStyleInterpolator:
-                    CardStyleInterpolators.forFadeFromBottomAndroid,
-                }}
+              />
+              <Stack.Screen
+                name="Settings"
+                component={Settings}
               />
             </Stack.Navigator>
           </NavigationContainer>
