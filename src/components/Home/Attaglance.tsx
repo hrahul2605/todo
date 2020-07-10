@@ -1,6 +1,6 @@
 import * as React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import TaskCard from "../TaskCard";
+import TaskCard from "../Task/TaskCard";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../constants";
 

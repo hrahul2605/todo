@@ -1,7 +1,7 @@
 import * as React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "../constants";
+import { RootStackParamList } from "../../constants";
 
 interface Props {
   isCategory: boolean;

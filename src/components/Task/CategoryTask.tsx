@@ -6,11 +6,11 @@ import {
   ScrollView,
   StyleSheet,
 } from "react-native";
-import Left from "../assets/icons/left.svg";
-import Plus from "../assets/icons/plus.svg";
+import Left from "../../assets/icons/left.svg";
+import Plus from "../../assets/icons/plus.svg";
 import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "../constants";
+import { RootStackParamList } from "../../constants";
 
 interface Props {
   route: RouteProp<RootStackParamList, "CategoryTask">;

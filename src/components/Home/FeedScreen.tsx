@@ -1,11 +1,11 @@
 import * as React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import Left from "../assets/icons/left.svg";
-import Plus from "../assets/icons/plus.svg";
-import TaskCard from "./TaskCard";
+import Left from "../../assets/icons/left.svg";
+import Plus from "../../assets/icons/plus.svg";
+import TaskCard from "../Task/TaskCard";
 import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "../constants";
+import { RootStackParamList } from "../../constants";
 
 interface Props {
   route: RouteProp<RootStackParamList, "FeedScreen">;

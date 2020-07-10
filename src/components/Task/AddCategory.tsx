@@ -6,8 +6,8 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
-import { SCREEN_WIDTH } from "../constants";
-import Close from "../assets/icons/close.svg";
+import { SCREEN_WIDTH } from "../../constants";
+import Close from "../../assets/icons/close.svg";
 
 interface Props {
   close: Function;

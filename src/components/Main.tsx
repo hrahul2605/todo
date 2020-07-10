@@ -15,9 +15,9 @@ import {
 } from "@react-navigation/stack";
 
 import Home from "./Home/Home";
-import FeedScreen from "./FeedScreen";
-import CreateTask from "./CreateTask";
-import CategoryTask from "./CategoryTask";
+import FeedScreen from "./Home/FeedScreen";
+import CreateTask from "./Task/CreateTask";
+import CategoryTask from "./Task/CategoryTask";
 import Loading from "./Loading";
 import Calender from "./Calender/Calender";
 

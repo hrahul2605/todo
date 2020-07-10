@@ -7,17 +7,17 @@ import {
   StyleSheet,
   Animated,
 } from "react-native";
-import Left from "../assets/icons/left.svg";
+import Left from "../../assets/icons/left.svg";
 import {
   SCREEN_WIDTH,
   month,
   day,
   RootStackParamList,
   SCREEN_HEIGHT,
-} from "../constants";
-import Calendar from "../assets/icons/calendar.svg";
-import Edit from "../assets/icons/edit.svg";
-import Plus from "../assets/icons/plus.svg";
+} from "../../constants";
+import Calendar from "../../assets/icons/calendar.svg";
+import Edit from "../../assets/icons/edit.svg";
+import Plus from "../../assets/icons/plus.svg";
 import { StackNavigationProp } from "@react-navigation/stack";
 import AddCategory from "./AddCategory";
 
