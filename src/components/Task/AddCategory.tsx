@@ -11,41 +11,76 @@ import Close from "../../assets/icons/close.svg";
 
 interface Props {
   close: Function;
+  type: string;
 }
 
-const AddCategory: FunctionComponent<Props> = ({ close }) => {
+const AddCategory: FunctionComponent<Props> = ({ close, type }) => {
   return (
     <View style={{ ...styles.container }}>
       <View style={{ ...styles.heading }}>
-        <Text style={{ ...styles.headingText }}>Add Category</Text>
+        <Text style={{ ...styles.headingText }}>{type}</Text>
         <TouchableOpacity onPress={() => close()}>
           <Close color="white" />
         </TouchableOpacity>
       </View>
-      <View style={{ ...styles.categoryDetailsContainer }}>
-        <View style={{ ...styles.nameInputContainer }}>
-          <Text style={{ ...styles.nameText }}>Name</Text>
-          <TextInput
-            placeholder="Category"
-            placeholderTextColor="#FFFF"
-            style={{ ...styles.nameInput }}
-          />
+      {type === "Add Category" ? (
+        <View style={{ ...styles.detailsContainer }}>
+          <View style={{ ...styles.nameInputContainer }}>
+            <Text style={{ ...styles.nameText }}>Name</Text>
+            <TextInput
+              placeholder="Category"
+              placeholderTextColor="#FFFF"
+              style={{ ...styles.nameInput }}
+            />
+          </View>
+          <View style={{ ...styles.colorSelectContainer }}>
+            <Text style={{ ...styles.nameText }}>Color</Text>
+          </View>
+          <View style={{ ...styles.colorsContainer }}>
+            <View style={{ ...styles.color, backgroundColor: "#f9be7c" }} />
+            <View style={{ ...styles.color, backgroundColor: "#309397" }} />
+            <View style={{ ...styles.color, backgroundColor: "#6488e4" }} />
+            <View style={{ ...styles.color, backgroundColor: "#E46472" }} />
+          </View>
         </View>
-        <View style={{ ...styles.colorSelectContainer }}>
-          <Text style={{ ...styles.nameText }}>Color</Text>
-        </View>
-        <View style={{ ...styles.colorsContainer }}>
-          <View style={{ ...styles.color, backgroundColor: "#f9be7c" }} />
-          <View style={{ ...styles.color, backgroundColor: "#309397" }} />
-          <View style={{ ...styles.color, backgroundColor: "#6488e4" }} />
-          <View style={{ ...styles.color, backgroundColor: "#E46472" }} />
-        </View>
-      </View>
+      ) : type === "Rename" ? (
+        <>
+          <View style={{ ...styles.renameContainer }}>
+            <Text style={{ ...styles.renameItemText }}>Name</Text>
+            <TextInput
+              placeholder="Dushtu Bunny"
+              placeholderTextColor="#FFFF"
+              style={{
+                ...styles.nameInput,
+                borderColor: "rgba(255, 255, 255, 0.12)",
+                borderBottomWidth: 1,
+              }}
+            />
+          </View>
+          <View style={{ height: 24 }} />
+          <View style={{ ...styles.renameContainer }}>
+            <Text style={{ ...styles.renameItemText }}>Designation</Text>
+            <TextInput
+              placeholder="Captain Developer"
+              placeholderTextColor="#FFFF"
+              style={{
+                ...styles.nameInput,
+                borderColor: "rgba(255, 255, 255, 0.12)",
+                borderBottomWidth: 1,
+              }}
+            />
+          </View>
+          <View style={{ height: 24 }} />
+        </>
+      ) : null}
       <View style={{ ...styles.buttonContainer }}>
-        <TouchableOpacity style={{ ...styles.cancelBtn }} onPress={() => close()} >
+        <TouchableOpacity
+          style={{ ...styles.cancelBtn }}
+          onPress={() => close()}
+        >
           <Text style={{ ...styles.btnText }}>Cancel</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={{ ...styles.doneBtn }}  onPress={() => close()}>
+        <TouchableOpacity style={{ ...styles.doneBtn }} onPress={() => close()}>
           <Text style={{ ...styles.btnText }}>Done</Text>
         </TouchableOpacity>
       </View>
@@ -76,7 +111,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontFamily: "bold",
   },
-  categoryDetailsContainer: {
+  detailsContainer: {
     height: 168,
     flexDirection: "column",
     justifyContent: "flex-start",
@@ -142,5 +177,16 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontSize: 12,
     fontFamily: "semiBold",
+  },
+  renameContainer: {
+    height: 48,
+    width: "100%",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
+  renameItemText: {
+    fontFamily: "regular",
+    fontSize: 12,
+    color: "rgba(255, 255, 255, 0.5)",
   },
 });

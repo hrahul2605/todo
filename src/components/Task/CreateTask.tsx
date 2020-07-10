@@ -117,7 +117,7 @@ const CreateTask: FunctionComponent<Props> = ({ navigation }) => {
           transform: [{ scale, translateY }],
         }}
       >
-        <AddCategory close={closeModal} />
+        <AddCategory close={closeModal} type="Add Category" />
       </Animated.View>
       <Animated.View
         style={{ ...styles.headerContainer, opacity: mainViewOpacity }}
