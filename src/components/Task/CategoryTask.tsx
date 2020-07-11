@@ -1,66 +1,100 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useState } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   ScrollView,
   StyleSheet,
+  FlatList,
 } from "react-native";
 import Left from "../../assets/icons/left.svg";
 import Plus from "../../assets/icons/plus.svg";
 import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "../../constants";
+import { RootStackParamList, task } from "../../constants";
+import { removeTask, removeCategoryTask } from "../../redux/ActionCreator";
+import { connect } from "react-redux";
+import TaskItem from "./TaskItem";
 
+interface det {
+  categoryName: string | undefined;
+  id: string;
+}
+
+interface Category {
+  tasks: task[];
+  categoryName: string;
+  categoryColor: string;
+  categoryDesc?: string;
+  id: string;
+}
 interface Props {
   route: RouteProp<RootStackParamList, "CategoryTask">;
   navigation: StackNavigationProp<RootStackParamList, "CategoryTask">;
+  removeTask: (id: string) => void;
+  removeCategoryTask: (det: det) => void;
+  category: Category[];
 }
 
-const CategoryTask: FunctionComponent<Props> = (props) => {
+const mapStateToProps = (state: { category: { category: Category[] } }) => ({
+  category: state.category.category,
+});
+
+const mapDispatchToProps = (dispatch: any) => ({
+  removeTask: (id: string) => dispatch(removeTask(id)),
+  removeCategoryTask: (det: det) => dispatch(removeCategoryTask(det)),
+});
+
+const CategoryTask: FunctionComponent<Props> = ({
+  navigation,
+  route,
+  removeTask,
+  removeCategoryTask,
+  category,
+}) => {
+  const index = category.findIndex((item) => {
+    return item.categoryName === route.params.taskName;
+  });
   return (
     <View style={{ flex: 1 }}>
       <View style={{ ...styles.nav }}>
-        <TouchableOpacity onPress={() => props.navigation.goBack()}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Left color="white" />
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => props.navigation.navigate("CreateTask")}
-        >
+        <TouchableOpacity onPress={() => navigation.navigate("CreateTask")}>
           <Plus color="white" />
         </TouchableOpacity>
       </View>
       <View style={{ ...styles.headingContainer }}>
-        <Text style={{ ...styles.headingText }}>
-          {props.route.params.taskName}
-        </Text>
+        <Text style={{ ...styles.headingText }}>{route.params.taskName}</Text>
       </View>
       <View style={{ ...styles.motivateTextContainer }}>
         <Text style={{ ...styles.motivateText }}>Giddy-up Captain!</Text>
       </View>
-      <ScrollView
+      <FlatList
+        data={category[index].tasks}
+        renderItem={({ item, index }) => {
+          return (
+            <TaskItem
+              key={index}
+              task={item}
+              removeTask={removeTask}
+              removeCategoryTask={removeCategoryTask}
+              categoryName={route.params.taskName}
+              color={route.params.bgColor}
+            />
+          );
+        }}
+        keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
         style={{ ...styles.scrollStyle }}
         contentContainerStyle={{ ...styles.scrollContainer }}
-      >
-        <View
-          style={{
-            ...styles.taskContainer,
-            backgroundColor: "#E46472",
-            marginHorizontal: 24,
-          }}
-        >
-          <Text style={{ ...styles.taskTitle }}>Chocholate cake</Text>
-          <Text style={{ ...styles.taskDesc }}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit ...
-          </Text>
-        </View>
-      </ScrollView>
+      />
     </View>
   );
 };
 
-export default CategoryTask;
+export default connect(mapStateToProps, mapDispatchToProps)(CategoryTask);
 
 const styles = StyleSheet.create({
   taskContainer: {
@@ -119,5 +153,10 @@ const styles = StyleSheet.create({
   },
   scrollStyle: {
     paddingVertical: 12,
+  },
+  taskDate: {
+    fontFamily: "light",
+    fontSize: 12,
+    color: "#FFFF",
   },
 });

@@ -5,6 +5,7 @@ import thunk from "redux-thunk";
 import logger from "redux-logger";
 
 import { taskReducer } from "./reducers/taskReducer";
+import { categoryReducer } from "./reducers/categoryReducer";
 
 const config = {
   key: "root",
@@ -14,7 +15,10 @@ const config = {
 
 export const ConfigureStore = () => {
   const store = createStore(
-    persistCombineReducers(config, { tasks: taskReducer }),
+    persistCombineReducers(config, {
+      tasks: taskReducer,
+      category: categoryReducer,
+    }),
     applyMiddleware(thunk, logger)
   );
   const persistor = persistStore(store);

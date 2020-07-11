@@ -1,36 +1,62 @@
 import * as React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+} from "react-native";
 import Left from "../../assets/icons/left.svg";
 import Plus from "../../assets/icons/plus.svg";
 import TaskCard from "../Task/TaskCard";
 import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "../../constants";
+import {
+  RootStackParamList,
+  task,
+  SCREEN_WIDTH,
+  SCREEN_HEIGHT,
+} from "../../constants";
 import { connect } from "react-redux";
 
-interface task {
-  category?: string;
-  title: string;
-  date: string;
-  desc?: string;
-  startTime?: string;
-  endTime?: string;
+import { removeTask } from "../../redux/ActionCreator";
+import TaskItem from "../Task/TaskItem";
+
+interface Category {
+  tasks: task[];
+  categoryName: string;
+  categoryColor: string;
+  categoryDesc?: string;
+  id: string;
 }
+
 interface Props {
   route: RouteProp<RootStackParamList, "FeedScreen">;
   navigation: StackNavigationProp<RootStackParamList, "FeedScreen">;
   tasks: Array<task>;
+  removeTask: (id: string) => void;
+  category: Category[];
 }
 
-const mapStateToProps = (state: { tasks: { tasks: task } }) => ({
+const mapStateToProps = (state: {
+  tasks: { tasks: Array<task> };
+  category: { category: Category[] };
+}) => ({
   tasks: state.tasks.tasks,
+  category: state.category.category,
 });
+
+const mapDispatchToProps = (dispatch: any) => ({
+  removeTask: (id: string) => dispatch(removeTask(id)),
+});
+
 const FeedScreen: React.FunctionComponent<Props> = ({
   route,
   navigation,
   tasks,
+  removeTask,
+  category,
 }) => {
-  console.log(tasks);
   return (
     <View style={{ ...styles.container }}>
       <View style={{ ...styles.nav }}>
@@ -52,47 +78,49 @@ const FeedScreen: React.FunctionComponent<Props> = ({
       <View style={{ height: "auto", paddingVertical: 12 }}>
         {route.params.screen !== "In progress" ? (
           <>
-            {tasks.map((item, index) => (
-              <View
-                style={{
-                  ...styles.taskContainer,
-                  backgroundColor: "#6488e4",
-                  marginHorizontal: 24,
-                }}
-                key={index}
-              >
-                <Text style={{ ...styles.taskTitle }}>{item.title}</Text>
-                <Text style={{ ...styles.taskDesc }}>
-                  {item.date} {item.desc}
-                </Text>
-              </View>
-            ))}
+            <FlatList
+              data={tasks}
+              renderItem={({ item, index }) => (
+                <TaskItem key={index} task={item} removeTask={removeTask} />
+              )}
+              keyExtractor={(item) => item.id}
+            />
           </>
         ) : (
-          <>
-            <View
-              style={{
-                flexDirection: "row",
-                flexWrap: "wrap",
-                alignItems: "baseline",
+          <View
+            style={{
+              width: SCREEN_WIDTH,
+              height: SCREEN_HEIGHT,
+              paddingBottom: 170,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <FlatList
+              data={category}
+              renderItem={({ item }) => (
+                <TaskCard
+                  name={item.categoryName}
+                  desc={item.categoryDesc}
+                  color={item.categoryColor}
+                  navigation={navigation}
+                />
+              )}
+              keyExtractor={(item) => item.id}
+              numColumns={2}
+              contentContainerStyle={{
+                width: SCREEN_WIDTH,
+                justifyContent: "center",
               }}
-            >
-              <TaskCard
-                name="ChatBot"
-                desc="Lorem ipsum"
-                color="#6488e4"
-                isCategory={true}
-                navigation={navigation}
-              />
-            </View>
-          </>
+            />
+          </View>
         )}
       </View>
     </View>
   );
 };
 
-export default connect(mapStateToProps)(FeedScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(FeedScreen);
 
 const styles = StyleSheet.create({
   container: {
@@ -121,22 +149,5 @@ const styles = StyleSheet.create({
     color: "rgba(255, 255, 255, 0.75)",
     fontFamily: "medium",
     fontSize: 14,
-  },
-  taskContainer: {
-    height: "auto",
-    width: 312,
-    borderRadius: 24,
-    padding: 16,
-    marginBottom: 12,
-  },
-  taskTitle: {
-    fontFamily: "medium",
-    fontSize: 14,
-    color: "#FFFF",
-  },
-  taskDesc: {
-    fontFamily: "light",
-    fontSize: 12,
-    color: "#FFFF",
   },
 });

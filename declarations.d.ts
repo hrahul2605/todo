@@ -7,3 +7,4 @@ declare module "redux-logger";
 declare module "./src/redux/ActionTypes.ts";
 declare module "redux-persist";
 declare module "react-redux";
+declare module 'redux-persist/es/integration/react'

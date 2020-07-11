@@ -1,26 +1,52 @@
 import * as React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { SCREEN_WIDTH } from "../../constants";
+import { SCREEN_WIDTH, task, RootStackParamList } from "../../constants";
 import Plus from "../../assets/icons/plus.svg";
 import Calendar from "../../assets/icons/calendar.svg";
 import Clock from "../../assets/icons/clock.svg";
 import Right from "../../assets/icons/right.svg";
 import Loader from "../../assets/icons/loader.svg";
+import { connect } from "react-redux";
+import { StackNavigationProp } from "@react-navigation/stack";
 
-export default function Feed(props: any) {
+interface Category {
+  tasks: task[];
+  categoryName: string;
+  categoryColor: string;
+  categoryDesc: string;
+  id: string;
+}
+
+interface Props {
+  tasks: Array<task>;
+  category: Category[];
+  navigation: StackNavigationProp<RootStackParamList>;
+}
+
+const mapStateToProps = (state: {
+  tasks: { tasks: Array<task> };
+  category: { category: Array<Category> };
+}) => ({
+  tasks: state.tasks.tasks,
+  category: state.category.category,
+});
+
+const Feed: React.FunctionComponent<Props> = ({
+  category,
+  navigation,
+  tasks,
+}) => {
   return (
     <View style={{ height: 260, width: SCREEN_WIDTH }}>
       <View style={{ ...styles.feedHeadingContainer }}>
         <Text style={{ ...styles.feedText }}>My tasks</Text>
         <View style={{ ...styles.feedEvents }}>
-          <TouchableOpacity
-            onPress={() => props.navigation.navigate("Calender")}
-          >
+          <TouchableOpacity onPress={() => navigation.navigate("Calender")}>
             <Calendar color="white" />
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-              props.navigation.navigate("CreateTask");
+              navigation.navigate("CreateTask");
             }}
           >
             <Plus color="white" />
@@ -33,15 +59,17 @@ export default function Feed(props: any) {
         </View>
         <TouchableOpacity
           onPress={() => {
-            props.navigation.navigate("FeedScreen", {
+            navigation.navigate("FeedScreen", {
               screen: "To do.",
               screenSub: "Giddy-up Captain!",
             });
           }}
           style={{ ...styles.feedDetails }}
         >
-          <Text style={{ ...styles.feedText, fontSize: 16 }}>To do.</Text>
-          <Text style={{ ...styles.feedDesc }}>5 tasks now - 1 started</Text>
+          <Text style={{ ...styles.feedText, fontSize: 16 }}>To do</Text>
+          <Text style={{ ...styles.feedDesc }}>
+            {tasks.length} tasks now
+          </Text>
         </TouchableOpacity>
       </View>
       <View style={{ ...styles.feedsContainer }}>
@@ -50,7 +78,7 @@ export default function Feed(props: any) {
         </View>
         <TouchableOpacity
           onPress={() => {
-            props.navigation.navigate("FeedScreen", {
+            navigation.navigate("FeedScreen", {
               screen: "In progress",
               screenSub: "Smells good! Something is cooking!",
             });
@@ -58,7 +86,9 @@ export default function Feed(props: any) {
           style={{ ...styles.feedDetails }}
         >
           <Text style={{ ...styles.feedText, fontSize: 16 }}>In progess</Text>
-          <Text style={{ ...styles.feedDesc }}>1 tasks now - 1 started</Text>
+          <Text style={{ ...styles.feedDesc }}>
+            {category.length} tasks now
+          </Text>
         </TouchableOpacity>
       </View>
       <View style={{ ...styles.feedsContainer }}>
@@ -67,7 +97,7 @@ export default function Feed(props: any) {
         </View>
         <TouchableOpacity
           onPress={() => {
-            props.navigation.navigate("FeedScreen", {
+            navigation.navigate("FeedScreen", {
               screen: "Done",
               screenSub: "Feel good about yourself",
             });
@@ -80,7 +110,9 @@ export default function Feed(props: any) {
       </View>
     </View>
   );
-}
+};
+
+export default connect(mapStateToProps)(Feed);
 
 const styles = StyleSheet.create({
   feedHeadingContainer: {

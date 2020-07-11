@@ -57,11 +57,21 @@ for (let i = date.getDate(); i <= month[mon].days; i++) {
 
 export { days };
 
+export interface task {
+  category?: string;
+  title: string;
+  date: string;
+  desc?: string;
+  startTime?: string;
+  endTime?: string;
+  id: string;
+}
+
 export type RootStackParamList = {
   Home: undefined;
   FeedScreen: { screen: string; screenSub: string };
   CreateTask: undefined;
-  CategoryTask: { taskName: string };
+  CategoryTask: { taskName: string; bgColor: string };
   Calender: undefined;
   Settings: undefined;
 };

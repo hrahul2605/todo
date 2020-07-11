@@ -10,7 +10,7 @@ interface Props {
 
 const DatePick: FunctionComponent<Props> = ({ close, setDate }) => {
   const dateChange = (date: Date) => {
-    setDate(getFormatedDate(date, "ddd DD, MMM"));
+    setDate(getFormatedDate(date,'ddd, DD MMM'))
   };
   return (
     <View style={{ ...styles.container }}>

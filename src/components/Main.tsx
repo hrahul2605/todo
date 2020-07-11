@@ -11,6 +11,7 @@ import {
 import { NavigationContainer } from "@react-navigation/native";
 import {
   createStackNavigator,
+  CardStyleInterpolators,
 } from "@react-navigation/stack";
 
 import Home from "./Home/Home";
@@ -43,30 +44,18 @@ export default function Main() {
           <NavigationContainer>
             <Stack.Navigator
               initialRouteName="Home"
-              headerMode="none"
-              screenOptions={{ cardStyle: { backgroundColor: "#282828" } }}
+              screenOptions={{
+                headerShown: false,
+                cardStyle: { backgroundColor: "#282828" },
+                cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+              }}
             >
               <Stack.Screen name="Home" component={Home} />
-              <Stack.Screen
-                name="FeedScreen"
-                component={FeedScreen}
-              />
-              <Stack.Screen
-                name="CreateTask"
-                component={CreateTask}
-              />
-              <Stack.Screen
-                name="CategoryTask"
-                component={CategoryTask}
-              />
-              <Stack.Screen
-                name="Calender"
-                component={Calender}
-              />
-              <Stack.Screen
-                name="Settings"
-                component={Settings}
-              />
+              <Stack.Screen name="FeedScreen" component={FeedScreen} />
+              <Stack.Screen name="CreateTask" component={CreateTask} />
+              <Stack.Screen name="CategoryTask" component={CategoryTask} />
+              <Stack.Screen name="Calender" component={Calender} />
+              <Stack.Screen name="Settings" component={Settings} />
             </Stack.Navigator>
           </NavigationContainer>
         </SafeAreaProvider>

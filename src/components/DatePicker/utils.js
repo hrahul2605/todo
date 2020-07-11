@@ -46,8 +46,8 @@ const gregorianConfigs = {
     'November',
     'December',
   ],
-  selectedFormat: 'YYYY-MMM-DD',
-  dateFormat: 'YYYY-MMM-DD',
+  selectedFormat: 'YYYY-MM-DD',
+  dateFormat: 'YYYY-MM-DD',
   monthYearFormat: 'YYYY MM',
   timeFormat: 'HH:mm',
   hour: 'Hour',
@@ -77,7 +77,7 @@ class utils {
 
   getFormated = (date, formatName = 'selectedFormat') => date.format(this.config[formatName]);
 
-  getFormatedDate = (date = new Date(), format = 'YYYY/MM/DD') => moment(date).format(format);
+  getFormatedDate = (date = new Date(), format = 'YYYY-MM-DD') => moment(date).format(format);
 
   getTime = time => this.getDate(time).format(this.config.timeFormat);
 

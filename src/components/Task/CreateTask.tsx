@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useRef, useState } from "react";
+import React, { FunctionComponent, useRef, useState, useEffect } from "react";
 import {
   Text,
   StyleSheet,
@@ -10,38 +10,57 @@ import {
   SCREEN_WIDTH,
   RootStackParamList,
   SCREEN_HEIGHT,
+  task,
 } from "../../constants";
 import { StackNavigationProp } from "@react-navigation/stack";
 import AddCategory from "./AddCategory";
 import CreateTaskDesc from "./CreateTaskDesc";
 import CreateTaskHeader from "./CreateTaskHeader";
 import DatePick from "../Calender/DatePick";
-import { addTask } from "../../redux/ActionCreator";
+import {
+  addTask,
+  addCategory,
+  addCategoryTask,
+} from "../../redux/ActionCreator";
 import { connect } from "react-redux";
 import { getFormatedDate } from "../DatePicker";
 
-interface task {
-  category?: string;
-  title: string;
-  date: string;
-  desc?: string;
-  startTime?: string;
-  endTime?: string;
-}
-interface Props {
-  navigation: StackNavigationProp<RootStackParamList, "CreateTask">;
-  addTask: (task: task) => void;
+interface Category {
+  tasks: task[] | [];
+  categoryName: string;
+  categoryColor: string;
+  categoryDesc?: string;
+  id: string;
 }
 
-const mapStateToProps = (state: { task: task }) => ({
-  task: state.task,
+interface Props {
+  navigation: StackNavigationProp<RootStackParamList, "CreateTask">;
+  addTask: (task: task) => any;
+  category: Category[];
+  addCategory: (category: Category) => any;
+  addCategoryTask: (task: { categoryName: string; task: task }) => any;
+}
+
+const mapStateToProps = (state: {
+  category: { category: Array<Category> };
+}) => ({
+  category: state.category.category,
 });
 
 const mapDispatchToProps = (dispacth: any) => ({
   addTask: (task: task) => dispacth(addTask(task)),
+  addCategory: (category: Category) => dispacth(addCategory(category)),
+  addCategoryTask: (task: { categoryName: string; task: task }) =>
+    dispacth(addCategoryTask(task)),
 });
 
-const CreateTask: FunctionComponent<Props> = ({ navigation, addTask }) => {
+const CreateTask: FunctionComponent<Props> = ({
+  navigation,
+  addTask,
+  category,
+  addCategory,
+  addCategoryTask,
+}) => {
   const opacity = useRef(new Animated.Value(0)).current;
   const dateAnimate = useRef(new Animated.Value(0)).current;
   const mainViewOpacity = useRef(new Animated.Value(1)).current;
@@ -125,6 +144,17 @@ const CreateTask: FunctionComponent<Props> = ({ navigation, addTask }) => {
 
   const [title, setTitle] = useState("");
   const [date, setDate] = useState(getFormatedDate(new Date(), "ddd, DD MMM"));
+  const [isCat, setCat] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("");
+
+  useEffect(() => {
+    if (selectedCategory === "") {
+      setCat(false);
+    } else {
+      setCat(true);
+    }
+  }, [selectedCategory]);
+
   return (
     <>
       <Animated.View
@@ -145,7 +175,12 @@ const CreateTask: FunctionComponent<Props> = ({ navigation, addTask }) => {
           transform: [{ scale, translateY }],
         }}
       >
-        <AddCategory close={closeModal} type="Add Category" />
+        <AddCategory
+          addCategory={addCategory}
+          close={closeModal}
+          type="Add Category"
+          setSelectedCategory={setSelectedCategory}
+        />
       </Animated.View>
       <Animated.View
         style={{ ...styles.headerContainer, opacity: mainViewOpacity }}
@@ -163,12 +198,29 @@ const CreateTask: FunctionComponent<Props> = ({ navigation, addTask }) => {
         showsVerticalScrollIndicator={false}
         style={{ width: SCREEN_WIDTH, opacity: mainViewOpacity }}
       >
-        <CreateTaskDesc animateModal={animateModal} />
+        <CreateTaskDesc
+          setCat={setCat}
+          categories={category}
+          animateModal={animateModal}
+          setSelectedCategory={setSelectedCategory}
+          selectedCategory={selectedCategory}
+        />
       </Animated.ScrollView>
       <Animated.View
         style={{ ...styles.createTaskContainer, opacity: btnOpacity }}
       >
-        <TouchableOpacity onPress={() => addTask({ date: date, title: title })}>
+        <TouchableOpacity
+          onPress={() => {
+            if (!isCat) {
+              addTask({ date: date, title: title, id: "" });
+            } else {
+              addCategoryTask({
+                categoryName: selectedCategory,
+                task: { date: date, title: title, id: "" },
+              });
+            }
+          }}
+        >
           <Text style={{ ...styles.createTaskText }}>Create Task</Text>
         </TouchableOpacity>
       </Animated.View>

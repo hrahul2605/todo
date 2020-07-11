@@ -5,16 +5,35 @@ import {
   Text,
   StyleSheet,
   TextInput,
+  TouchableWithoutFeedback,
 } from "react-native";
-import { SCREEN_WIDTH } from "../../constants";
+import { SCREEN_WIDTH, task } from "../../constants";
 import Edit from "../../assets/icons/edit.svg";
 import Plus from "../../assets/icons/plus.svg";
 
-interface Props {
-  animateModal: () => void;
+interface Category {
+  tasks: task[];
+  categoryName: string;
+  categoryColor: string;
+  categoryDesc?: string;
+  id: string;
 }
 
-const CreateTaskDesc: FunctionComponent<Props> = ({ animateModal }) => {
+interface Props {
+  animateModal: () => void;
+  categories: Category[];
+  setCat: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectedCategory: React.Dispatch<React.SetStateAction<string>>;
+  selectedCategory: string;
+}
+
+const CreateTaskDesc: FunctionComponent<Props> = ({
+  animateModal,
+  categories,
+  setCat,
+  setSelectedCategory,
+  selectedCategory,
+}) => {
   return (
     <>
       <View style={{ height: 315 }} />
@@ -63,16 +82,33 @@ const CreateTaskDesc: FunctionComponent<Props> = ({ animateModal }) => {
             </TouchableOpacity>
           </View>
           <View style={{ ...styles.categoryItemContainer }}>
-            <View style={{ ...styles.categoryItem }}>
-              <Text style={{ ...styles.categoryItemText }}>Lorem ipsum</Text>
-              <Edit width={12} color="white" />
-            </View>
-            <View style={{ ...styles.categoryItem }}>
-              <Text style={{ ...styles.categoryItemText }}>
-                Lorem ipsum dolor sit amet
-              </Text>
-              <Edit width={12} color="white" />
-            </View>
+            {categories.map((item, index) => (
+              <TouchableWithoutFeedback
+                key={index}
+                onPress={() => {
+                  if (selectedCategory === item.categoryName) {
+                    setSelectedCategory("");
+                  } else {
+                    setSelectedCategory(item.categoryName);
+                  }
+                }}
+              >
+                <View
+                  style={{
+                    ...styles.categoryItem,
+                    backgroundColor:
+                      selectedCategory === item.categoryName
+                        ? item.categoryColor
+                        : "#555555",
+                  }}
+                >
+                  <Text style={{ ...styles.categoryItemText }}>
+                    {item.categoryName}
+                  </Text>
+                  <Edit width={12} color="white" />
+                </View>
+              </TouchableWithoutFeedback>
+            ))}
           </View>
         </View>
       </View>
@@ -160,7 +196,6 @@ const styles = StyleSheet.create({
     width: "auto",
     paddingHorizontal: 8,
     paddingVertical: 2,
-    backgroundColor: "#FFCC66",
     height: 29,
     flexDirection: "row",
     borderRadius: 50,

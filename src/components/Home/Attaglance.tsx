@@ -25,7 +25,6 @@ export default function Attaglance({ navigation }: Props) {
           name="ChatBot"
           desc="Lorem ipsum"
           color="#6488e4"
-          isCategory={true}
           navigation={navigation}
         />
       </View>

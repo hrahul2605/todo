@@ -4,25 +4,30 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../constants";
 
 interface Props {
-  isCategory: boolean;
   color: string;
   name: string;
   desc?: string;
   navigation: StackNavigationProp<RootStackParamList>;
 }
-
-export default function TaskCard(props: Props) {
+function TaskCard(props: Props) {
   return (
     <TouchableOpacity
       onPress={() =>
-        props.navigation.navigate("CategoryTask", { taskName: props.name })
+        props.navigation.navigate("CategoryTask", {
+          taskName: props.name,
+          bgColor: props.color,
+        })
       }
     >
       <View style={{ ...styles.cardContainer, backgroundColor: props.color }}>
-        <View style={{ marginVertical: 28 }}>
-          {props.isCategory ? (
-            <View style={{ ...styles.percentage }}></View>
-          ) : null}
+        <View
+          style={{
+            marginVertical: 28,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <View style={{ ...styles.percentage }}></View>
           <View style={{ ...styles.cardText }}>
             <Text style={{ ...styles.cardTextHeading }}>{props.name}</Text>
             <Text style={{ ...styles.cardTextDesc }}>{props.desc}</Text>
@@ -32,6 +37,8 @@ export default function TaskCard(props: Props) {
     </TouchableOpacity>
   );
 }
+
+export default TaskCard;
 
 const styles = StyleSheet.create({
   cardContainer: {
@@ -47,9 +54,10 @@ const styles = StyleSheet.create({
   percentage: {
     height: 64,
     width: 64,
-    backgroundColor: "white",
     borderRadius: 64,
     marginBottom: 12,
+    borderWidth:3,
+    borderColor:"white"
   },
   cardText: {
     height: 41,
@@ -61,6 +69,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: "regular",
     color: "#FFFF",
+    textAlign: "center",
   },
   cardTextDesc: {
     fontSize: 12,

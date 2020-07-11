@@ -1,20 +1,41 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useState } from "react";
 import {
   View,
   Text,
   TextInput,
   StyleSheet,
   TouchableOpacity,
+  TouchableWithoutFeedback,
 } from "react-native";
-import { SCREEN_WIDTH } from "../../constants";
+import { SCREEN_WIDTH, task } from "../../constants";
 import Close from "../../assets/icons/close.svg";
+import Correct from "../../assets/icons/correct.svg";
+
+interface Category {
+  tasks: task[] | [];
+  categoryName: string;
+  categoryColor: string;
+  categoryDesc?: string;
+  id: string;
+}
 
 interface Props {
   close: Function;
   type: string;
+  addCategory: (category: Category) => any;
+  setSelectedCategory: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const AddCategory: FunctionComponent<Props> = ({ close, type }) => {
+const AddCategory: FunctionComponent<Props> = ({
+  close,
+  type,
+  addCategory,
+  setSelectedCategory,
+}) => {
+  const [categoryName, setCategoryName] = useState("");
+  const [categoryColor, setCategoryColor] = useState("");
+  const colors = ["#f9be7c", "#309397", "#6488e4", "#E46472"];
+
   return (
     <View style={{ ...styles.container }}>
       <View style={{ ...styles.heading }}>
@@ -31,16 +52,35 @@ const AddCategory: FunctionComponent<Props> = ({ close, type }) => {
               placeholder="Category"
               placeholderTextColor="#FFFF"
               style={{ ...styles.nameInput }}
+              value={categoryName}
+              onChangeText={(val) => setCategoryName(val)}
             />
           </View>
           <View style={{ ...styles.colorSelectContainer }}>
             <Text style={{ ...styles.nameText }}>Color</Text>
           </View>
           <View style={{ ...styles.colorsContainer }}>
-            <View style={{ ...styles.color, backgroundColor: "#f9be7c" }} />
-            <View style={{ ...styles.color, backgroundColor: "#309397" }} />
-            <View style={{ ...styles.color, backgroundColor: "#6488e4" }} />
-            <View style={{ ...styles.color, backgroundColor: "#E46472" }} />
+            {colors.map((item) => (
+              <TouchableWithoutFeedback
+                key={item}
+                onPress={() => setCategoryColor(item)}
+              >
+                <View
+                  style={{
+                    ...styles.color,
+                    backgroundColor: item,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Correct
+                    width={12}
+                    color="white"
+                    style={{ opacity: categoryColor === item ? 1 : 0 }}
+                  />
+                </View>
+              </TouchableWithoutFeedback>
+            ))}
           </View>
         </View>
       ) : type === "Rename" ? (
@@ -80,7 +120,24 @@ const AddCategory: FunctionComponent<Props> = ({ close, type }) => {
         >
           <Text style={{ ...styles.btnText }}>Cancel</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={{ ...styles.doneBtn }} onPress={() => close()}>
+        <TouchableOpacity
+          style={{ ...styles.doneBtn }}
+          onPress={() => {
+            if (type === "Add Category") {
+              addCategory({
+                categoryName: categoryName,
+                categoryColor: categoryColor,
+                tasks: [],
+                id: "",
+              });
+              setSelectedCategory(categoryName);
+              setCategoryName("");
+              setCategoryColor("");
+              close();
+            }
+          }}
+          disabled={categoryColor === "" || categoryName === ""}
+        >
           <Text style={{ ...styles.btnText }}>Done</Text>
         </TouchableOpacity>
       </View>
@@ -133,6 +190,7 @@ const styles = StyleSheet.create({
     fontFamily: "medium",
     fontSize: 16,
     width: SCREEN_WIDTH - 96,
+    color: "#FFFF",
   },
   colorSelectContainer: {
     height: 24,

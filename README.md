@@ -4,4 +4,6 @@
 
 ### A simple todo app with features to categorise your task.
 
+![](./src/assets/icons/app-detail.png)
+
 _this project uses [react-native-modern-datepicker](https://github.com/HosseinShabani/react-native-modern-datepicker) in *src/components/DatePicker* for more customisation of the calender_
