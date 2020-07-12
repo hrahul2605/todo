@@ -155,8 +155,46 @@ const CreateTask: FunctionComponent<Props> = ({
     }
   }, [selectedCategory]);
 
+  const translation = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      Animated.spring(translation, {
+        toValue: 1,
+        mass: 1,
+        stiffness: 500,
+        damping: 60,
+        useNativeDriver: true,
+      }).start();
+    });
+    return unsubscribe;
+  }, [navigation]);
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("blur", () => {
+      Animated.spring(translation, {
+        toValue: 0,
+        mass: 1,
+        stiffness: 500,
+        damping: 60,
+        useNativeDriver: true,
+      }).start();
+    });
+    return unsubscribe;
+  }, [navigation]);
+
+  const transX = translation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, -SCREEN_WIDTH],
+  });
+
   return (
-    <>
+    <Animated.View
+      style={{
+        opacity: translation,
+        transform: [{ translateX: transX }],
+        left: SCREEN_WIDTH,
+      }}
+    >
       <Animated.View
         style={{
           ...styles.datePickerContainer,
@@ -224,7 +262,7 @@ const CreateTask: FunctionComponent<Props> = ({
           <Text style={{ ...styles.createTaskText }}>Create Task</Text>
         </TouchableOpacity>
       </Animated.View>
-    </>
+    </Animated.View>
   );
 };
 

@@ -1,17 +1,17 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useEffect } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
-  ScrollView,
   StyleSheet,
   FlatList,
+  Animated,
 } from "react-native";
 import Left from "../../assets/icons/left.svg";
 import Plus from "../../assets/icons/plus.svg";
 import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList, task } from "../../constants";
+import { RootStackParamList, task, SCREEN_WIDTH } from "../../constants";
 import { removeTask, removeCategoryTask } from "../../redux/ActionCreator";
 import { connect } from "react-redux";
 import TaskItem from "./TaskItem";
@@ -55,10 +55,56 @@ const CategoryTask: FunctionComponent<Props> = ({
   const index = category.findIndex((item) => {
     return item.categoryName === route.params.taskName;
   });
+  const transition = React.useRef(new Animated.Value(0)).current;
+
+  const animateDown = () => {
+    Animated.spring(transition, {
+      toValue: 0,
+      mass: 1,
+      stiffness: 500,
+      damping: 60,
+      useNativeDriver: true,
+    }).start();
+  };
+  const animateUp = () => {
+    Animated.spring(transition, {
+      toValue: 1,
+      mass: 1,
+      stiffness: 500,
+      damping: 60,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  React.useEffect(() => {
+    navigation.addListener("blur", () => {
+      animateDown();
+    });
+
+    navigation.addListener("focus", (e) => {
+      animateUp();
+    });
+  }, [navigation]);
+
+  const translateX = transition.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, -SCREEN_WIDTH],
+  });
   return (
-    <View style={{ flex: 1 }}>
+    <Animated.View
+      style={{
+        flex: 1,
+        opacity: transition,
+        transform: [{ translateX }],
+        left: SCREEN_WIDTH,
+      }}
+    >
       <View style={{ ...styles.nav }}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.goBack();
+          }}
+        >
           <Left color="white" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("CreateTask")}>
@@ -90,7 +136,7 @@ const CategoryTask: FunctionComponent<Props> = ({
         style={{ ...styles.scrollStyle }}
         contentContainerStyle={{ ...styles.scrollContainer }}
       />
-    </View>
+    </Animated.View>
   );
 };
 

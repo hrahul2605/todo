@@ -8,18 +8,33 @@ interface Props {
   name: string;
   desc?: string;
   navigation: StackNavigationProp<RootStackParamList>;
+  onPressed?: (e: boolean) => void;
+  isCategory: boolean;
 }
-function TaskCard(props: Props) {
+const colors = ["#f9be7c", "#309397", "#6488e4", "#E46472"];
+
+function TaskCard({
+  color = colors[Math.floor(Math.random() * colors.length)],
+  isCategory,
+  onPressed,
+  name,
+  navigation,
+  desc,
+}: Props) {
   return (
     <TouchableOpacity
-      onPress={() =>
-        props.navigation.navigate("CategoryTask", {
-          taskName: props.name,
-          bgColor: props.color,
-        })
-      }
+      onPress={() => {
+        if (onPressed !== undefined) {
+          onPressed(true);
+        }
+        navigation.navigate("CategoryTask", {
+          taskName: name,
+          bgColor: color,
+        });
+      }}
+      disabled={!isCategory}
     >
-      <View style={{ ...styles.cardContainer, backgroundColor: props.color }}>
+      <View style={{ ...styles.cardContainer, backgroundColor: color }}>
         <View
           style={{
             marginVertical: 28,
@@ -27,10 +42,12 @@ function TaskCard(props: Props) {
             alignItems: "center",
           }}
         >
-          <View style={{ ...styles.percentage }}></View>
+          {isCategory ? <View style={{ ...styles.percentage }}></View> : null}
           <View style={{ ...styles.cardText }}>
-            <Text style={{ ...styles.cardTextHeading }}>{props.name}</Text>
-            <Text style={{ ...styles.cardTextDesc }}>{props.desc}</Text>
+            <Text style={{ ...styles.cardTextHeading }}>{name}</Text>
+            {desc !== undefined ? (
+              <Text style={{ ...styles.cardTextDesc }}>{desc}</Text>
+            ) : null}
           </View>
         </View>
       </View>
@@ -56,8 +73,8 @@ const styles = StyleSheet.create({
     width: 64,
     borderRadius: 64,
     marginBottom: 12,
-    borderWidth:3,
-    borderColor:"white"
+    borderWidth: 3,
+    borderColor: "white",
   },
   cardText: {
     height: 41,

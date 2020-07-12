@@ -21,6 +21,7 @@ import CategoryTask from "./Task/CategoryTask";
 import Loading from "./Loading";
 import Calender from "./Calender/Calender";
 import Settings from "./Settings";
+import { transform } from "@babel/core";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -32,6 +33,17 @@ export default function Main() {
     semiBold: require("../assets/fonts/Montserrat-SemiBold.ttf"),
     light: require("../assets/fonts/Montserrat-Light.ttf"),
   });
+  const config = {
+    animation: "spring",
+    config: {
+      stiffness: 1000,
+      damping: 500,
+      mass: 3,
+      overshootClamping: true,
+      restDisplacementThreshold: 0.01,
+      restSpeedThreshold: 0.01,
+    },
+  };
   if (!loaded) {
     return <Loading />;
   } else {
@@ -46,8 +58,10 @@ export default function Main() {
               initialRouteName="Home"
               screenOptions={{
                 headerShown: false,
-                cardStyle: { backgroundColor: "#282828" },
-                cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+                cardStyle: { backgroundColor: "transparent" },
+                cardStyleInterpolator: CardStyleInterpolators.forNoAnimation,
+                gestureEnabled: true,
+                gestureDirection: "horizontal",
               }}
             >
               <Stack.Screen name="Home" component={Home} />

@@ -67,9 +67,7 @@ const Feed: React.FunctionComponent<Props> = ({
           style={{ ...styles.feedDetails }}
         >
           <Text style={{ ...styles.feedText, fontSize: 16 }}>To do</Text>
-          <Text style={{ ...styles.feedDesc }}>
-            {tasks.length} tasks now
-          </Text>
+          <Text style={{ ...styles.feedDesc }}>{tasks.length} tasks now</Text>
         </TouchableOpacity>
       </View>
       <View style={{ ...styles.feedsContainer }}>
@@ -143,6 +141,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 12,
     paddingHorizontal: 24,
+    marginBottom: 12,
   },
   feedIcon: {
     height: 44,

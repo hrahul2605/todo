@@ -22,8 +22,8 @@ interface Category {
 interface Props {
   close: Function;
   type: string;
-  addCategory: (category: Category) => any;
-  setSelectedCategory: React.Dispatch<React.SetStateAction<string>>;
+  addCategory?: (category: Category) => any;
+  setSelectedCategory?: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const AddCategory: FunctionComponent<Props> = ({
@@ -123,7 +123,11 @@ const AddCategory: FunctionComponent<Props> = ({
         <TouchableOpacity
           style={{ ...styles.doneBtn }}
           onPress={() => {
-            if (type === "Add Category") {
+            if (
+              type === "Add Category" &&
+              addCategory !== undefined &&
+              setSelectedCategory !== undefined
+            ) {
               addCategory({
                 categoryName: categoryName,
                 categoryColor: categoryColor,

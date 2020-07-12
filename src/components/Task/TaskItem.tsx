@@ -17,7 +17,7 @@ import {
   min,
 } from "react-native-redash";
 
-import { task } from "../../constants";
+import { task, SCREEN_WIDTH } from "../../constants";
 
 import Edit from "../../assets/icons/edit.svg";
 import Delete from "../../assets/icons/delete.svg";
@@ -42,7 +42,7 @@ const TaskItem: React.FunctionComponent<ItemProps> = ({
   removeTask,
   removeCategoryTask,
   categoryName,
-  color,
+  color = "#E46472",
 }) => {
   const {
     gestureHandler,
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   },
   taskContainer: {
     height: "auto",
-    width: 312,
+    width: SCREEN_WIDTH - 48,
     borderRadius: 24,
     padding: 16,
     marginBottom: 12,

@@ -10,20 +10,26 @@ interface Props {
 
 const Header: React.FunctionComponent<Props> = ({ navigation }) => {
   return (
-    <View style={{ ...styles.headerContainer }}>
-      <View style={{ ...styles.detailContainer }}>
-        <View style={{ ...styles.userImage }} />
-        <View style={{ ...styles.userContainer }}>
-          <Text style={{ ...styles.userName }}>Dushtu Bunny</Text>
-          <Text style={{ ...styles.userDesc }}>Captain Developer</Text>
-        </View>
-        <View style={{ ...styles.settingsContainer }}>
-          <TouchableOpacity onPress={() => navigation.navigate("Settings")}>
-            <Setting color="#000000" width={24} />
-          </TouchableOpacity>
+    <>
+      <View style={{ ...styles.headerContainer }}>
+        <View style={{ ...styles.detailContainer }}>
+          <View style={{ ...styles.userImage }} />
+          <View style={{ ...styles.userContainer }}>
+            <Text style={{ ...styles.userName }}>Dushtu Bunny</Text>
+            <Text style={{ ...styles.userDesc }}>Captain Developer</Text>
+          </View>
         </View>
       </View>
-    </View>
+      <View
+        style={{
+          ...styles.settingsContainer,
+        }}
+      >
+        <TouchableOpacity onPress={() => navigation.navigate("Settings")}>
+          <Setting color="#000000" width={24} />
+        </TouchableOpacity>
+      </View>
+    </>
   );
 };
 
@@ -38,8 +44,6 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 45,
     position: "absolute",
     top: 0,
-    elevation: 1,
-    zIndex: 1,
   },
   detailContainer: {
     height: 110,
@@ -74,7 +78,7 @@ const styles = StyleSheet.create({
     fontFamily: "regular",
   },
   settingsContainer: {
-    width: 93,
+    width: "100%",
     height: 116,
     paddingHorizontal: 24,
     paddingTop: 16,

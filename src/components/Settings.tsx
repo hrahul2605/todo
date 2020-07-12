@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import Close from "../assets/icons/close.svg";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList, SCREEN_HEIGHT } from "../constants";
+import { RootStackParamList, SCREEN_HEIGHT, SCREEN_WIDTH } from "../constants";
 import AddCategory from "./Task/AddCategory";
 
 interface Props {
@@ -67,6 +67,42 @@ const Settings: FunctionComponent<Props> = ({ navigation }) => {
     }).start();
   };
 
+  const transition = React.useRef(new Animated.Value(0)).current;
+
+  const animateDown = () => {
+    Animated.spring(transition, {
+      toValue: 0,
+      mass: 1,
+      stiffness: 500,
+      damping: 60,
+      useNativeDriver: true,
+    }).start();
+  };
+  const animateUp = () => {
+    Animated.spring(transition, {
+      toValue: 1,
+      mass: 1,
+      stiffness: 500,
+      damping: 60,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  React.useEffect(() => {
+    navigation.addListener("blur", () => {
+      animateDown();
+    });
+
+    navigation.addListener("focus", (e) => {
+      animateUp();
+    });
+  }, [navigation]);
+
+  const translateX = transition.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, -SCREEN_WIDTH],
+  });
+
   return (
     <>
       <Animated.View
@@ -79,7 +115,12 @@ const Settings: FunctionComponent<Props> = ({ navigation }) => {
         <AddCategory close={closeModal} type="Rename" />
       </Animated.View>
       <Animated.ScrollView
-        style={{ ...styles.container, opacity: mainViewOpacity }}
+        style={{
+          ...styles.container,
+          opacity: mainViewOpacity,
+          transform: [{ translateX }],
+          left: SCREEN_WIDTH,
+        }}
       >
         <View style={{ ...styles.nav }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -154,7 +195,7 @@ const styles = StyleSheet.create({
   },
   optionCard: {
     height: 48,
-    paddingRight: 12,
+    paddingHorizontal: 12,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",

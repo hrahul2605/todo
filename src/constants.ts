@@ -71,7 +71,10 @@ export type RootStackParamList = {
   Home: undefined;
   FeedScreen: { screen: string; screenSub: string };
   CreateTask: undefined;
-  CategoryTask: { taskName: string; bgColor: string };
+  CategoryTask: {
+    taskName: string;
+    bgColor: string;
+  };
   Calender: undefined;
   Settings: undefined;
 };
