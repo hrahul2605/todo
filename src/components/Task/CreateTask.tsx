@@ -5,6 +5,7 @@ import {
   Animated,
   View,
   TouchableOpacity,
+  Keyboard,
 } from "react-native";
 import {
   SCREEN_WIDTH,
@@ -24,6 +25,7 @@ import {
 } from "../../redux/ActionCreator";
 import { connect } from "react-redux";
 import { getFormatedDate } from "../DatePicker";
+import { StackActions } from "@react-navigation/native";
 
 interface Category {
   tasks: task[] | [];
@@ -245,7 +247,7 @@ const CreateTask: FunctionComponent<Props> = ({
         />
       </Animated.ScrollView>
       <Animated.View
-        style={{ ...styles.createTaskContainer, opacity: btnOpacity }}
+        style={{ opacity: btnOpacity, ...styles.createTaskContainer }}
       >
         <TouchableOpacity
           onPress={() => {
@@ -257,6 +259,8 @@ const CreateTask: FunctionComponent<Props> = ({
                 task: { date: date, title: title, id: "" },
               });
             }
+            navigation.dispatch(StackActions.popToTop());
+            Keyboard.dismiss();
           }}
         >
           <Text style={{ ...styles.createTaskText }}>Create Task</Text>
@@ -298,6 +302,7 @@ const styles = StyleSheet.create({
     bottom: 24,
     justifyContent: "center",
     alignItems: "center",
+    zIndex: 10,
   },
   createTaskText: {
     fontSize: 14,

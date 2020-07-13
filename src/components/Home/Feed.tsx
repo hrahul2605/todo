@@ -21,20 +21,24 @@ interface Props {
   tasks: Array<task>;
   category: Category[];
   navigation: StackNavigationProp<RootStackParamList>;
+  done: Array<task>;
 }
 
 const mapStateToProps = (state: {
   tasks: { tasks: Array<task> };
   category: { category: Array<Category> };
+  done: { done: Array<task> };
 }) => ({
   tasks: state.tasks.tasks,
   category: state.category.category,
+  done: state.done.done,
 });
 
 const Feed: React.FunctionComponent<Props> = ({
   category,
   navigation,
   tasks,
+  done,
 }) => {
   return (
     <View style={{ height: 260, width: SCREEN_WIDTH }}>
@@ -60,7 +64,7 @@ const Feed: React.FunctionComponent<Props> = ({
         <TouchableOpacity
           onPress={() => {
             navigation.navigate("FeedScreen", {
-              screen: "To do.",
+              screen: "To do",
               screenSub: "Giddy-up Captain!",
             });
           }}
@@ -103,7 +107,7 @@ const Feed: React.FunctionComponent<Props> = ({
           style={{ ...styles.feedDetails }}
         >
           <Text style={{ ...styles.feedText, fontSize: 16 }}>Done</Text>
-          <Text style={{ ...styles.feedDesc }}>18 tasks now - 18 started</Text>
+          <Text style={{ ...styles.feedDesc }}>{done.length} completed.</Text>
         </TouchableOpacity>
       </View>
     </View>

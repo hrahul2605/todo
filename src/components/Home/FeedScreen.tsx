@@ -20,8 +20,13 @@ import {
 } from "../../constants";
 import { connect } from "react-redux";
 
-import { removeTask } from "../../redux/ActionCreator";
+import {
+  removeTask,
+  addDoneTask,
+  removeDoneTask,
+} from "../../redux/ActionCreator";
 import TaskItem from "../Task/TaskItem";
+import List from "../List";
 
 interface Category {
   tasks: task[];
@@ -37,18 +42,25 @@ interface Props {
   tasks: Array<task>;
   removeTask: (id: string) => void;
   category: Category[];
+  addDoneTask: (doneTask: task) => void;
+  done: Array<task>;
+  removeDoneTask: (id: string) => void;
 }
 
 const mapStateToProps = (state: {
   tasks: { tasks: Array<task> };
   category: { category: Category[] };
+  done: { done: Array<task> };
 }) => ({
   tasks: state.tasks.tasks,
   category: state.category.category,
+  done: state.done.done,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
   removeTask: (id: string) => dispatch(removeTask(id)),
+  addDoneTask: (doneTask: task) => dispatch(addDoneTask(doneTask)),
+  removeDoneTask: (id: string) => dispatch(removeDoneTask(id)),
 });
 
 const FeedScreen: React.FunctionComponent<Props> = ({
@@ -57,6 +69,9 @@ const FeedScreen: React.FunctionComponent<Props> = ({
   tasks,
   removeTask,
   category,
+  addDoneTask,
+  done,
+  removeDoneTask,
 }) => {
   const opacity = React.useRef(new Animated.Value(0)).current;
   const [pressed, setPressed] = React.useState(false);
@@ -79,7 +94,6 @@ const FeedScreen: React.FunctionComponent<Props> = ({
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener("blur", () => {
-      console.log(pressed);
       if (!pressed) {
         animate(0);
       } else {
@@ -95,9 +109,6 @@ const FeedScreen: React.FunctionComponent<Props> = ({
     outputRange: [0, -SCREEN_WIDTH, -SCREEN_WIDTH * 2],
   });
 
-  React.useEffect(() => {
-    console.log(pressed);
-  }, [pressed]);
   return (
     <Animated.View
       style={{
@@ -112,7 +123,7 @@ const FeedScreen: React.FunctionComponent<Props> = ({
           position: "absolute",
           top: 0,
           elevation: 0.1,
-          zIndex: 1,
+          zIndex: 20,
           backgroundColor: "#282828",
           width: "100%",
         }}
@@ -125,14 +136,16 @@ const FeedScreen: React.FunctionComponent<Props> = ({
           >
             <Left color="white" />
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              setPressed(true);
-              navigation.navigate("CreateTask");
-            }}
-          >
-            <Plus color="white" />
-          </TouchableOpacity>
+          {route.params.screen !== "Done" ? (
+            <TouchableOpacity
+              onPress={() => {
+                setPressed(true);
+                navigation.navigate("CreateTask");
+              }}
+            >
+              <Plus color="white" />
+            </TouchableOpacity>
+          ) : null}
         </View>
         <View style={{ ...styles.headingContainer }}>
           <Text style={{ ...styles.headingText }}>{route.params.screen}</Text>
@@ -145,45 +158,57 @@ const FeedScreen: React.FunctionComponent<Props> = ({
       </View>
       <View style={{ height: "auto", paddingVertical: 12 }}>
         {route.params.screen !== "In progress" ? (
-          <>
-            <FlatList
-              data={tasks}
-              renderItem={({ item, index }) => (
-                <TaskItem key={index} task={item} removeTask={removeTask} />
-              )}
-              keyExtractor={(item) => item.id}
-              contentContainerStyle={{ paddingTop: 139 }}
-            />
-          </>
+          route.params.screen === "To do" ? (
+            <>
+              <FlatList
+                data={tasks}
+                renderItem={({ item, index }) => (
+                  <TaskItem
+                    key={index}
+                    task={item}
+                    removeTask={removeTask}
+                    addDoneTask={addDoneTask}
+                  />
+                )}
+                contentContainerStyle={{ paddingTop: 139, paddingBottom: 30 }}
+                numColumns={1}
+                style={{ height: SCREEN_HEIGHT, zIndex: 10 }}
+              />
+            </>
+          ) : (
+            <>
+              <FlatList
+                data={done}
+                renderItem={({ item, index }) => (
+                  <TaskItem
+                    key={index}
+                    task={item}
+                    removeTask={removeTask}
+                    doneScreen={true}
+                    removeDoneTask={removeDoneTask}
+                    color="#6488e4"
+                  />
+                )}
+                contentContainerStyle={{ paddingTop: 139, paddingBottom: 30 }}
+                numColumns={1}
+                style={{ height: SCREEN_HEIGHT, zIndex: 10 }}
+              />
+            </>
+          )
         ) : (
           <View
             style={{
-              width: SCREEN_WIDTH,
               height: SCREEN_HEIGHT,
-              alignItems: "center",
-              justifyContent: "center",
+              width: SCREEN_WIDTH,
+              paddingTop: 139,
+              flexDirection: "row",
             }}
           >
-            <FlatList
+            <List
+              setPressed={setPressed}
+              navigation={navigation}
               data={category}
-              renderItem={({ item }) => (
-                <TaskCard
-                  name={item.categoryName}
-                  desc={item.categoryDesc}
-                  color={item.categoryColor}
-                  navigation={navigation}
-                  onPressed={(e: boolean) => setPressed(e)}
-                  isCategory={true}
-                />
-              )}
-              keyExtractor={(item) => item.id}
-              numColumns={2}
-              contentContainerStyle={{
-                width: SCREEN_WIDTH,
-                justifyContent: "center",
-                paddingTop: 139,
-                paddingBottom:30,
-              }}
+              isProgressScreen={true}
             />
           </View>
         )}

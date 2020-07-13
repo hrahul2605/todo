@@ -2,8 +2,9 @@ import * as React from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
 import TaskCard from "../Task/TaskCard";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList, task, SCREEN_WIDTH } from "../../constants";
+import { RootStackParamList, task } from "../../constants";
 import { connect } from "react-redux";
+import List from "../List";
 
 interface Category {
   tasks: task[];
@@ -30,38 +31,21 @@ function Attaglance({ navigation, tasks, category }: Props) {
   let temp = tasks?.map((item) => {
     return item;
   });
-  data = data?.concat(temp !== undefined ? temp : []);
+  data = data?.concat(temp !== undefined ? temp : null);
   return (
     <View>
       <View style={{ ...styles.headingContainer }}>
         <Text style={{ ...styles.headingText }}>Atta Glance</Text>
       </View>
+
       <View
         style={{
+          flex: 1,
           flexDirection: "row",
-          flexWrap: "wrap",
+          height: "auto",
         }}
       >
-        <FlatList
-          data={data}
-          renderItem={({ item }) => {
-            return (
-              <TaskCard
-                name={item.categoryName || item.title}
-                desc={item.categoryDesc || item.desc}
-                color={item.categoryColor}
-                navigation={navigation}
-                isCategory={item.categoryName !== undefined}
-              />
-            );
-          }}
-          keyExtractor={(item) => item.id}
-          numColumns={2}
-          contentContainerStyle={{
-            width: SCREEN_WIDTH,
-            justifyContent: "center",
-          }}
-        />
+        <List navigation={navigation} data={data} />
       </View>
     </View>
   );

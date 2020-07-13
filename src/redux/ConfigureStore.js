@@ -6,6 +6,7 @@ import logger from "redux-logger";
 
 import { taskReducer } from "./reducers/taskReducer";
 import { categoryReducer } from "./reducers/categoryReducer";
+import { doneReducer } from "./reducers/doneReducer";
 
 const config = {
   key: "root",
@@ -18,6 +19,7 @@ export const ConfigureStore = () => {
     persistCombineReducers(config, {
       tasks: taskReducer,
       category: categoryReducer,
+      done: doneReducer,
     }),
     applyMiddleware(thunk, logger)
   );

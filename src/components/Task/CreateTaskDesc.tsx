@@ -102,10 +102,20 @@ const CreateTaskDesc: FunctionComponent<Props> = ({
                         : "#555555",
                   }}
                 >
-                  <Text style={{ ...styles.categoryItemText }}>
+                  <Text
+                    style={{
+                      ...styles.categoryItemText,
+                      color:
+                        selectedCategory === item.categoryName
+                          ? "#FFFF"
+                          : "rgba(0, 0, 0, 0.5)",
+                    }}
+                  >
                     {item.categoryName}
                   </Text>
-                  <Edit width={12} color="white" />
+                  <View>
+                    <Edit width={12} color="white" />
+                  </View>
                 </View>
               </TouchableWithoutFeedback>
             ))}
@@ -191,22 +201,24 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     alignItems: "baseline",
+    marginHorizontal: 12,
   },
   categoryItem: {
     width: "auto",
     paddingHorizontal: 8,
     paddingVertical: 2,
-    height: 29,
     flexDirection: "row",
     borderRadius: 50,
     justifyContent: "space-between",
     alignItems: "center",
-    marginLeft: 12,
     marginBottom: 6,
+    marginRight: 12,
   },
   categoryItemText: {
     fontFamily: "regular",
     fontSize: 12,
     marginRight: 15,
+    marginLeft: 7,
+    marginVertical: 4,
   },
 });

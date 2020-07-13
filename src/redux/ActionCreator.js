@@ -15,6 +15,11 @@ export const addCategory = (category) => ({
   payload: category,
 });
 
+export const removeCategory = (id) => ({
+  type: ActionTypes.REMOVE_CATEGORY,
+  payload: id,
+});
+
 export const addCategoryTask = (category) => ({
   type: ActionTypes.ADD_CATEGORY_TASK,
   payload: category,
@@ -23,4 +28,14 @@ export const addCategoryTask = (category) => ({
 export const removeCategoryTask = ({ categoryName, id }) => ({
   type: ActionTypes.REMOVE_CATEGORY_TASK,
   payload: { categoryName, id },
+});
+
+export const addDoneTask = (doneTask) => ({
+  type: ActionTypes.ADD_DONE_TASK,
+  payload: doneTask,
+});
+
+export const removeDoneTask = (id) => ({
+  type: ActionTypes.REMOVE_DONE_TASK,
+  payload: id,
 });

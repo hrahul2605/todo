@@ -60,8 +60,6 @@ export default function Main() {
                 headerShown: false,
                 cardStyle: { backgroundColor: "transparent" },
                 cardStyleInterpolator: CardStyleInterpolators.forNoAnimation,
-                gestureEnabled: true,
-                gestureDirection: "horizontal",
               }}
             >
               <Stack.Screen name="Home" component={Home} />

@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect } from "react";
+import React, { FunctionComponent } from "react";
 import {
   View,
   Text,
@@ -9,10 +9,15 @@ import {
 } from "react-native";
 import Left from "../../assets/icons/left.svg";
 import Plus from "../../assets/icons/plus.svg";
+import Delete from "../../assets/icons/delete.svg";
 import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList, task, SCREEN_WIDTH } from "../../constants";
-import { removeTask, removeCategoryTask } from "../../redux/ActionCreator";
+import {
+  removeTask,
+  removeCategoryTask,
+  removeCategory,
+} from "../../redux/ActionCreator";
 import { connect } from "react-redux";
 import TaskItem from "./TaskItem";
 
@@ -34,6 +39,7 @@ interface Props {
   removeTask: (id: string) => void;
   removeCategoryTask: (det: det) => void;
   category: Category[];
+  removeCategory: (id: string) => void;
 }
 
 const mapStateToProps = (state: { category: { category: Category[] } }) => ({
@@ -43,6 +49,7 @@ const mapStateToProps = (state: { category: { category: Category[] } }) => ({
 const mapDispatchToProps = (dispatch: any) => ({
   removeTask: (id: string) => dispatch(removeTask(id)),
   removeCategoryTask: (det: det) => dispatch(removeCategoryTask(det)),
+  removeCategory: (id: string) => dispatch(removeCategory(id)),
 });
 
 const CategoryTask: FunctionComponent<Props> = ({
@@ -51,6 +58,7 @@ const CategoryTask: FunctionComponent<Props> = ({
   removeTask,
   removeCategoryTask,
   category,
+  removeCategory,
 }) => {
   const index = category.findIndex((item) => {
     return item.categoryName === route.params.taskName;
@@ -107,9 +115,20 @@ const CategoryTask: FunctionComponent<Props> = ({
         >
           <Left color="white" />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("CreateTask")}>
-          <Plus color="white" />
-        </TouchableOpacity>
+        <View style={{ flexDirection: "row" }}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.goBack();
+              removeCategory(category[index].id);
+            }}
+            style={{ marginRight: 25 }}
+          >
+            <Delete color="white" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("CreateTask")}>
+            <Plus color="white" />
+          </TouchableOpacity>
+        </View>
       </View>
       <View style={{ ...styles.headingContainer }}>
         <Text style={{ ...styles.headingText }}>{route.params.taskName}</Text>
@@ -117,25 +136,27 @@ const CategoryTask: FunctionComponent<Props> = ({
       <View style={{ ...styles.motivateTextContainer }}>
         <Text style={{ ...styles.motivateText }}>Giddy-up Captain!</Text>
       </View>
-      <FlatList
-        data={category[index].tasks}
-        renderItem={({ item, index }) => {
-          return (
-            <TaskItem
-              key={index}
-              task={item}
-              removeTask={removeTask}
-              removeCategoryTask={removeCategoryTask}
-              categoryName={route.params.taskName}
-              color={route.params.bgColor}
-            />
-          );
-        }}
-        keyExtractor={(item) => item.id}
-        showsVerticalScrollIndicator={false}
-        style={{ ...styles.scrollStyle }}
-        contentContainerStyle={{ ...styles.scrollContainer }}
-      />
+      {category[index] !== undefined ? (
+        <FlatList
+          data={category[index].tasks}
+          renderItem={({ item, index }) => {
+            return (
+              <TaskItem
+                key={index}
+                task={item}
+                removeTask={removeTask}
+                removeCategoryTask={removeCategoryTask}
+                categoryName={route.params.taskName}
+                color={route.params.bgColor}
+              />
+            );
+          }}
+          keyExtractor={(item) => item.id}
+          showsVerticalScrollIndicator={false}
+          style={{ ...styles.scrollStyle }}
+          contentContainerStyle={{ ...styles.scrollContainer }}
+        />
+      ) : null}
     </Animated.View>
   );
 };
@@ -169,7 +190,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   headingContainer: {
-    height: 56,
     flexDirection: "row",
     paddingVertical: 12,
     paddingHorizontal: 24,

@@ -11,7 +11,7 @@ import Animated, {
 } from "react-native-reanimated";
 import {
   snapPoint,
-  timing,
+  spring,
   usePanGestureHandler,
   useValue,
   min,
@@ -35,6 +35,9 @@ interface ItemProps {
   removeCategoryTask?: (det: det) => void;
   categoryName?: string;
   color?: string;
+  addDoneTask?: (doneTask: task) => void;
+  doneScreen?: boolean;
+  removeDoneTask?: (id: string) => void;
 }
 
 const TaskItem: React.FunctionComponent<ItemProps> = ({
@@ -43,6 +46,9 @@ const TaskItem: React.FunctionComponent<ItemProps> = ({
   removeCategoryTask,
   categoryName,
   color = "#E46472",
+  addDoneTask,
+  doneScreen = false,
+  removeDoneTask,
 }) => {
   const {
     gestureHandler,
@@ -61,7 +67,14 @@ const TaskItem: React.FunctionComponent<ItemProps> = ({
         set(translateX, add(offsetX, min(translation.x, 0)))
       ),
       cond(eq(state, State.END), [
-        set(translateX, timing({ from: translateX, to })),
+        set(
+          translateX,
+          spring({
+            from: translateX,
+            to,
+            config: { mass: 1, stiffness: 500, damping: 60 },
+          })
+        ),
         set(offsetX, translateX),
       ]),
     ],
@@ -80,18 +93,34 @@ const TaskItem: React.FunctionComponent<ItemProps> = ({
             onPress={() => {
               if (removeCategoryTask !== undefined) {
                 removeCategoryTask({ categoryName: categoryName, id: task.id });
-              } else {
+              } else if (doneScreen === false) {
                 removeTask(task.id);
+              } else {
+                console.log("DESIRED");
+                if (removeDoneTask !== undefined) {
+                  removeDoneTask(task.id);
+                }
               }
             }}
           >
             <Delete color="white" width={16} />
           </TouchableOpacity>
-          <Edit color="white" width={16} />
-          <Correct color="white" width={16} />
+          {!doneScreen ? <Edit color="white" width={16} /> : null}
+          {!doneScreen ? (
+            <TouchableOpacity
+              onPress={() => {
+                if (addDoneTask !== undefined) {
+                  addDoneTask(task);
+                  removeTask(task.id);
+                }
+              }}
+            >
+              <Correct color="white" width={16} />
+            </TouchableOpacity>
+          ) : null}
         </Animated.View>
       </View>
-      <PanGestureHandler {...gestureHandler}>
+      <PanGestureHandler {...gestureHandler} activeOffsetX={[-15, 15]}>
         <Animated.View style={{ transform: [{ translateX }] }}>
           <View
             style={{

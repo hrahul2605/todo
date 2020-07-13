@@ -1,7 +1,7 @@
 import * as React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "../../constants";
+import { RootStackParamList, SCREEN_WIDTH, task } from "../../constants";
 
 interface Props {
   color: string;
@@ -10,6 +10,8 @@ interface Props {
   navigation: StackNavigationProp<RootStackParamList>;
   onPressed?: (e: boolean) => void;
   isCategory: boolean;
+  tasks?: task[];
+  date?: string;
 }
 const colors = ["#f9be7c", "#309397", "#6488e4", "#E46472"];
 
@@ -20,6 +22,8 @@ function TaskCard({
   name,
   navigation,
   desc,
+  tasks,
+  date,
 }: Props) {
   return (
     <TouchableOpacity
@@ -48,6 +52,23 @@ function TaskCard({
             {desc !== undefined ? (
               <Text style={{ ...styles.cardTextDesc }}>{desc}</Text>
             ) : null}
+            {isCategory ? (
+              <Text style={{ ...styles.cardTextDesc }}>
+                {tasks?.length} task in total
+              </Text>
+            ) : null}
+            {date !== undefined ? (
+              <Text
+                style={{
+                  ...styles.cardTextDesc,
+                  fontSize: 11,
+                  fontFamily: "light",
+                  paddingTop: 1,
+                }}
+              >
+                {date}
+              </Text>
+            ) : null}
           </View>
         </View>
       </View>
@@ -59,13 +80,9 @@ export default TaskCard;
 
 const styles = StyleSheet.create({
   cardContainer: {
-    width: 144,
-    height: "auto",
+    width: 0.4 * SCREEN_WIDTH,
     borderRadius: 45,
-    marginLeft: 24,
     marginBottom: 24,
-    justifyContent: "center",
-    alignItems: "center",
     paddingHorizontal: 12,
   },
   percentage: {
@@ -77,13 +94,12 @@ const styles = StyleSheet.create({
     borderColor: "white",
   },
   cardText: {
-    height: 41,
     width: "auto",
     justifyContent: "center",
     alignItems: "center",
   },
   cardTextHeading: {
-    fontSize: 15,
+    fontSize: 14,
     fontFamily: "regular",
     color: "#FFFF",
     textAlign: "center",

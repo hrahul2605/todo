@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { SCREEN_WIDTH, RootStackParamList } from "../../constants";
 import Setting from "../../assets/icons/settings.svg";
 import { StackNavigationProp } from "@react-navigation/stack";
+import Ico from "../../assets/bigheads/1.svg";
 
 interface Props {
   navigation: StackNavigationProp<RootStackParamList>;
@@ -13,7 +14,9 @@ const Header: React.FunctionComponent<Props> = ({ navigation }) => {
     <>
       <View style={{ ...styles.headerContainer }}>
         <View style={{ ...styles.detailContainer }}>
-          <View style={{ ...styles.userImage }} />
+          <View style={{ ...styles.userImage }}>
+            <Ico preserveAspectRatio="none" width={100} height={100} />
+          </View>
           <View style={{ ...styles.userContainer }}>
             <Text style={{ ...styles.userName }}>Dushtu Bunny</Text>
             <Text style={{ ...styles.userDesc }}>Captain Developer</Text>
@@ -56,8 +59,9 @@ const styles = StyleSheet.create({
   userImage: {
     width: 80,
     height: 80,
-    backgroundColor: "white",
     borderRadius: 80,
+    justifyContent: "center",
+    alignItems: "center",
   },
   userContainer: {
     paddingHorizontal: 12,
