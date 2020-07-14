@@ -16,6 +16,8 @@ interface Props {
   categories: Category[];
   setSelectedCategory: React.Dispatch<React.SetStateAction<string>>;
   selectedCategory: string;
+  desc: string;
+  setDesc: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const CreateTaskDesc: FunctionComponent<Props> = ({
@@ -23,6 +25,8 @@ const CreateTaskDesc: FunctionComponent<Props> = ({
   categories,
   setSelectedCategory,
   selectedCategory,
+  desc,
+  setDesc,
 }) => {
   return (
     <>
@@ -54,6 +58,8 @@ const CreateTaskDesc: FunctionComponent<Props> = ({
             style={{ ...styles.descInput }}
             placeholder="Lorem ipsum dolor sit amet"
             placeholderTextColor="#FFFF"
+            value={desc}
+            onChangeText={(e) => setDesc(e)}
           />
         </View>
       </View>

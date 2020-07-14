@@ -76,20 +76,11 @@ const CategoryTask: FunctionComponent<Props> = ({
   const index = category.findIndex((item) => {
     return item.categoryName === route.params.taskName;
   });
-  const transition = React.useRef(new Animated.Value(0)).current;
-
-  const animateDown = () => {
-    Animated.spring(transition, {
-      toValue: 0,
-      mass: 1,
-      stiffness: 500,
-      damping: 60,
-      useNativeDriver: true,
-    }).start();
-  };
-  const animateUp = () => {
-    Animated.spring(transition, {
-      toValue: 1,
+  const opacity = React.useRef(new Animated.Value(0)).current;
+  const [pressed, setPressed] = React.useState(false);
+  const animate = (val: number) => {
+    Animated.spring(opacity, {
+      toValue: val,
       mass: 1,
       stiffness: 500,
       damping: 60,
@@ -98,26 +89,36 @@ const CategoryTask: FunctionComponent<Props> = ({
   };
 
   React.useEffect(() => {
-    navigation.addListener("blur", () => {
-      animateDown();
+    const unsubscribe = navigation.addListener("focus", () => {
+      animate(1);
     });
-
-    navigation.addListener("focus", (e) => {
-      animateUp();
-    });
+    return unsubscribe;
   }, [navigation]);
 
-  const translateX = transition.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, -SCREEN_WIDTH],
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener("blur", () => {
+      if (!pressed) {
+        animate(0);
+      } else {
+        animate(2);
+        setPressed(false);
+      }
+    });
+    return unsubscribe;
+  }, [pressed]);
+
+  const translateX = opacity.interpolate({
+    inputRange: [0, 1, 2],
+    outputRange: [0, -SCREEN_WIDTH, -SCREEN_WIDTH * 2],
   });
   return (
     <Animated.View
       style={{
         flex: 1,
-        opacity: transition,
+        opacity,
         transform: [{ translateX }],
         left: SCREEN_WIDTH,
+        paddingTop: 8,
       }}
     >
       <View style={{ ...styles.nav }}>
@@ -138,7 +139,14 @@ const CategoryTask: FunctionComponent<Props> = ({
           >
             <Delete color="white" />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate("CreateTask")}>
+          <TouchableOpacity
+            onPress={() => {
+              setPressed(true);
+              navigation.navigate("CreateTask", {
+                categoryName: route.params.taskName,
+              });
+            }}
+          >
             <Plus color="white" />
           </TouchableOpacity>
         </View>
@@ -242,7 +250,7 @@ const CategoryTask: FunctionComponent<Props> = ({
                       key={index}
                       task={item}
                       categoryName={route.params.taskName}
-                      color={route.params.bgColor}
+                      color="#6488e4"
                       addDoneCategoryTask={addDoneCategoryTask}
                       isCategoryDoneScreen={true}
                       removeDoneCategoryTask={removeDoneCategoryTask}

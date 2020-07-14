@@ -79,7 +79,7 @@ export interface Category {
 export type RootStackParamList = {
   Home: undefined;
   FeedScreen: { screen: string; screenSub: string };
-  CreateTask: undefined;
+  CreateTask: undefined | { categoryName: string };
   CategoryTask: {
     taskName: string;
     bgColor: string;
@@ -99,3 +99,5 @@ export interface state {
   category: { category: Category[] };
   done: { done: task[] };
 }
+
+export const colors = ["#F9BE7C", "#309397", "#6488e4", "#E46472"];

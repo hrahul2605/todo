@@ -41,7 +41,7 @@ function RenderDates(props: any) {
 const Calender: FunctionComponent<Props> = ({ navigation }) => {
   return (
     <>
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, paddingTop: 8 }}>
         <View
           style={{
             elevation: 0.1,
@@ -49,6 +49,8 @@ const Calender: FunctionComponent<Props> = ({ navigation }) => {
             position: "absolute",
             top: 0,
             backgroundColor: "#282828",
+
+            paddingTop: 8,
           }}
         >
           <View style={{ ...styles.headerContainer }}>
@@ -82,7 +84,7 @@ const Calender: FunctionComponent<Props> = ({ navigation }) => {
           contentContainerStyle={{
             paddingVertical: 12,
             flexDirection: "row",
-            paddingTop: 230
+            paddingTop: 230,
           }}
         >
           <View style={{ ...styles.scrollViewLeftContainer }}>

@@ -27,9 +27,10 @@ import {
 } from "../../redux/ActionCreator";
 import { connect } from "react-redux";
 import { getFormatedDate } from "../DatePicker";
-import { StackActions } from "@react-navigation/native";
+import { StackActions, RouteProp } from "@react-navigation/native";
 
 interface Props {
+  route: RouteProp<RootStackParamList, "CreateTask">;
   navigation: StackNavigationProp<RootStackParamList, "CreateTask">;
   addTask: (task: task) => any;
   category: Category[];
@@ -54,6 +55,7 @@ const CreateTask: FunctionComponent<Props> = ({
   category,
   addCategory,
   addCategoryTask,
+  route,
 }) => {
   const opacity = useRef(new Animated.Value(0)).current;
   const dateAnimate = useRef(new Animated.Value(0)).current;
@@ -140,6 +142,14 @@ const CreateTask: FunctionComponent<Props> = ({
   const [date, setDate] = useState(getFormatedDate(new Date(), "ddd, DD MMM"));
   const [isCat, setCat] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [pressedOnce, setPressedOnce] = useState(false);
+  const [desc, setDesc] = useState("");
+
+  useEffect(() => {
+    if (route.params?.categoryName !== undefined) {
+      setSelectedCategory(route.params.categoryName);
+    }
+  }, []);
 
   useEffect(() => {
     if (selectedCategory === "") {
@@ -187,6 +197,7 @@ const CreateTask: FunctionComponent<Props> = ({
         opacity: translation,
         transform: [{ translateX: transX }],
         left: SCREEN_WIDTH,
+        paddingTop: 8,
       }}
     >
       <Animated.View
@@ -235,6 +246,8 @@ const CreateTask: FunctionComponent<Props> = ({
           animateModal={animateModal}
           setSelectedCategory={setSelectedCategory}
           selectedCategory={selectedCategory}
+          desc={desc}
+          setDesc={setDesc}
         />
       </Animated.ScrollView>
       <Animated.View
@@ -242,17 +255,30 @@ const CreateTask: FunctionComponent<Props> = ({
       >
         <TouchableOpacity
           onPress={() => {
+            setPressedOnce(true);
             if (!isCat) {
-              addTask({ date: date, title: title, id: "" });
+              if (desc === "") {
+                addTask({ date: date, title: title, id: "" });
+              } else {
+                addTask({ date: date, title: title, id: "", desc: desc });
+              }
             } else {
-              addCategoryTask({
-                categoryName: selectedCategory,
-                task: { date: date, title: title, id: "" },
-              });
+              if (desc === "") {
+                addCategoryTask({
+                  categoryName: selectedCategory,
+                  task: { date: date, title: title, id: "" },
+                });
+              } else {
+                addCategoryTask({
+                  categoryName: selectedCategory,
+                  task: { date: date, title: title, id: "", desc: desc },
+                });
+              }
             }
             navigation.dispatch(StackActions.popToTop());
             Keyboard.dismiss();
           }}
+          disabled={pressedOnce}
         >
           <View
             style={{
@@ -284,13 +310,14 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   headerContainer: {
-    height: 315,
+    height: 323,
     backgroundColor: "#FFCC66",
     borderBottomRightRadius: 45,
     borderBottomLeftRadius: 45,
     position: "absolute",
     elevation: 1,
     zIndex: 1,
+    paddingTop: 8,
   },
   createTaskContainer: {
     width: SCREEN_WIDTH - 48,

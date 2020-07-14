@@ -115,6 +115,7 @@ const FeedScreen: React.FunctionComponent<Props> = ({
           zIndex: 20,
           backgroundColor: "#282828",
           width: "100%",
+          paddingTop: 8,
         }}
       >
         <View style={{ ...styles.nav }}>
@@ -159,7 +160,7 @@ const FeedScreen: React.FunctionComponent<Props> = ({
                     addDoneTask={addDoneTask}
                   />
                 )}
-                contentContainerStyle={{ paddingTop: 139, paddingBottom: 30 }}
+                contentContainerStyle={{ paddingTop: 139, paddingBottom: 38 }}
                 numColumns={1}
                 style={{ height: SCREEN_HEIGHT, zIndex: 10 }}
               />
@@ -178,28 +179,38 @@ const FeedScreen: React.FunctionComponent<Props> = ({
                     color="#6488e4"
                   />
                 )}
-                contentContainerStyle={{ paddingTop: 139, paddingBottom: 30 }}
+                contentContainerStyle={{ paddingTop: 139, paddingBottom: 38 }}
                 numColumns={1}
                 style={{ height: SCREEN_HEIGHT, zIndex: 10 }}
               />
             </>
           )
         ) : (
-          <View
-            style={{
-              height: SCREEN_HEIGHT,
-              width: SCREEN_WIDTH,
-              paddingTop: 139,
-              flexDirection: "row",
-            }}
-          >
-            <List
-              setPressed={setPressed}
-              navigation={navigation}
-              data={category}
-              isProgressScreen={true}
-            />
-          </View>
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            data={undefined}
+            renderItem={undefined}
+            style={{ height: SCREEN_HEIGHT }}
+            ListEmptyComponent={
+              <>
+                <View
+                  style={{
+                    paddingTop: 139,
+                    flexDirection: "row",
+                    flex: 1,
+                  }}
+                >
+                  <List
+                    setPressed={setPressed}
+                    navigation={navigation}
+                    data={category}
+                    isProgressScreen={true}
+                  />
+                </View>
+              </>
+            }
+            contentContainerStyle={{ paddingBottom: 38 }}
+          />
         )}
       </View>
     </Animated.View>
@@ -211,6 +222,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(FeedScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 8,
   },
   nav: {
     height: 56,

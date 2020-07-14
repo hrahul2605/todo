@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Animated } from "react-native";
+import { Animated, View } from "react-native";
 import Header from "./Header";
 import Feed from "./Feed";
 import Attaglance from "./Attaglance";
@@ -37,7 +37,7 @@ const Home: React.FunctionComponent<Props> = ({ navigation }) => {
       animateDown();
     });
 
-    navigation.addListener("focus", (e) => {
+    navigation.addListener("focus", () => {
       animateUp();
     });
   }, [navigation]);
@@ -48,7 +48,7 @@ const Home: React.FunctionComponent<Props> = ({ navigation }) => {
   });
 
   return (
-    <Animated.View style={{ flex: 1, zIndex: 1 }}>
+    <View style={{ flex: 1, zIndex: 1 }}>
       <Animated.View
         style={{
           transform: [{ translateX }],
@@ -63,17 +63,17 @@ const Home: React.FunctionComponent<Props> = ({ navigation }) => {
       <Animated.FlatList
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingTop: 150 }}
-        style={{ opacity }}
-        data={[{ id: "1" }]}
-        renderItem={() => (
+        data={[]}
+        renderItem={{}}
+        ListEmptyComponent={
           <>
             <Feed navigation={navigation} />
             <Attaglance navigation={navigation} />
           </>
-        )}
-        keyExtractor={(item: any) => item.id}
-      ></Animated.FlatList>
-    </Animated.View>
+        }
+        style={{ opacity }}
+      />
+    </View>
   );
 };
 

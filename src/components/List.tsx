@@ -19,6 +19,22 @@ const List: FunctionComponent<Props> = ({
 }) => {
   let data1 = data?.filter((item, index) => index % 2 === 0);
   let data2 = data?.filter((item, index) => index % 2 === 1);
+  if (!isProgressScreen) {
+    data1 = data1?.filter((item, index) => {
+      if (item.categoryName !== undefined) {
+        if (item.tasks.length !== 0) {
+          return item;
+        }
+      } else return item;
+    });
+    data2 = data2?.filter((item, index) => {
+      if (item.categoryName !== undefined) {
+        if (item.tasks.length !== 0) {
+          return item;
+        }
+      } else return item;
+    });
+  }
   return (
     <>
       <View
@@ -34,7 +50,7 @@ const List: FunctionComponent<Props> = ({
       >
         <FlatList
           listKey="#LEFT"
-          data={data !== undefined && data?.length % 2 ? data1 : data2}
+          data={data1?.length === 0 ? data2 : data1}
           showsVerticalScrollIndicator={false}
           renderItem={({ item, index }) => {
             if (
@@ -83,7 +99,7 @@ const List: FunctionComponent<Props> = ({
       >
         <FlatList
           listKey="#RIGHT"
-          data={data !== undefined && data?.length % 2 ? data2 : data1}
+          data={data1?.length === 0 ? data1 : data2}
           showsVerticalScrollIndicator={false}
           renderItem={({ item, index }) => {
             if (

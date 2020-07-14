@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from "react-native";
-import { SCREEN_WIDTH, Category, state, user } from "../../constants";
+import { SCREEN_WIDTH, Category, state, user, colors } from "../../constants";
 import Close from "../../assets/icons/close.svg";
 import Correct from "../../assets/icons/correct.svg";
 import { connect } from "react-redux";
@@ -40,8 +40,9 @@ const AddCategory: FunctionComponent<Props> = ({
   updateDetails,
 }) => {
   const [categoryName, setCategoryName] = useState("");
-  const [categoryColor, setCategoryColor] = useState("");
-  const colors = ["#f9be7c", "#309397", "#6488e4", "#E46472"];
+  const [categoryColor, setCategoryColor] = useState(
+    colors[Math.floor(Math.random() * colors.length)]
+  );
   const [userName, setUserName] = useState(user?.userName);
   const [userDesc, setUserDesc] = useState(user?.userDesc);
 
