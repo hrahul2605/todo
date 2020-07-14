@@ -5,7 +5,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../constants";
 
 interface Props {
-  data: any[] | undefined;
+  data?: any[];
   navigation: StackNavigationProp<RootStackParamList>;
   setPressed?: (value: React.SetStateAction<boolean>) => void;
   isProgressScreen?: boolean;
@@ -34,7 +34,7 @@ const List: FunctionComponent<Props> = ({
       >
         <FlatList
           listKey="#LEFT"
-          data={data2}
+          data={data !== undefined && data?.length % 2 ? data1 : data2}
           showsVerticalScrollIndicator={false}
           renderItem={({ item, index }) => {
             if (
@@ -42,6 +42,14 @@ const List: FunctionComponent<Props> = ({
               item.title !== undefined ||
               isProgressScreen
             ) {
+              let percentage = 0;
+              if (item.categoryName !== undefined) {
+                const taskLength = item.tasks.length;
+                const doneLength = item.done.length;
+                if (doneLength !== 0 || taskLength !== 0) {
+                  percentage = (doneLength * 100) / (doneLength + taskLength);
+                }
+              }
               return (
                 <TaskCard
                   key={index}
@@ -55,6 +63,7 @@ const List: FunctionComponent<Props> = ({
                   onPressed={(e: boolean) =>
                     setPressed !== undefined ? setPressed(e) : undefined
                   }
+                  percentage={percentage}
                 />
               );
             } else return null;
@@ -74,7 +83,7 @@ const List: FunctionComponent<Props> = ({
       >
         <FlatList
           listKey="#RIGHT"
-          data={data1}
+          data={data !== undefined && data?.length % 2 ? data2 : data1}
           showsVerticalScrollIndicator={false}
           renderItem={({ item, index }) => {
             if (
@@ -82,6 +91,14 @@ const List: FunctionComponent<Props> = ({
               item.title !== undefined ||
               isProgressScreen
             ) {
+              let percentage = 0;
+              if (item.categoryName !== undefined) {
+                const taskLength = item.tasks.length;
+                const doneLength = item.done.length;
+                if (doneLength !== 0 || taskLength !== 0) {
+                  percentage = (doneLength * 100) / (doneLength + taskLength);
+                }
+              }
               return (
                 <TaskCard
                   key={index + 10000}
@@ -95,6 +112,7 @@ const List: FunctionComponent<Props> = ({
                   onPressed={(e: boolean) =>
                     setPressed !== undefined ? setPressed(e) : undefined
                   }
+                  percentage={percentage}
                 />
               );
             } else return null;

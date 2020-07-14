@@ -12,6 +12,8 @@ import {
   RootStackParamList,
   SCREEN_HEIGHT,
   task,
+  Category,
+  state,
 } from "../../constants";
 import { StackNavigationProp } from "@react-navigation/stack";
 import AddCategory from "./AddCategory";
@@ -27,14 +29,6 @@ import { connect } from "react-redux";
 import { getFormatedDate } from "../DatePicker";
 import { StackActions } from "@react-navigation/native";
 
-interface Category {
-  tasks: task[] | [];
-  categoryName: string;
-  categoryColor: string;
-  categoryDesc?: string;
-  id: string;
-}
-
 interface Props {
   navigation: StackNavigationProp<RootStackParamList, "CreateTask">;
   addTask: (task: task) => any;
@@ -43,17 +37,15 @@ interface Props {
   addCategoryTask: (task: { categoryName: string; task: task }) => any;
 }
 
-const mapStateToProps = (state: {
-  category: { category: Array<Category> };
-}) => ({
+const mapStateToProps = (state: state) => ({
   category: state.category.category,
 });
 
-const mapDispatchToProps = (dispacth: any) => ({
-  addTask: (task: task) => dispacth(addTask(task)),
-  addCategory: (category: Category) => dispacth(addCategory(category)),
+const mapDispatchToProps = (dispatch: any) => ({
+  addTask: (task: task) => dispatch(addTask(task)),
+  addCategory: (category: Category) => dispatch(addCategory(category)),
   addCategoryTask: (task: { categoryName: string; task: task }) =>
-    dispacth(addCategoryTask(task)),
+    dispatch(addCategoryTask(task)),
 });
 
 const CreateTask: FunctionComponent<Props> = ({
@@ -239,7 +231,6 @@ const CreateTask: FunctionComponent<Props> = ({
         style={{ width: SCREEN_WIDTH, opacity: mainViewOpacity }}
       >
         <CreateTaskDesc
-          setCat={setCat}
           categories={category}
           animateModal={animateModal}
           setSelectedCategory={setSelectedCategory}
@@ -263,7 +254,17 @@ const CreateTask: FunctionComponent<Props> = ({
             Keyboard.dismiss();
           }}
         >
-          <Text style={{ ...styles.createTaskText }}>Create Task</Text>
+          <View
+            style={{
+              flex: 1,
+              width: SCREEN_WIDTH - 48,
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: 45,
+            }}
+          >
+            <Text style={{ ...styles.createTaskText }}>Create Task</Text>
+          </View>
         </TouchableOpacity>
       </Animated.View>
     </Animated.View>

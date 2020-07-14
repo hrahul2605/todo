@@ -2,6 +2,7 @@ import * as React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList, SCREEN_WIDTH, task } from "../../constants";
+import PercentageCircle from "../PercentageCircle";
 
 interface Props {
   color: string;
@@ -12,6 +13,7 @@ interface Props {
   isCategory: boolean;
   tasks?: task[];
   date?: string;
+  percentage?: number;
 }
 const colors = ["#f9be7c", "#309397", "#6488e4", "#E46472"];
 
@@ -24,6 +26,7 @@ function TaskCard({
   desc,
   tasks,
   date,
+  percentage,
 }: Props) {
   return (
     <TouchableOpacity
@@ -46,7 +49,11 @@ function TaskCard({
             alignItems: "center",
           }}
         >
-          {isCategory ? <View style={{ ...styles.percentage }}></View> : null}
+          {isCategory && percentage !== undefined ? (
+            <View style={{ marginBottom: 12 }}>
+              <PercentageCircle percentage={percentage} />
+            </View>
+          ) : null}
           <View style={{ ...styles.cardText }}>
             <Text style={{ ...styles.cardTextHeading }}>{name}</Text>
             {desc !== undefined ? (
@@ -54,7 +61,7 @@ function TaskCard({
             ) : null}
             {isCategory ? (
               <Text style={{ ...styles.cardTextDesc }}>
-                {tasks?.length} task in total
+                {tasks?.length} task remaining
               </Text>
             ) : null}
             {date !== undefined ? (
@@ -88,10 +95,6 @@ const styles = StyleSheet.create({
   percentage: {
     height: 64,
     width: 64,
-    borderRadius: 64,
-    marginBottom: 12,
-    borderWidth: 3,
-    borderColor: "white",
   },
   cardText: {
     width: "auto",

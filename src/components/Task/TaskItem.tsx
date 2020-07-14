@@ -31,13 +31,22 @@ const snapPoints = [-120, 0];
 
 interface ItemProps {
   task: task;
-  removeTask: (id: string) => void;
+  removeTask?: (id: string) => void;
   removeCategoryTask?: (det: det) => void;
   categoryName?: string;
   color?: string;
   addDoneTask?: (doneTask: task) => void;
   doneScreen?: boolean;
   removeDoneTask?: (id: string) => void;
+  addDoneCategoryTask?: ({
+    categoryName,
+    taskId,
+  }: {
+    categoryName: string;
+    taskId: string;
+  }) => void;
+  isCategoryDoneScreen?: boolean;
+  removeDoneCategoryTask?: (det: det) => void;
 }
 
 const TaskItem: React.FunctionComponent<ItemProps> = ({
@@ -49,6 +58,9 @@ const TaskItem: React.FunctionComponent<ItemProps> = ({
   addDoneTask,
   doneScreen = false,
   removeDoneTask,
+  addDoneCategoryTask,
+  isCategoryDoneScreen = false,
+  removeDoneCategoryTask,
 }) => {
   const {
     gestureHandler,
@@ -93,25 +105,43 @@ const TaskItem: React.FunctionComponent<ItemProps> = ({
             onPress={() => {
               if (removeCategoryTask !== undefined) {
                 removeCategoryTask({ categoryName: categoryName, id: task.id });
-              } else if (doneScreen === false) {
+              } else if (doneScreen === false && removeTask !== undefined) {
                 removeTask(task.id);
-              } else {
+              } else if (removeDoneTask !== undefined) {
+                removeDoneTask(task.id);
+              } else if (removeDoneCategoryTask !== undefined) {
                 console.log("DESIRED");
-                if (removeDoneTask !== undefined) {
-                  removeDoneTask(task.id);
-                }
+                removeDoneCategoryTask({
+                  categoryName: categoryName,
+                  id: task.id,
+                });
               }
             }}
           >
             <Delete color="white" width={16} />
           </TouchableOpacity>
-          {!doneScreen ? <Edit color="white" width={16} /> : null}
-          {!doneScreen ? (
+          {!doneScreen && !isCategoryDoneScreen ? (
+            <Edit color="white" width={16} />
+          ) : null}
+          {!doneScreen && !isCategoryDoneScreen ? (
             <TouchableOpacity
               onPress={() => {
-                if (addDoneTask !== undefined) {
+                if (addDoneTask !== undefined && removeTask !== undefined) {
                   addDoneTask(task);
                   removeTask(task.id);
+                } else if (
+                  addDoneCategoryTask !== undefined &&
+                  categoryName !== undefined &&
+                  removeCategoryTask !== undefined
+                ) {
+                  addDoneCategoryTask({
+                    categoryName: categoryName,
+                    taskId: task.id,
+                  });
+                  removeCategoryTask({
+                    categoryName: categoryName,
+                    id: task.id,
+                  });
                 }
               }}
             >

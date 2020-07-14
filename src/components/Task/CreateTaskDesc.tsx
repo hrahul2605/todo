@@ -7,22 +7,13 @@ import {
   TextInput,
   TouchableWithoutFeedback,
 } from "react-native";
-import { SCREEN_WIDTH, task } from "../../constants";
+import { SCREEN_WIDTH, Category } from "../../constants";
 import Edit from "../../assets/icons/edit.svg";
 import Plus from "../../assets/icons/plus.svg";
-
-interface Category {
-  tasks: task[];
-  categoryName: string;
-  categoryColor: string;
-  categoryDesc?: string;
-  id: string;
-}
 
 interface Props {
   animateModal: () => void;
   categories: Category[];
-  setCat: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedCategory: React.Dispatch<React.SetStateAction<string>>;
   selectedCategory: string;
 }
@@ -30,7 +21,6 @@ interface Props {
 const CreateTaskDesc: FunctionComponent<Props> = ({
   animateModal,
   categories,
-  setCat,
   setSelectedCategory,
   selectedCategory,
 }) => {

@@ -7,6 +7,7 @@ import logger from "redux-logger";
 import { taskReducer } from "./reducers/taskReducer";
 import { categoryReducer } from "./reducers/categoryReducer";
 import { doneReducer } from "./reducers/doneReducer";
+import { userReducer } from "./reducers/userReducer";
 
 const config = {
   key: "root",
@@ -20,6 +21,7 @@ export const ConfigureStore = () => {
       tasks: taskReducer,
       category: categoryReducer,
       done: doneReducer,
+      user: userReducer,
     }),
     applyMiddleware(thunk, logger)
   );

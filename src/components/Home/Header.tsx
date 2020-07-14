@@ -1,15 +1,24 @@
 import * as React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { SCREEN_WIDTH, RootStackParamList } from "../../constants";
+import { SCREEN_WIDTH, RootStackParamList, state } from "../../constants";
 import Setting from "../../assets/icons/settings.svg";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { connect } from "react-redux";
 import Ico from "../../assets/bigheads/1.svg";
 
 interface Props {
   navigation: StackNavigationProp<RootStackParamList>;
+  user: { userName: string; userDesc: string };
 }
 
-const Header: React.FunctionComponent<Props> = ({ navigation }) => {
+const mapStateToProps = (state: state) => ({
+  user: state.user,
+});
+
+const Header: React.FunctionComponent<Props> = ({
+  navigation,
+  user: { userName, userDesc },
+}) => {
   return (
     <>
       <View style={{ ...styles.headerContainer }}>
@@ -18,16 +27,12 @@ const Header: React.FunctionComponent<Props> = ({ navigation }) => {
             <Ico preserveAspectRatio="none" width={100} height={100} />
           </View>
           <View style={{ ...styles.userContainer }}>
-            <Text style={{ ...styles.userName }}>Dushtu Bunny</Text>
-            <Text style={{ ...styles.userDesc }}>Captain Developer</Text>
+            <Text style={{ ...styles.userName }}>{userName}</Text>
+            <Text style={{ ...styles.userDesc }}>{userDesc}</Text>
           </View>
         </View>
       </View>
-      <View
-        style={{
-          ...styles.settingsContainer,
-        }}
-      >
+      <View style={{ ...styles.settingsContainer }}>
         <TouchableOpacity onPress={() => navigation.navigate("Settings")}>
           <Setting color="#000000" width={24} />
         </TouchableOpacity>
@@ -36,7 +41,7 @@ const Header: React.FunctionComponent<Props> = ({ navigation }) => {
   );
 };
 
-export default Header;
+export default connect(mapStateToProps)(Header);
 
 const styles = StyleSheet.create({
   headerContainer: {

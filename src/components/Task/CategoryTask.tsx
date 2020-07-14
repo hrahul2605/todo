@@ -12,11 +12,13 @@ import Plus from "../../assets/icons/plus.svg";
 import Delete from "../../assets/icons/delete.svg";
 import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList, task, SCREEN_WIDTH } from "../../constants";
+import { RootStackParamList, SCREEN_WIDTH, Category } from "../../constants";
 import {
   removeTask,
   removeCategoryTask,
   removeCategory,
+  addDoneCategoryTask,
+  removeDoneCategoryTask,
 } from "../../redux/ActionCreator";
 import { connect } from "react-redux";
 import TaskItem from "./TaskItem";
@@ -26,13 +28,6 @@ interface det {
   id: string;
 }
 
-interface Category {
-  tasks: task[];
-  categoryName: string;
-  categoryColor: string;
-  categoryDesc?: string;
-  id: string;
-}
 interface Props {
   route: RouteProp<RootStackParamList, "CategoryTask">;
   navigation: StackNavigationProp<RootStackParamList, "CategoryTask">;
@@ -40,6 +35,14 @@ interface Props {
   removeCategoryTask: (det: det) => void;
   category: Category[];
   removeCategory: (id: string) => void;
+  addDoneCategoryTask: ({
+    categoryName,
+    taskId,
+  }: {
+    categoryName: string;
+    taskId: string;
+  }) => void;
+  removeDoneCategoryTask: (det: det) => void;
 }
 
 const mapStateToProps = (state: { category: { category: Category[] } }) => ({
@@ -50,6 +53,14 @@ const mapDispatchToProps = (dispatch: any) => ({
   removeTask: (id: string) => dispatch(removeTask(id)),
   removeCategoryTask: (det: det) => dispatch(removeCategoryTask(det)),
   removeCategory: (id: string) => dispatch(removeCategory(id)),
+  addDoneCategoryTask: ({
+    categoryName,
+    taskId,
+  }: {
+    categoryName: string;
+    taskId: string;
+  }) => dispatch(addDoneCategoryTask({ categoryName, taskId })),
+  removeDoneCategoryTask: (det: det) => dispatch(removeDoneCategoryTask(det)),
 });
 
 const CategoryTask: FunctionComponent<Props> = ({
@@ -59,6 +70,8 @@ const CategoryTask: FunctionComponent<Props> = ({
   removeCategoryTask,
   category,
   removeCategory,
+  addDoneCategoryTask,
+  removeDoneCategoryTask,
 }) => {
   const index = category.findIndex((item) => {
     return item.categoryName === route.params.taskName;
@@ -136,27 +149,115 @@ const CategoryTask: FunctionComponent<Props> = ({
       <View style={{ ...styles.motivateTextContainer }}>
         <Text style={{ ...styles.motivateText }}>Giddy-up Captain!</Text>
       </View>
-      {category[index] !== undefined ? (
-        <FlatList
-          data={category[index].tasks}
-          renderItem={({ item, index }) => {
-            return (
-              <TaskItem
-                key={index}
-                task={item}
-                removeTask={removeTask}
-                removeCategoryTask={removeCategoryTask}
-                categoryName={route.params.taskName}
-                color={route.params.bgColor}
+      <FlatList
+        data={null}
+        renderItem={null}
+        ListHeaderComponent={
+          category[index] !== undefined ? (
+            <>
+              <View style={{ paddingHorizontal: 36, marginTop: 12 }}>
+                <Text
+                  style={{ color: "#FFFF", fontFamily: "bold", fontSize: 15 }}
+                >
+                  To do.
+                </Text>
+                {category[index].tasks.length === 0 ? (
+                  <Text
+                    style={{
+                      color: "#FFFF",
+                      fontFamily: "light",
+                      fontSize: 12,
+                      marginTop: 10,
+                    }}
+                  >
+                    No tasks added
+                  </Text>
+                ) : null}
+              </View>
+              <FlatList
+                nestedScrollEnabled={true}
+                data={category[index].tasks}
+                renderItem={({ item, index }) => {
+                  return (
+                    <TaskItem
+                      key={index}
+                      task={item}
+                      removeTask={removeTask}
+                      removeCategoryTask={removeCategoryTask}
+                      categoryName={route.params.taskName}
+                      color={route.params.bgColor}
+                      addDoneCategoryTask={addDoneCategoryTask}
+                    />
+                  );
+                }}
+                keyExtractor={(item) => item.id}
+                showsVerticalScrollIndicator={false}
+                style={{ ...styles.scrollStyle }}
+                contentContainerStyle={{ ...styles.scrollContainer }}
               />
-            );
-          }}
-          keyExtractor={(item) => item.id}
-          showsVerticalScrollIndicator={false}
-          style={{ ...styles.scrollStyle }}
-          contentContainerStyle={{ ...styles.scrollContainer }}
-        />
-      ) : null}
+            </>
+          ) : null
+        }
+        ListFooterComponent={
+          category[index] !== undefined ? (
+            <>
+              <View style={{ paddingHorizontal: 36 }}>
+                <Text
+                  style={{ color: "#FFFF", fontFamily: "bold", fontSize: 15 }}
+                >
+                  Done
+                </Text>
+                {category[index].done.length === 0 ? (
+                  category[index].tasks.length === 0 ? (
+                    <Text
+                      style={{
+                        color: "#FFFF",
+                        fontFamily: "light",
+                        fontSize: 12,
+                        marginTop: 10,
+                      }}
+                    >
+                      Nothing completed
+                    </Text>
+                  ) : (
+                    <Text
+                      style={{
+                        color: "#FFFF",
+                        fontFamily: "light",
+                        fontSize: 12,
+                        marginTop: 10,
+                      }}
+                    >
+                      You lazy bastard, do some work!
+                    </Text>
+                  )
+                ) : null}
+              </View>
+              <FlatList
+                nestedScrollEnabled={true}
+                data={category[index].done}
+                renderItem={({ item, index }) => {
+                  return (
+                    <TaskItem
+                      key={index}
+                      task={item}
+                      categoryName={route.params.taskName}
+                      color={route.params.bgColor}
+                      addDoneCategoryTask={addDoneCategoryTask}
+                      isCategoryDoneScreen={true}
+                      removeDoneCategoryTask={removeDoneCategoryTask}
+                    />
+                  );
+                }}
+                keyExtractor={(item) => item.id}
+                showsVerticalScrollIndicator={false}
+                style={{ ...styles.scrollStyle }}
+                contentContainerStyle={{ ...styles.scrollContainer }}
+              />
+            </>
+          ) : null
+        }
+      />
     </Animated.View>
   );
 };

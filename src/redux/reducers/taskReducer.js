@@ -7,7 +7,7 @@ const INITIAL_STATE = {
 export const taskReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case ActionTypes.ADD_TASK:
-      action.payload.id = JSON.stringify(state.tasks.length);
+      action.payload.id = JSON.stringify(Date.now());
       return { ...state, tasks: state.tasks.concat(action.payload) };
     case ActionTypes.REMOVE_TASK:
       return {

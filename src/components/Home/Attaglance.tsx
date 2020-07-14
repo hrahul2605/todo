@@ -1,22 +1,11 @@
 import * as React from "react";
-import { View, Text, StyleSheet, FlatList } from "react-native";
-import TaskCard from "../Task/TaskCard";
+import { View, Text, StyleSheet } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList, task } from "../../constants";
+import { RootStackParamList, task, Category, state } from "../../constants";
 import { connect } from "react-redux";
 import List from "../List";
 
-interface Category {
-  tasks: task[];
-  categoryName: string;
-  categoryColor: string;
-  categoryDesc?: string;
-  id: string;
-}
-const mapStateToProps = (state: {
-  tasks: { tasks: Array<task> };
-  category: { category: Category[] };
-}) => ({
+const mapStateToProps = (state: state) => ({
   tasks: state.tasks.tasks,
   category: state.category.category,
 });

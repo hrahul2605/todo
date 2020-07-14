@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import Left from "../../assets/icons/left.svg";
 import Plus from "../../assets/icons/plus.svg";
-import TaskCard from "../Task/TaskCard";
 import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import {
@@ -17,6 +16,8 @@ import {
   task,
   SCREEN_WIDTH,
   SCREEN_HEIGHT,
+  Category,
+  state,
 } from "../../constants";
 import { connect } from "react-redux";
 
@@ -28,30 +29,18 @@ import {
 import TaskItem from "../Task/TaskItem";
 import List from "../List";
 
-interface Category {
-  tasks: task[];
-  categoryName: string;
-  categoryColor: string;
-  categoryDesc?: string;
-  id: string;
-}
-
 interface Props {
   route: RouteProp<RootStackParamList, "FeedScreen">;
   navigation: StackNavigationProp<RootStackParamList, "FeedScreen">;
   tasks: Array<task>;
   removeTask: (id: string) => void;
-  category: Category[];
   addDoneTask: (doneTask: task) => void;
-  done: Array<task>;
   removeDoneTask: (id: string) => void;
+  category: Category[];
+  done: Array<task>;
 }
 
-const mapStateToProps = (state: {
-  tasks: { tasks: Array<task> };
-  category: { category: Category[] };
-  done: { done: Array<task> };
-}) => ({
+const mapStateToProps = (state: state) => ({
   tasks: state.tasks.tasks,
   category: state.category.category,
   done: state.done.done,

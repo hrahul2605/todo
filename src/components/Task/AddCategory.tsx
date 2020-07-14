@@ -7,23 +7,28 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from "react-native";
-import { SCREEN_WIDTH, task } from "../../constants";
+import { SCREEN_WIDTH, Category, state, user } from "../../constants";
 import Close from "../../assets/icons/close.svg";
 import Correct from "../../assets/icons/correct.svg";
+import { connect } from "react-redux";
+import { updateDetails } from "../../redux/ActionCreator";
 
-interface Category {
-  tasks: task[] | [];
-  categoryName: string;
-  categoryColor: string;
-  categoryDesc?: string;
-  id: string;
-}
+const mapStateToProps = (state: state) => ({
+  user: state.user,
+});
+
+const mapDispatchToProps = (dispatch: any) => ({
+  updateDetails: ({ userName, userDesc }: user) =>
+    dispatch(updateDetails({ userName, userDesc })),
+});
 
 interface Props {
   close: Function;
   type: string;
   addCategory?: (category: Category) => any;
   setSelectedCategory?: React.Dispatch<React.SetStateAction<string>>;
+  user?: user;
+  updateDetails?: ({ userName, userDesc }: user) => void;
 }
 
 const AddCategory: FunctionComponent<Props> = ({
@@ -31,10 +36,14 @@ const AddCategory: FunctionComponent<Props> = ({
   type,
   addCategory,
   setSelectedCategory,
+  user,
+  updateDetails,
 }) => {
   const [categoryName, setCategoryName] = useState("");
   const [categoryColor, setCategoryColor] = useState("");
   const colors = ["#f9be7c", "#309397", "#6488e4", "#E46472"];
+  const [userName, setUserName] = useState(user?.userName);
+  const [userDesc, setUserDesc] = useState(user?.userDesc);
 
   return (
     <View style={{ ...styles.container }}>
@@ -88,26 +97,32 @@ const AddCategory: FunctionComponent<Props> = ({
           <View style={{ ...styles.renameContainer }}>
             <Text style={{ ...styles.renameItemText }}>Name</Text>
             <TextInput
-              placeholder="Dushtu Bunny"
+              placeholder={userName}
               placeholderTextColor="#FFFF"
               style={{
                 ...styles.nameInput,
                 borderColor: "rgba(255, 255, 255, 0.12)",
                 borderBottomWidth: 1,
               }}
+              onChangeText={(val) => setUserName(val)}
+              value={userName}
+              onFocus={() => setUserName("")}
             />
           </View>
           <View style={{ height: 24 }} />
           <View style={{ ...styles.renameContainer }}>
             <Text style={{ ...styles.renameItemText }}>Designation</Text>
             <TextInput
-              placeholder="Captain Developer"
+              placeholder={userDesc}
               placeholderTextColor="#FFFF"
               style={{
                 ...styles.nameInput,
                 borderColor: "rgba(255, 255, 255, 0.12)",
                 borderBottomWidth: 1,
               }}
+              onChangeText={(val) => setUserDesc(val)}
+              value={userDesc}
+              onFocus={() => setUserDesc("")}
             />
           </View>
           <View style={{ height: 24 }} />
@@ -116,7 +131,16 @@ const AddCategory: FunctionComponent<Props> = ({
       <View style={{ ...styles.buttonContainer }}>
         <TouchableOpacity
           style={{ ...styles.cancelBtn }}
-          onPress={() => close()}
+          onPress={() => {
+            if (type === "Rename") {
+              setUserName(user?.userName);
+              setUserDesc(user?.userDesc);
+            } else {
+              setCategoryName("");
+              setCategoryColor("");
+            }
+            close();
+          }}
         >
           <Text style={{ ...styles.btnText }}>Cancel</Text>
         </TouchableOpacity>
@@ -133,14 +157,27 @@ const AddCategory: FunctionComponent<Props> = ({
                 categoryColor: categoryColor,
                 tasks: [],
                 id: "",
+                done: [],
               });
               setSelectedCategory(categoryName);
               setCategoryName("");
               setCategoryColor("");
-              close();
+            } else if (type === "Rename") {
+              if (
+                userName !== undefined &&
+                userDesc !== undefined &&
+                updateDetails !== undefined
+              ) {
+                updateDetails({ userName, userDesc });
+              }
             }
+            close();
           }}
-          disabled={categoryColor === "" || categoryName === ""}
+          disabled={
+            type === "Add Category"
+              ? categoryColor === "" || categoryName === ""
+              : userName === "" || userDesc === ""
+          }
         >
           <Text style={{ ...styles.btnText }}>Done</Text>
         </TouchableOpacity>
@@ -149,7 +186,7 @@ const AddCategory: FunctionComponent<Props> = ({
   );
 };
 
-export default AddCategory;
+export default connect(mapStateToProps, mapDispatchToProps)(AddCategory);
 
 const styles = StyleSheet.create({
   container: {

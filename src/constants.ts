@@ -67,6 +67,15 @@ export interface task {
   id: string;
 }
 
+export interface Category {
+  tasks: task[] | [];
+  categoryName: string;
+  categoryColor: string;
+  categoryDesc?: string;
+  id: string;
+  done: task[] | [];
+}
+
 export type RootStackParamList = {
   Home: undefined;
   FeedScreen: { screen: string; screenSub: string };
@@ -78,3 +87,15 @@ export type RootStackParamList = {
   Calender: undefined;
   Settings: undefined;
 };
+
+export interface user {
+  userName: string;
+  userDesc: string;
+}
+
+export interface state {
+  user: user;
+  tasks: { tasks: task[] };
+  category: { category: Category[] };
+  done: { done: task[] };
+}
