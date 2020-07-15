@@ -18,13 +18,12 @@ import {
 } from "react-native-redash";
 
 import { task, SCREEN_WIDTH } from "../../constants";
-
 import Edit from "../../assets/icons/edit.svg";
 import Delete from "../../assets/icons/delete.svg";
 import Correct from "../../assets/icons/correct.svg";
 
 interface det {
-  categoryName: string | undefined;
+  categoryId: string | undefined;
   id: string;
 }
 const snapPoints = [-120, 0];
@@ -39,14 +38,17 @@ interface ItemProps {
   doneScreen?: boolean;
   removeDoneTask?: (id: string) => void;
   addDoneCategoryTask?: ({
-    categoryName,
+    categoryId,
     taskId,
   }: {
-    categoryName: string;
+    categoryId: string;
     taskId: string;
   }) => void;
   isCategoryDoneScreen?: boolean;
   removeDoneCategoryTask?: (det: det) => void;
+  x: number;
+  loaded: boolean;
+  categoryId?: string;
 }
 
 const TaskItem: React.FunctionComponent<ItemProps> = ({
@@ -61,6 +63,9 @@ const TaskItem: React.FunctionComponent<ItemProps> = ({
   addDoneCategoryTask,
   isCategoryDoneScreen = false,
   removeDoneCategoryTask,
+  x,
+  loaded,
+  categoryId,
 }) => {
   const {
     gestureHandler,
@@ -71,7 +76,9 @@ const TaskItem: React.FunctionComponent<ItemProps> = ({
   const translateX = useValue(0);
   const offsetX = useValue(0);
   const to = snapPoint(translateX, velocity.x, snapPoints);
+  const itemTransX = useValue(0);
 
+  const config = { mass: 1, damping: 70, stiffness: 300 };
   useCode(
     () => [
       cond(
@@ -92,8 +99,16 @@ const TaskItem: React.FunctionComponent<ItemProps> = ({
     ],
     []
   );
+
+  useCode(() => [set(itemTransX, spring({ from: 0, to: -x, config }))], []);
+
   return (
-    <Animated.View>
+    <Animated.View
+      style={{
+        left: !loaded ? x : 0,
+        transform: [{ translateX: !loaded ? itemTransX : 0 }],
+      }}
+    >
       <View style={{ ...styles.bg }}>
         <Animated.View
           style={{
@@ -104,15 +119,14 @@ const TaskItem: React.FunctionComponent<ItemProps> = ({
           <TouchableOpacity
             onPress={() => {
               if (removeCategoryTask !== undefined) {
-                removeCategoryTask({ categoryName: categoryName, id: task.id });
+                removeCategoryTask({ categoryId: categoryId, id: task.id });
               } else if (doneScreen === false && removeTask !== undefined) {
                 removeTask(task.id);
               } else if (removeDoneTask !== undefined) {
                 removeDoneTask(task.id);
               } else if (removeDoneCategoryTask !== undefined) {
-                console.log("DESIRED");
                 removeDoneCategoryTask({
-                  categoryName: categoryName,
+                  categoryId: categoryId,
                   id: task.id,
                 });
               }
@@ -131,15 +145,15 @@ const TaskItem: React.FunctionComponent<ItemProps> = ({
                   removeTask(task.id);
                 } else if (
                   addDoneCategoryTask !== undefined &&
-                  categoryName !== undefined &&
+                  categoryId !== undefined &&
                   removeCategoryTask !== undefined
                 ) {
                   addDoneCategoryTask({
-                    categoryName: categoryName,
+                    categoryId: categoryId,
                     taskId: task.id,
                   });
                   removeCategoryTask({
-                    categoryName: categoryName,
+                    categoryId: categoryId,
                     id: task.id,
                   });
                 }
@@ -151,7 +165,7 @@ const TaskItem: React.FunctionComponent<ItemProps> = ({
         </Animated.View>
       </View>
       <PanGestureHandler {...gestureHandler} activeOffsetX={[-15, 15]}>
-        <Animated.View style={{ transform: [{ translateX }] }}>
+        <Animated.View style={{ transform: [{ translateX }], elevation: 10 }}>
           <View
             style={{
               ...styles.taskContainer,
@@ -160,8 +174,13 @@ const TaskItem: React.FunctionComponent<ItemProps> = ({
             }}
           >
             <Text style={{ ...styles.taskTitle }}>{task.title}</Text>
-            <Text style={{ ...styles.taskDesc }}>
-              {task.date} {task.desc}
+            {task.desc !== undefined ? (
+              <Text style={{ ...styles.taskDesc, paddingBottom: 4 }}>
+                {task.desc}
+              </Text>
+            ) : null}
+            <Text style={{ ...styles.taskDesc, fontSize: 10 }}>
+              {task.date}
             </Text>
           </View>
         </Animated.View>
@@ -184,6 +203,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderRadius: 24,
     paddingRight: 24,
+    elevation: 3,
   },
   btn: {
     height: "100%",
@@ -203,6 +223,7 @@ const styles = StyleSheet.create({
     fontFamily: "medium",
     fontSize: 14,
     color: "#FFFF",
+    paddingBottom: 4,
   },
   taskDesc: {
     fontFamily: "light",

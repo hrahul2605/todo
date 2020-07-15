@@ -58,7 +58,7 @@ for (let i = date.getDate(); i <= month[mon].days; i++) {
 export { days };
 
 export interface task {
-  category?: string;
+  color?: string;
   title: string;
   date: string;
   desc?: string;
@@ -79,10 +79,13 @@ export interface Category {
 export type RootStackParamList = {
   Home: undefined;
   FeedScreen: { screen: string; screenSub: string };
-  CreateTask: undefined | { categoryName: string };
+  CreateTask:
+    | undefined
+    | { categoryName: string; categoryId: string | undefined };
   CategoryTask: {
     taskName: string;
     bgColor: string;
+    categoryId: string | undefined;
   };
   Calender: undefined;
   Settings: undefined;
@@ -100,4 +103,14 @@ export interface state {
   done: { done: task[] };
 }
 
-export const colors = ["#F9BE7C", "#309397", "#6488e4", "#E46472"];
+export const colors = [
+  "#F9BE7C",
+  "#309397",
+  // "#6488e4",
+  "#E46472",
+  "#BA68C8",
+  "#81C784",
+  "#FF8A65",
+  "#9575CD",
+  "#64B5F6",
+];

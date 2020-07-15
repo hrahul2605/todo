@@ -1,11 +1,9 @@
 import * as React from "react";
-import { StyleSheet, Platform } from "react-native";
 import * as Font from "expo-font";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import {
   STATUS_BAR,
-  BOTTOM_NAVBAR_HEIGHT,
   RootStackParamList,
 } from "../constants";
 import { NavigationContainer } from "@react-navigation/native";
@@ -63,11 +61,3 @@ export default function Main() {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  AndroidSafeAreaView: {
-    flex: 1,
-    marginTop: Platform.OS === "android" ? STATUS_BAR : 0,
-    marginBottom: Platform.OS === "android" ? BOTTOM_NAVBAR_HEIGHT : 0,
-  },
-});

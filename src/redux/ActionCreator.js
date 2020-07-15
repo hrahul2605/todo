@@ -25,19 +25,19 @@ export const addCategoryTask = (category) => ({
   payload: category,
 });
 
-export const removeCategoryTask = ({ categoryName, id }) => ({
+export const removeCategoryTask = ({ categoryId, id }) => ({
   type: ActionTypes.REMOVE_CATEGORY_TASK,
-  payload: { categoryName, id },
+  payload: { categoryId, id },
 });
 
-export const addDoneCategoryTask = ({ categoryName, taskId }) => ({
+export const addDoneCategoryTask = ({ categoryId, taskId }) => ({
   type: ActionTypes.ADD_DONE_CATEGORY_TASK,
-  payload: { categoryName, taskId },
+  payload: { categoryId, taskId },
 });
 
-export const removeDoneCategoryTask = ({ categoryName, id }) => ({
+export const removeDoneCategoryTask = ({ categoryId, id }) => ({
   type: ActionTypes.REMOVE_DONE_CATEGORY_TASK,
-  payload: { categoryName, id },
+  payload: { categoryId, id },
 });
 
 export const addDoneTask = (doneTask) => ({

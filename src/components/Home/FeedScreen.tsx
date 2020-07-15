@@ -15,12 +15,11 @@ import {
   RootStackParamList,
   task,
   SCREEN_WIDTH,
-  SCREEN_HEIGHT,
   Category,
   state,
+  WINDOW_HEIGHT,
 } from "../../constants";
 import { connect } from "react-redux";
-
 import {
   removeTask,
   addDoneTask,
@@ -74,12 +73,19 @@ const FeedScreen: React.FunctionComponent<Props> = ({
     }).start();
   };
 
+  const [loaded, setLoaded] = React.useState(false);
+
   React.useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       animate(1);
     });
     return unsubscribe;
   }, [navigation]);
+
+  React.useEffect(() => {
+    let timer = setTimeout(() => setLoaded(true), 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener("blur", () => {
@@ -158,11 +164,14 @@ const FeedScreen: React.FunctionComponent<Props> = ({
                     task={item}
                     removeTask={removeTask}
                     addDoneTask={addDoneTask}
+                    x={700 + index * 450}
+                    loaded={loaded}
+                    color={item.color}
                   />
                 )}
-                contentContainerStyle={{ paddingTop: 139, paddingBottom: 38 }}
+                contentContainerStyle={{ paddingTop: 139, paddingBottom: 50 }}
                 numColumns={1}
-                style={{ height: SCREEN_HEIGHT, zIndex: 10 }}
+                style={{ height: WINDOW_HEIGHT, zIndex: 10 }}
               />
             </>
           ) : (
@@ -177,11 +186,13 @@ const FeedScreen: React.FunctionComponent<Props> = ({
                     doneScreen={true}
                     removeDoneTask={removeDoneTask}
                     color="#6488e4"
+                    x={700 + index * 450}
+                    loaded={loaded}
                   />
                 )}
-                contentContainerStyle={{ paddingTop: 139, paddingBottom: 38 }}
+                contentContainerStyle={{ paddingTop: 139, paddingBottom: 50 }}
                 numColumns={1}
-                style={{ height: SCREEN_HEIGHT, zIndex: 10 }}
+                style={{ height: WINDOW_HEIGHT, zIndex: 10 }}
               />
             </>
           )
@@ -190,7 +201,7 @@ const FeedScreen: React.FunctionComponent<Props> = ({
             showsVerticalScrollIndicator={false}
             data={undefined}
             renderItem={undefined}
-            style={{ height: SCREEN_HEIGHT }}
+            style={{ height: WINDOW_HEIGHT }}
             ListEmptyComponent={
               <>
                 <View
@@ -209,7 +220,7 @@ const FeedScreen: React.FunctionComponent<Props> = ({
                 </View>
               </>
             }
-            contentContainerStyle={{ paddingBottom: 38 }}
+            contentContainerStyle={{ paddingBottom: 50 }}
           />
         )}
       </View>

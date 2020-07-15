@@ -7,7 +7,6 @@ const INITIAL_STATE = {
 export const categoryReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case ActionTypes.ADD_CATEGORY:
-      action.payload.id = JSON.stringify(Date.now());
       return { ...state, category: state.category.concat(action.payload) };
     case ActionTypes.REMOVE_CATEGORY:
       return {
@@ -23,7 +22,7 @@ export const categoryReducer = (state = INITIAL_STATE, action) => {
         ...state,
         category: state.category.map((item) => {
           let newItem;
-          if (item.categoryName === action.payload.categoryName) {
+          if (item.id === action.payload.categoryId) {
             action.payload.task.id = JSON.stringify(Date.now());
             newItem = { ...item, tasks: [...item.tasks, action.payload.task] };
           } else newItem = { ...item };
@@ -34,7 +33,7 @@ export const categoryReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         category: state.category.map((item) => {
-          if (item.categoryName === action.payload.categoryName) {
+          if (item.id === action.payload.categoryId) {
             return {
               ...item,
               tasks: item.tasks.filter((x) => x.id !== action.payload.id),
@@ -47,7 +46,7 @@ export const categoryReducer = (state = INITIAL_STATE, action) => {
         ...state,
         category: state.category.map((item) => {
           let newItem;
-          if (item.categoryName === action.payload.categoryName) {
+          if (item.id === action.payload.categoryId) {
             let doneItem = item.tasks.filter(
               (x) => x.id === action.payload.taskId
             );
@@ -60,7 +59,7 @@ export const categoryReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         category: state.category.map((item) => {
-          if (item.categoryName === action.payload.categoryName) {
+          if (item.id === action.payload.categoryId) {
             return {
               ...item,
               done: item.done.filter((x) => x.id !== action.payload.id),

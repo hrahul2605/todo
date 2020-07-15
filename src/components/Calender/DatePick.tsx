@@ -1,7 +1,9 @@
 import React, { FunctionComponent } from "react";
 import DatePicker, { getToday, getFormatedDate } from "../DatePicker/index.js";
-import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
-import { SCREEN_WIDTH } from "../../constants";
+import { View, StyleSheet } from "react-native";
+import { SCREEN_WIDTH, WINDOW_HEIGHT } from "../../constants";
+import { TapGestureHandler } from "react-native-gesture-handler";
+import Animated from "react-native-reanimated";
 
 interface Props {
   close: () => void;
@@ -10,7 +12,7 @@ interface Props {
 
 const DatePick: FunctionComponent<Props> = ({ close, setDate }) => {
   const dateChange = (date: Date) => {
-    setDate(getFormatedDate(date,'ddd, DD MMM'))
+    setDate(getFormatedDate(date, "ddd, DD MMM"));
   };
   return (
     <View style={{ ...styles.container }}>
@@ -30,22 +32,22 @@ const DatePick: FunctionComponent<Props> = ({ close, setDate }) => {
           textFontSize: 16,
           textSecondaryFontSize: 12,
         }}
-        style={{ borderRadius: 24 }}
+        style={{ borderRadius: 24, position: "absolute" }}
         mode="calendar"
         selected={getToday()}
         onDateChange={(date) => dateChange(date)}
       />
-      <View style={{ ...styles.btnContainer }}>
-        <TouchableOpacity
-          style={{ ...styles.cancelBtn }}
-          onPress={() => close()}
-        >
-          <Text style={{ ...styles.btnText }}>Cancel</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={{ ...styles.doneBtn }} onPress={() => close()}>
-          <Text style={{ ...styles.btnText }}>Done</Text>
-        </TouchableOpacity>
-      </View>
+      <TapGestureHandler onHandlerStateChange={() => close()}>
+        <Animated.View
+          style={{
+            width: SCREEN_WIDTH,
+            height: WINDOW_HEIGHT,
+            zIndex: -1,
+            elevation: -1,
+            position: "absolute",
+          }}
+        ></Animated.View>
+      </TapGestureHandler>
     </View>
   );
 };

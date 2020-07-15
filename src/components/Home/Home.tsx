@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Animated, View } from "react-native";
+import { Animated, View, FlatList, StyleSheet } from "react-native";
 import Header from "./Header";
 import Feed from "./Feed";
 import Attaglance from "./Attaglance";
@@ -48,33 +48,40 @@ const Home: React.FunctionComponent<Props> = ({ navigation }) => {
   });
 
   return (
-    <View style={{ flex: 1, zIndex: 1 }}>
-      <Animated.View
-        style={{
-          transform: [{ translateX }],
-          opacity,
-          zIndex: 1,
-          position: "absolute",
-          top: 0,
-        }}
-      >
+    <Animated.View
+      style={{ ...styles.container, transform: [{ translateX }], opacity }}
+    >
+      <View style={{ ...styles.headerContainer }}>
         <Header navigation={navigation} />
-      </Animated.View>
-      <Animated.FlatList
+      </View>
+      <FlatList
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingTop: 150 }}
-        data={[]}
-        renderItem={{}}
+        data={undefined}
+        renderItem={undefined}
         ListEmptyComponent={
           <>
             <Feed navigation={navigation} />
             <Attaglance navigation={navigation} />
           </>
         }
-        style={{ opacity }}
       />
-    </View>
+    </Animated.View>
   );
 };
 
 export default Home;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    zIndex: 1,
+  },
+  headerContainer: {
+    zIndex: 1,
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+  },
+});

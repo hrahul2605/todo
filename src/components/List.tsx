@@ -71,7 +71,7 @@ const List: FunctionComponent<Props> = ({
                   key={index}
                   name={item.categoryName || item.title}
                   desc={item.categoryDesc || item.desc}
-                  color={item.categoryColor}
+                  color={item.categoryColor || item.color}
                   navigation={navigation}
                   isCategory={item.categoryName !== undefined}
                   tasks={item.tasks}
@@ -80,6 +80,9 @@ const List: FunctionComponent<Props> = ({
                     setPressed !== undefined ? setPressed(e) : undefined
                   }
                   percentage={percentage}
+                  categoryId={
+                    item.categoryName !== undefined ? item.id : undefined
+                  }
                 />
               );
             } else return null;
@@ -120,7 +123,7 @@ const List: FunctionComponent<Props> = ({
                   key={index + 10000}
                   name={item.categoryName || item.title}
                   desc={item.categoryDesc || item.desc}
-                  color={item.categoryColor}
+                  color={item.categoryColor || item.color}
                   navigation={navigation}
                   isCategory={item.categoryName !== undefined}
                   tasks={item.tasks}
@@ -129,6 +132,9 @@ const List: FunctionComponent<Props> = ({
                     setPressed !== undefined ? setPressed(e) : undefined
                   }
                   percentage={percentage}
+                  categoryId={
+                    item.categoryName !== undefined ? item.id : undefined
+                  }
                 />
               );
             } else return null;

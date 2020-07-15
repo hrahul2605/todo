@@ -45,6 +45,7 @@ const AddCategory: FunctionComponent<Props> = ({
   );
   const [userName, setUserName] = useState(user?.userName);
   const [userDesc, setUserDesc] = useState(user?.userDesc);
+  const [id, setId] = useState(JSON.stringify(Date.now()));
 
   return (
     <View style={{ ...styles.container }}>
@@ -138,7 +139,9 @@ const AddCategory: FunctionComponent<Props> = ({
               setUserDesc(user?.userDesc);
             } else {
               setCategoryName("");
-              setCategoryColor("");
+              setCategoryColor(
+                colors[Math.floor(Math.random() * colors.length)]
+              );
             }
             close();
           }}
@@ -157,12 +160,17 @@ const AddCategory: FunctionComponent<Props> = ({
                 categoryName: categoryName,
                 categoryColor: categoryColor,
                 tasks: [],
-                id: "",
+                id: id,
                 done: [],
               });
-              setSelectedCategory(categoryName);
+              setSelectedCategory(id);
+              setTimeout(() => {
+                setId(JSON.stringify(Date.now()));
+              }, 100);
               setCategoryName("");
-              setCategoryColor("");
+              setCategoryColor(
+                colors[Math.floor(Math.random() * colors.length)]
+              );
             } else if (type === "Rename") {
               if (
                 userName !== undefined &&

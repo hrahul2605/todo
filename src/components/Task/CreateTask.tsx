@@ -14,6 +14,8 @@ import {
   task,
   Category,
   state,
+  WINDOW_HEIGHT,
+  colors,
 } from "../../constants";
 import { StackNavigationProp } from "@react-navigation/stack";
 import AddCategory from "./AddCategory";
@@ -35,7 +37,7 @@ interface Props {
   addTask: (task: task) => any;
   category: Category[];
   addCategory: (category: Category) => any;
-  addCategoryTask: (task: { categoryName: string; task: task }) => any;
+  addCategoryTask: (task: { categoryId: string; task: task }) => any;
 }
 
 const mapStateToProps = (state: state) => ({
@@ -45,7 +47,7 @@ const mapStateToProps = (state: state) => ({
 const mapDispatchToProps = (dispatch: any) => ({
   addTask: (task: task) => dispatch(addTask(task)),
   addCategory: (category: Category) => dispatch(addCategory(category)),
-  addCategoryTask: (task: { categoryName: string; task: task }) =>
+  addCategoryTask: (task: { categoryId: string; task: task }) =>
     dispatch(addCategoryTask(task)),
 });
 
@@ -146,8 +148,8 @@ const CreateTask: FunctionComponent<Props> = ({
   const [desc, setDesc] = useState("");
 
   useEffect(() => {
-    if (route.params?.categoryName !== undefined) {
-      setSelectedCategory(route.params.categoryName);
+    if (route.params?.categoryId !== undefined) {
+      setSelectedCategory(route.params.categoryId);
     }
   }, []);
 
@@ -198,6 +200,7 @@ const CreateTask: FunctionComponent<Props> = ({
         transform: [{ translateX: transX }],
         left: SCREEN_WIDTH,
         paddingTop: 8,
+        height: WINDOW_HEIGHT,
       }}
     >
       <Animated.View
@@ -226,7 +229,10 @@ const CreateTask: FunctionComponent<Props> = ({
         />
       </Animated.View>
       <Animated.View
-        style={{ ...styles.headerContainer, opacity: mainViewOpacity }}
+        style={{
+          ...styles.headerContainer,
+          opacity: mainViewOpacity,
+        }}
       >
         <CreateTaskHeader
           goBack={navigation.goBack}
@@ -258,27 +264,38 @@ const CreateTask: FunctionComponent<Props> = ({
             setPressedOnce(true);
             if (!isCat) {
               if (desc === "") {
-                addTask({ date: date, title: title, id: "" });
+                addTask({
+                  date: date,
+                  title: title,
+                  id: "",
+                  color: colors[Math.floor(Math.random() * colors.length)],
+                });
               } else {
-                addTask({ date: date, title: title, id: "", desc: desc });
+                addTask({
+                  date: date,
+                  title: title,
+                  id: "",
+                  desc: desc,
+                  color: colors[Math.floor(Math.random() * colors.length)],
+                });
               }
             } else {
               if (desc === "") {
                 addCategoryTask({
-                  categoryName: selectedCategory,
+                  categoryId: selectedCategory,
                   task: { date: date, title: title, id: "" },
                 });
               } else {
                 addCategoryTask({
-                  categoryName: selectedCategory,
+                  categoryId: selectedCategory,
                   task: { date: date, title: title, id: "", desc: desc },
                 });
               }
             }
-            navigation.dispatch(StackActions.popToTop());
+            navigation.dispatch(StackActions.pop());
             Keyboard.dismiss();
           }}
-          disabled={pressedOnce}
+          disabled={pressedOnce || title === ""}
         >
           <View
             style={{
@@ -305,8 +322,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     zIndex: 10,
-    top: SCREEN_HEIGHT,
-    height: SCREEN_HEIGHT,
+    top: WINDOW_HEIGHT,
+    height: WINDOW_HEIGHT,
     elevation: 10,
   },
   headerContainer: {
@@ -327,10 +344,10 @@ const styles = StyleSheet.create({
     borderRadius: 45,
     marginHorizontal: 24,
     elevation: 10,
-    bottom: 24,
     justifyContent: "center",
     alignItems: "center",
     zIndex: 10,
+    bottom: 48,
   },
   createTaskText: {
     fontSize: 14,
@@ -339,12 +356,12 @@ const styles = StyleSheet.create({
   },
   datePickerContainer: {
     position: "absolute",
-    height: SCREEN_HEIGHT,
+    height: WINDOW_HEIGHT,
     width: SCREEN_WIDTH,
     elevation: 10,
-    zIndex: 10,
+    zIndex: 20,
     alignItems: "center",
     justifyContent: "center",
-    top: -SCREEN_HEIGHT,
+    top: -WINDOW_HEIGHT,
   },
 });

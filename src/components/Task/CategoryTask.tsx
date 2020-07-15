@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useState } from "react";
 import {
   View,
   Text,
@@ -24,7 +24,7 @@ import { connect } from "react-redux";
 import TaskItem from "./TaskItem";
 
 interface det {
-  categoryName: string | undefined;
+  categoryId: string | undefined;
   id: string;
 }
 
@@ -36,10 +36,10 @@ interface Props {
   category: Category[];
   removeCategory: (id: string) => void;
   addDoneCategoryTask: ({
-    categoryName,
+    categoryId,
     taskId,
   }: {
-    categoryName: string;
+    categoryId: string;
     taskId: string;
   }) => void;
   removeDoneCategoryTask: (det: det) => void;
@@ -54,12 +54,12 @@ const mapDispatchToProps = (dispatch: any) => ({
   removeCategoryTask: (det: det) => dispatch(removeCategoryTask(det)),
   removeCategory: (id: string) => dispatch(removeCategory(id)),
   addDoneCategoryTask: ({
-    categoryName,
+    categoryId,
     taskId,
   }: {
-    categoryName: string;
+    categoryId: string;
     taskId: string;
-  }) => dispatch(addDoneCategoryTask({ categoryName, taskId })),
+  }) => dispatch(addDoneCategoryTask({ categoryId, taskId })),
   removeDoneCategoryTask: (det: det) => dispatch(removeDoneCategoryTask(det)),
 });
 
@@ -74,7 +74,7 @@ const CategoryTask: FunctionComponent<Props> = ({
   removeDoneCategoryTask,
 }) => {
   const index = category.findIndex((item) => {
-    return item.categoryName === route.params.taskName;
+    return item.id === route.params.categoryId;
   });
   const opacity = React.useRef(new Animated.Value(0)).current;
   const [pressed, setPressed] = React.useState(false);
@@ -107,10 +107,25 @@ const CategoryTask: FunctionComponent<Props> = ({
     return unsubscribe;
   }, [pressed]);
 
+  const [loaded, setLoaded] = useState(false);
+
+  React.useEffect(() => {
+    let timer = setTimeout(() => setLoaded(true), 1000);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, []);
+
   const translateX = opacity.interpolate({
     inputRange: [0, 1, 2],
     outputRange: [0, -SCREEN_WIDTH, -SCREEN_WIDTH * 2],
   });
+
+  let taskLength = 0;
+  if (category[index] !== undefined) {
+    taskLength = category[index].tasks.length;
+  }
+
   return (
     <Animated.View
       style={{
@@ -144,6 +159,7 @@ const CategoryTask: FunctionComponent<Props> = ({
               setPressed(true);
               navigation.navigate("CreateTask", {
                 categoryName: route.params.taskName,
+                categoryId: route.params.categoryId,
               });
             }}
           >
@@ -195,6 +211,9 @@ const CategoryTask: FunctionComponent<Props> = ({
                       categoryName={route.params.taskName}
                       color={route.params.bgColor}
                       addDoneCategoryTask={addDoneCategoryTask}
+                      x={700 + index * 450}
+                      loaded={loaded}
+                      categoryId={route.params.categoryId}
                     />
                   );
                 }}
@@ -254,6 +273,9 @@ const CategoryTask: FunctionComponent<Props> = ({
                       addDoneCategoryTask={addDoneCategoryTask}
                       isCategoryDoneScreen={true}
                       removeDoneCategoryTask={removeDoneCategoryTask}
+                      x={700 + (index + taskLength) * 450}
+                      loaded={loaded}
+                      categoryId={route.params.categoryId}
                     />
                   );
                 }}

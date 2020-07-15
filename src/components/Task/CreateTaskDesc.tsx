@@ -82,10 +82,10 @@ const CreateTaskDesc: FunctionComponent<Props> = ({
               <TouchableWithoutFeedback
                 key={index}
                 onPress={() => {
-                  if (selectedCategory === item.categoryName) {
+                  if (selectedCategory === item.id) {
                     setSelectedCategory("");
                   } else {
-                    setSelectedCategory(item.categoryName);
+                    setSelectedCategory(item.id);
                   }
                 }}
               >
@@ -93,7 +93,7 @@ const CreateTaskDesc: FunctionComponent<Props> = ({
                   style={{
                     ...styles.categoryItem,
                     backgroundColor:
-                      selectedCategory === item.categoryName
+                      selectedCategory === item.id
                         ? item.categoryColor
                         : "#555555",
                   }}
@@ -102,7 +102,7 @@ const CreateTaskDesc: FunctionComponent<Props> = ({
                     style={{
                       ...styles.categoryItemText,
                       color:
-                        selectedCategory === item.categoryName
+                        selectedCategory === item.id
                           ? "#FFFF"
                           : "rgba(0, 0, 0, 0.5)",
                     }}
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
     marginBottom: 50,
     paddingHorizontal: 24,
     paddingTop: 14,
-    paddingBottom: 34,
+    paddingBottom: 54,
   },
   categoryItemContainer: {
     marginTop: 8,

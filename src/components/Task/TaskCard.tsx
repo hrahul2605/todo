@@ -1,5 +1,11 @@
 import * as React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  Animated,
+} from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList, SCREEN_WIDTH, task } from "../../constants";
 import PercentageCircle from "../PercentageCircle";
@@ -14,11 +20,10 @@ interface Props {
   tasks?: task[];
   date?: string;
   percentage?: number;
+  categoryId?: string;
 }
-const colors = ["#f9be7c", "#309397", "#6488e4", "#E46472"];
-
 function TaskCard({
-  color = colors[Math.floor(Math.random() * colors.length)],
+  color,
   isCategory,
   onPressed,
   name,
@@ -27,26 +32,57 @@ function TaskCard({
   tasks,
   date,
   percentage,
+  categoryId,
 }: Props) {
-  return (
-    <TouchableOpacity
-      onPress={() => {
+  const scale = new Animated.Value(1);
+
+  const handlePressAnimation = () => {
+    Animated.spring(scale, {
+      toValue: 0.9,
+      mass: 1,
+      stiffness: 40000,
+      damping: 400,
+      useNativeDriver: true,
+    }).start(() => {
+      Animated.spring(scale, {
+        toValue: 1,
+        mass: 1,
+        stiffness: 40000,
+        damping: 400,
+        useNativeDriver: true,
+      }).start(() => {
         if (onPressed !== undefined) {
           onPressed(true);
         }
         navigation.navigate("CategoryTask", {
           taskName: name,
           bgColor: color,
+          categoryId: categoryId,
         });
+      });
+    });
+  };
+
+  return (
+    <TouchableWithoutFeedback
+      onPress={() => {
+        handlePressAnimation();
       }}
       disabled={!isCategory}
     >
-      <View style={{ ...styles.cardContainer, backgroundColor: color }}>
+      <Animated.View
+        style={{
+          ...styles.cardContainer,
+          backgroundColor: color,
+          transform: [{ scale }],
+        }}
+      >
         <View
           style={{
-            marginVertical: 28,
+            marginTop: 24,
             justifyContent: "center",
             alignItems: "center",
+            marginBottom: 36,
           }}
         >
           {isCategory && percentage !== undefined ? (
@@ -78,8 +114,8 @@ function TaskCard({
             ) : null}
           </View>
         </View>
-      </View>
-    </TouchableOpacity>
+      </Animated.View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -91,6 +127,8 @@ const styles = StyleSheet.create({
     borderRadius: 45,
     marginBottom: 24,
     paddingHorizontal: 12,
+    elevation: 10,
+    zIndex: 10,
   },
   percentage: {
     height: 64,
@@ -103,7 +141,7 @@ const styles = StyleSheet.create({
   },
   cardTextHeading: {
     fontSize: 14,
-    fontFamily: "regular",
+    fontFamily: "medium",
     color: "#FFFF",
     textAlign: "center",
   },
@@ -111,5 +149,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: "light",
     color: "#FFFF",
+    textAlign: "center",
   },
 });

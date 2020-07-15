@@ -30,7 +30,10 @@ const CreateTaskHeader: FunctionComponent<Props> = ({
   return (
     <>
       <View style={{ ...styles.nav }}>
-        <TouchableOpacity onPress={() => goBack()}>
+        <TouchableOpacity
+          onPress={() => goBack()}
+          style={{ ...styles.backBtn }}
+        >
           <Left color="black" />
         </TouchableOpacity>
       </View>
@@ -53,14 +56,16 @@ const CreateTaskHeader: FunctionComponent<Props> = ({
         <View style={{ ...styles.title }}>
           <Text style={{ ...styles.titleText }}>Date</Text>
           <View style={{ flexDirection: "row" }}>
-            <TextInput
-              placeholderTextColor="#000000"
-              placeholder={`${day[datee.getDay()]}, ${datee.getDate()} ${
-                month[datee.getMonth()].month
-              }`}
-              style={{ ...styles.dateInput }}
-              value={date}
-            />
+            <View pointerEvents="none">
+              <TextInput
+                placeholderTextColor="#000000"
+                placeholder={`${day[datee.getDay()]}, ${datee.getDate()} ${
+                  month[datee.getMonth()].month
+                }`}
+                style={{ ...styles.dateInput }}
+                value={date}
+              />
+            </View>
             <TouchableOpacity
               style={{ ...styles.calenderIcon }}
               onPress={() => animateDateOpen()}
@@ -79,9 +84,13 @@ export default CreateTaskHeader;
 const styles = StyleSheet.create({
   nav: {
     height: 56,
+    width: 72,
+  },
+  backBtn: {
     justifyContent: "space-between",
     paddingVertical: 12,
     paddingHorizontal: 24,
+    height: "100%",
   },
   heading: {
     height: 56,

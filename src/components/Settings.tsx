@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import Close from "../assets/icons/close.svg";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList, SCREEN_HEIGHT, SCREEN_WIDTH } from "../constants";
+import { RootStackParamList, SCREEN_WIDTH, WINDOW_HEIGHT } from "../constants";
 import AddCategory from "./Task/AddCategory";
 
 interface Props {
@@ -46,7 +46,7 @@ const Settings: FunctionComponent<Props> = ({ navigation }) => {
 
   const translateY = opacity.interpolate({
     inputRange: [0, 0.1, 1],
-    outputRange: [0, -SCREEN_HEIGHT, -SCREEN_HEIGHT],
+    outputRange: [0, -WINDOW_HEIGHT, -WINDOW_HEIGHT],
   });
 
   const animateModal = () => {
@@ -212,8 +212,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     zIndex: 10,
-    top: SCREEN_HEIGHT,
-    height: SCREEN_HEIGHT,
+    top: WINDOW_HEIGHT,
+    height: WINDOW_HEIGHT,
     elevation: 10,
   },
 });

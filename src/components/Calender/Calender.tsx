@@ -1,13 +1,14 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useEffect, useRef } from "react";
 import {
   View,
   TouchableOpacity,
   StyleSheet,
   Text,
   ScrollView,
+  Animated,
 } from "react-native";
 import { NavigationProp } from "@react-navigation/native";
-import { RootStackParamList, days, time } from "../../constants";
+import { RootStackParamList, days, time, SCREEN_WIDTH } from "../../constants";
 import Left from "../../assets/icons/left.svg";
 interface Props {
   navigation: NavigationProp<RootStackParamList>;
@@ -39,80 +40,113 @@ function RenderDates(props: any) {
 }
 
 const Calender: FunctionComponent<Props> = ({ navigation }) => {
-  return (
-    <>
-      <View style={{ flex: 1, paddingTop: 8 }}>
-        <View
-          style={{
-            elevation: 0.1,
-            zIndex: 5,
-            position: "absolute",
-            top: 0,
-            backgroundColor: "#282828",
+  const translateX = useRef(new Animated.Value(0)).current;
 
-            paddingTop: 8,
-          }}
-        >
-          <View style={{ ...styles.headerContainer }}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Left color="white" />
-            </TouchableOpacity>
-          </View>
-          <View style={{ ...styles.headingContainer }}>
-            <Text style={{ ...styles.headingText }}>Today</Text>
-          </View>
-          <View style={{ ...styles.nameContainer }}>
-            <Text style={{ ...styles.nameText }}>
-              Good morning, Captain Dushtu {/*  Name prop*/}
-            </Text>
-          </View>
-          <ScrollView
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            style={{
-              maxHeight: 88,
-            }}
-            contentContainerStyle={{ paddingVertical: 12, paddingLeft: 24 }}
-          >
-            {days.map((item, index) => {
-              return <RenderDates item={item} key={index} />;
-            })}
-          </ScrollView>
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      Animated.spring(translateX, {
+        toValue: -SCREEN_WIDTH,
+        mass: 1,
+        stiffness: 500,
+        damping: 60,
+        useNativeDriver: true,
+      }).start();
+    });
+    return unsubscribe;
+  }, [navigation]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("blur", () => {
+      Animated.spring(translateX, {
+        toValue: 0,
+        mass: 1,
+        stiffness: 500,
+        damping: 60,
+        useNativeDriver: true,
+      }).start();
+    });
+    return unsubscribe;
+  }, [navigation]);
+
+  return (
+    <Animated.View
+      style={{
+        flex: 1,
+        paddingTop: 8,
+        left: SCREEN_WIDTH,
+        transform: [{ translateX }],
+      }}
+    >
+      <View
+        style={{
+          elevation: 0.1,
+          zIndex: 5,
+          position: "absolute",
+          top: 0,
+          backgroundColor: "#282828",
+
+          paddingTop: 8,
+        }}
+      >
+        <View style={{ ...styles.headerContainer }}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Left color="white" />
+          </TouchableOpacity>
+        </View>
+        <View style={{ ...styles.headingContainer }}>
+          <Text style={{ ...styles.headingText }}>Today</Text>
+        </View>
+        <View style={{ ...styles.nameContainer }}>
+          <Text style={{ ...styles.nameText }}>
+            Good morning, Captain Dushtu {/*  Name prop*/}
+          </Text>
         </View>
         <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingVertical: 12,
-            flexDirection: "row",
-            paddingTop: 230,
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          style={{
+            maxHeight: 88,
           }}
+          contentContainerStyle={{ paddingVertical: 12, paddingLeft: 24 }}
         >
-          <View style={{ ...styles.scrollViewLeftContainer }}>
-            {time.map((item, index) => {
-              return (
-                <View key={index} style={{ ...styles.timeContainer }}>
-                  <Text style={{ ...styles.timeText }}>{item}</Text>
-                </View>
-              );
-            })}
-          </View>
-          <View style={{ ...styles.scrollViewRightContainer }}>
-            {time.map((item, index) => {
-              return (
-                <View key={index} style={{ ...styles.taskContainer }}>
-                  <View style={{ ...styles.taskDetail }}>
-                    <Text style={{ ...styles.emptyText }}>
-                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                      - - - - -
-                    </Text>
-                  </View>
-                </View>
-              );
-            })}
-          </View>
+          {days.map((item, index) => {
+            return <RenderDates item={item} key={index} />;
+          })}
         </ScrollView>
       </View>
-    </>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingVertical: 12,
+          flexDirection: "row",
+          paddingTop: 230,
+        }}
+      >
+        <View style={{ ...styles.scrollViewLeftContainer }}>
+          {time.map((item, index) => {
+            return (
+              <View key={index} style={{ ...styles.timeContainer }}>
+                <Text style={{ ...styles.timeText }}>{item}</Text>
+              </View>
+            );
+          })}
+        </View>
+        <View style={{ ...styles.scrollViewRightContainer }}>
+          {time.map((item, index) => {
+            return (
+              <View key={index} style={{ ...styles.taskContainer }}>
+                <View style={{ ...styles.taskDetail }}>
+                  <Text style={{ ...styles.emptyText }}>
+                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                    - - - -
+                  </Text>
+                </View>
+              </View>
+            );
+          })}
+        </View>
+      </ScrollView>
+    </Animated.View>
   );
 };
 

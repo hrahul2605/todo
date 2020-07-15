@@ -8,6 +8,8 @@ import Right from "../../assets/icons/right.svg";
 import Loader from "../../assets/icons/loader.svg";
 import { connect } from "react-redux";
 import { StackNavigationProp } from "@react-navigation/stack";
+import Animated from "react-native-reanimated";
+import { spring } from "react-native-redash";
 
 interface Category {
   tasks: task[];
@@ -40,24 +42,36 @@ const Feed: React.FunctionComponent<Props> = ({
   tasks,
   done,
 }) => {
+  const config = { mass: 1, damping: 70, stiffness: 300 };
+
   return (
     <View style={{ height: 260, width: SCREEN_WIDTH }}>
       <View style={{ ...styles.feedHeadingContainer }}>
         <Text style={{ ...styles.feedText }}>My tasks</Text>
         <View style={{ ...styles.feedEvents }}>
-          <TouchableOpacity onPress={() => navigation.navigate("Calender")}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("Calender")}
+            style={{ flex: 1 }}
+          >
             <Calendar color="white" />
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
               navigation.navigate("CreateTask");
             }}
+            style={{ flex: 1, alignItems: "flex-end" }}
           >
             <Plus color="white" />
           </TouchableOpacity>
         </View>
       </View>
-      <View style={{ ...styles.feedsContainer }}>
+      <Animated.View
+        style={{
+          ...styles.feedsContainer,
+          left: 150,
+          transform: [{ translateX: spring({ from: 0, to: -150, config }) }],
+        }}
+      >
         <View style={{ ...styles.feedIcon }}>
           <Clock color="white" />
         </View>
@@ -73,8 +87,14 @@ const Feed: React.FunctionComponent<Props> = ({
           <Text style={{ ...styles.feedText, fontSize: 16 }}>To do</Text>
           <Text style={{ ...styles.feedDesc }}>{tasks.length} tasks now</Text>
         </TouchableOpacity>
-      </View>
-      <View style={{ ...styles.feedsContainer }}>
+      </Animated.View>
+      <Animated.View
+        style={{
+          ...styles.feedsContainer,
+          transform: [{ translateX: spring({ from: 0, to: -250, config }) }],
+          left: 250,
+        }}
+      >
         <View style={{ ...styles.feedIcon, backgroundColor: "#F9BE7C" }}>
           <Loader color="white" />
         </View>
@@ -85,15 +105,23 @@ const Feed: React.FunctionComponent<Props> = ({
               screenSub: "Smells good! Something is cooking!",
             });
           }}
-          style={{ ...styles.feedDetails }}
+          style={{
+            ...styles.feedDetails,
+          }}
         >
           <Text style={{ ...styles.feedText, fontSize: 16 }}>In progess</Text>
           <Text style={{ ...styles.feedDesc }}>
             {category.length} tasks now
           </Text>
         </TouchableOpacity>
-      </View>
-      <View style={{ ...styles.feedsContainer }}>
+      </Animated.View>
+      <Animated.View
+        style={{
+          ...styles.feedsContainer,
+          transform: [{ translateX: spring({ from: 0, to: -350, config }) }],
+          left: 350,
+        }}
+      >
         <View style={{ ...styles.feedIcon, backgroundColor: "#6488E4" }}>
           <Right color="white" />
         </View>
@@ -109,7 +137,7 @@ const Feed: React.FunctionComponent<Props> = ({
           <Text style={{ ...styles.feedText, fontSize: 16 }}>Done</Text>
           <Text style={{ ...styles.feedDesc }}>{done.length} completed.</Text>
         </TouchableOpacity>
-      </View>
+      </Animated.View>
     </View>
   );
 };
@@ -157,8 +185,7 @@ const styles = StyleSheet.create({
   },
   feedDetails: {
     height: 44,
-    flexDirection: "column",
-    justifyContent: "flex-start",
+    justifyContent: "center",
     alignItems: "flex-start",
     flex: 1,
     marginLeft: 12,
