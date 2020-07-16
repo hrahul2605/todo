@@ -1,5 +1,16 @@
 import { Dimensions, StatusBar } from "react-native";
+import Av1 from "./assets/avatars/1.svg";
+import Av2 from "./assets/avatars/2.svg";
+import Av3 from "./assets/avatars/3.svg";
+import Av4 from "./assets/avatars/4.svg";
+import Av5 from "./assets/avatars/5.svg";
+import Av6 from "./assets/avatars/6.svg";
+import Av7 from "./assets/avatars/7.svg";
+import Av8 from "./assets/avatars/8.svg";
+import Av9 from "./assets/avatars/9.svg";
+import Av10 from "./assets/avatars/10.svg";
 
+export const Avatar = [Av1, Av2, Av3, Av4, Av5, Av6, Av7, Av8, Av9, Av10];
 export const SCREEN_HEIGHT = Dimensions.get("screen").height;
 export const SCREEN_WIDTH = Dimensions.get("screen").width;
 export const STATUS_BAR = StatusBar.currentHeight || 24;
@@ -18,6 +29,11 @@ export const month = [
   { month: "November", days: 30 },
   { month: "December", days: 31 },
 ];
+
+export const getMonth = (mon: string) => {
+  const index = month.findIndex(({ month }) => month.slice(0, 3) === mon);
+  return JSON.stringify(index + 1);
+};
 
 export const day = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 export const time = [
@@ -81,7 +97,13 @@ export type RootStackParamList = {
   FeedScreen: { screen: string; screenSub: string };
   CreateTask:
     | undefined
-    | { categoryName: string; categoryId: string | undefined };
+    | {
+        categoryName?: string;
+        categoryId?: string;
+        editScreen?: boolean;
+        task?: task;
+        isCategoryTaskEdit?: boolean | undefined;
+      };
   CategoryTask: {
     taskName: string;
     bgColor: string;

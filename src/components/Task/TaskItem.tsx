@@ -49,6 +49,8 @@ interface ItemProps {
   x: number;
   loaded: boolean;
   categoryId?: string;
+  handleEdit?: ({ task }: { task: task }) => void;
+  handleCategoryTaskEdit?: ({ task }: { task: task }) => void;
 }
 
 const TaskItem: React.FunctionComponent<ItemProps> = ({
@@ -66,6 +68,8 @@ const TaskItem: React.FunctionComponent<ItemProps> = ({
   x,
   loaded,
   categoryId,
+  handleEdit,
+  handleCategoryTaskEdit,
 }) => {
   const {
     gestureHandler,
@@ -135,7 +139,17 @@ const TaskItem: React.FunctionComponent<ItemProps> = ({
             <Delete color="white" width={16} />
           </TouchableOpacity>
           {!doneScreen && !isCategoryDoneScreen ? (
-            <Edit color="white" width={16} />
+            <TouchableOpacity
+              onPress={() => {
+                if (handleEdit !== undefined) {
+                  handleEdit({ task: task });
+                } else if (handleCategoryTaskEdit !== undefined) {
+                  handleCategoryTaskEdit({ task: task });
+                }
+              }}
+            >
+              <Edit color="white" width={16} />
+            </TouchableOpacity>
           ) : null}
           {!doneScreen && !isCategoryDoneScreen ? (
             <TouchableOpacity
@@ -180,7 +194,7 @@ const TaskItem: React.FunctionComponent<ItemProps> = ({
               </Text>
             ) : null}
             <Text style={{ ...styles.taskDesc, fontSize: 10 }}>
-              {task.date}
+              {task.date.slice(0, 11)}
             </Text>
           </View>
         </Animated.View>

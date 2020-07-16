@@ -109,7 +109,7 @@ function TaskCard({
                   paddingTop: 1,
                 }}
               >
-                {date}
+                {date.slice(0, 11)}
               </Text>
             ) : null}
           </View>

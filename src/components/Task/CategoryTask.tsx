@@ -6,13 +6,20 @@ import {
   StyleSheet,
   FlatList,
   Animated,
+  BackHandler,
 } from "react-native";
 import Left from "../../assets/icons/left.svg";
 import Plus from "../../assets/icons/plus.svg";
 import Delete from "../../assets/icons/delete.svg";
-import { RouteProp } from "@react-navigation/native";
+import Edit from "../../assets/icons/edit.svg";
+import { RouteProp, useFocusEffect } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList, SCREEN_WIDTH, Category } from "../../constants";
+import {
+  RootStackParamList,
+  SCREEN_WIDTH,
+  Category,
+  task,
+} from "../../constants";
 import {
   removeTask,
   removeCategoryTask,
@@ -22,6 +29,7 @@ import {
 } from "../../redux/ActionCreator";
 import { connect } from "react-redux";
 import TaskItem from "./TaskItem";
+import AddCategory from "./AddCategory";
 
 interface det {
   categoryId: string | undefined;
@@ -73,7 +81,7 @@ const CategoryTask: FunctionComponent<Props> = ({
   addDoneCategoryTask,
   removeDoneCategoryTask,
 }) => {
-  const index = category.findIndex((item) => {
+  const i = category.findIndex((item) => {
     return item.id === route.params.categoryId;
   });
   const opacity = React.useRef(new Animated.Value(0)).current;
@@ -122,120 +130,122 @@ const CategoryTask: FunctionComponent<Props> = ({
   });
 
   let taskLength = 0;
-  if (category[index] !== undefined) {
-    taskLength = category[index].tasks.length;
+  if (category[i] !== undefined) {
+    taskLength = category[i].tasks.length;
   }
 
+  const handleCategoryTaskEdit = ({ task }: { task: task }) => {
+    setPressed(true);
+    navigation.navigate("CreateTask", {
+      editScreen: true,
+      isCategoryTaskEdit: true,
+      categoryId: category[i].id,
+      task,
+    });
+  };
+
+  const [modal, setModal] = useState(false);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        if (modal) {
+          setModal(false);
+          return true;
+        } else {
+          return false;
+        }
+      };
+
+      BackHandler.addEventListener("hardwareBackPress", onBackPress);
+
+      return () =>
+        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    }, [modal])
+  );
   return (
-    <Animated.View
-      style={{
-        flex: 1,
-        opacity,
-        transform: [{ translateX }],
-        left: SCREEN_WIDTH,
-        paddingTop: 8,
-      }}
-    >
-      <View style={{ ...styles.nav }}>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.goBack();
-          }}
-        >
-          <Left color="white" />
-        </TouchableOpacity>
-        <View style={{ flexDirection: "row" }}>
+    <>
+      {category[i] !== undefined ? (
+        <AddCategory
+          editCategoryId={category[i].id}
+          editCategoryName={category[i].categoryName}
+          editCategoryColor={category[i].categoryColor}
+          type="Edit Category"
+          modal={modal}
+          setModal={setModal}
+        />
+      ) : null}
+      <Animated.View
+        style={{
+          flex: 1,
+          opacity,
+          transform: [{ translateX }],
+          left: SCREEN_WIDTH,
+          paddingTop: 24,
+        }}
+      >
+        <View style={{ ...styles.nav }}>
           <TouchableOpacity
             onPress={() => {
               navigation.goBack();
-              removeCategory(category[index].id);
-            }}
-            style={{ marginRight: 25 }}
-          >
-            <Delete color="white" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              setPressed(true);
-              navigation.navigate("CreateTask", {
-                categoryName: route.params.taskName,
-                categoryId: route.params.categoryId,
-              });
             }}
           >
-            <Plus color="white" />
+            <Left color="white" />
           </TouchableOpacity>
+          <View style={{ flexDirection: "row" }}>
+            <TouchableOpacity
+              onPress={() => setModal(true)}
+              style={{ paddingRight: 25 }}
+            >
+              <Edit color="white" width={20} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.goBack();
+                removeCategory(category[i].id);
+              }}
+              style={{ marginRight: 15, paddingRight: 10 }}
+            >
+              <Delete color="white" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setPressed(true);
+                if (category[i] !== undefined) {
+                  navigation.navigate("CreateTask", {
+                    categoryName: category[i].categoryName,
+                    categoryId: category[i].id,
+                  });
+                }
+              }}
+            >
+              <Plus color="white" />
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-      <View style={{ ...styles.headingContainer }}>
-        <Text style={{ ...styles.headingText }}>{route.params.taskName}</Text>
-      </View>
-      <View style={{ ...styles.motivateTextContainer }}>
-        <Text style={{ ...styles.motivateText }}>Giddy-up Captain!</Text>
-      </View>
-      <FlatList
-        data={null}
-        renderItem={null}
-        ListHeaderComponent={
-          category[index] !== undefined ? (
-            <>
-              <View style={{ paddingHorizontal: 36, marginTop: 12 }}>
-                <Text
-                  style={{ color: "#FFFF", fontFamily: "bold", fontSize: 15 }}
-                >
-                  To do.
-                </Text>
-                {category[index].tasks.length === 0 ? (
+        <View style={{ ...styles.headingContainer }}>
+          {category[i] !== undefined ? (
+            <Text style={{ ...styles.headingText }}>
+              {category[i].categoryName}
+            </Text>
+          ) : null}
+        </View>
+        <View style={{ ...styles.motivateTextContainer }}>
+          <Text style={{ ...styles.motivateText }}>Giddy-up Captain!</Text>
+        </View>
+        <FlatList
+          data={null}
+          renderItem={null}
+          ListHeaderComponent={
+            category[i] !== undefined ? (
+              <>
+                <View style={{ paddingHorizontal: 36, marginTop: 12 }}>
                   <Text
-                    style={{
-                      color: "#FFFF",
-                      fontFamily: "light",
-                      fontSize: 12,
-                      marginTop: 10,
-                    }}
+                    style={{ color: "#FFFF", fontFamily: "bold", fontSize: 15 }}
                   >
-                    No tasks added
+                    To do.
                   </Text>
-                ) : null}
-              </View>
-              <FlatList
-                nestedScrollEnabled={true}
-                data={category[index].tasks}
-                renderItem={({ item, index }) => {
-                  return (
-                    <TaskItem
-                      key={index}
-                      task={item}
-                      removeTask={removeTask}
-                      removeCategoryTask={removeCategoryTask}
-                      categoryName={route.params.taskName}
-                      color={route.params.bgColor}
-                      addDoneCategoryTask={addDoneCategoryTask}
-                      x={700 + index * 450}
-                      loaded={loaded}
-                      categoryId={route.params.categoryId}
-                    />
-                  );
-                }}
-                keyExtractor={(item) => item.id}
-                showsVerticalScrollIndicator={false}
-                style={{ ...styles.scrollStyle }}
-                contentContainerStyle={{ ...styles.scrollContainer }}
-              />
-            </>
-          ) : null
-        }
-        ListFooterComponent={
-          category[index] !== undefined ? (
-            <>
-              <View style={{ paddingHorizontal: 36 }}>
-                <Text
-                  style={{ color: "#FFFF", fontFamily: "bold", fontSize: 15 }}
-                >
-                  Done
-                </Text>
-                {category[index].done.length === 0 ? (
-                  category[index].tasks.length === 0 ? (
+                  {category[i].tasks.length === 0 ? (
                     <Text
                       style={{
                         color: "#FFFF",
@@ -244,51 +254,103 @@ const CategoryTask: FunctionComponent<Props> = ({
                         marginTop: 10,
                       }}
                     >
-                      Nothing completed
+                      No tasks added
                     </Text>
-                  ) : (
-                    <Text
-                      style={{
-                        color: "#FFFF",
-                        fontFamily: "light",
-                        fontSize: 12,
-                        marginTop: 10,
-                      }}
-                    >
-                      You lazy bastard, do some work!
-                    </Text>
-                  )
-                ) : null}
-              </View>
-              <FlatList
-                nestedScrollEnabled={true}
-                data={category[index].done}
-                renderItem={({ item, index }) => {
-                  return (
-                    <TaskItem
-                      key={index}
-                      task={item}
-                      categoryName={route.params.taskName}
-                      color="#6488e4"
-                      addDoneCategoryTask={addDoneCategoryTask}
-                      isCategoryDoneScreen={true}
-                      removeDoneCategoryTask={removeDoneCategoryTask}
-                      x={700 + (index + taskLength) * 450}
-                      loaded={loaded}
-                      categoryId={route.params.categoryId}
-                    />
-                  );
-                }}
-                keyExtractor={(item) => item.id}
-                showsVerticalScrollIndicator={false}
-                style={{ ...styles.scrollStyle }}
-                contentContainerStyle={{ ...styles.scrollContainer }}
-              />
-            </>
-          ) : null
-        }
-      />
-    </Animated.View>
+                  ) : null}
+                </View>
+                <FlatList
+                  nestedScrollEnabled={true}
+                  data={category[i].tasks}
+                  renderItem={({ item, index }) => {
+                    return (
+                      <TaskItem
+                        key={index}
+                        task={item}
+                        removeTask={removeTask}
+                        removeCategoryTask={removeCategoryTask}
+                        categoryName={category[i].categoryName}
+                        color={category[i].categoryColor}
+                        addDoneCategoryTask={addDoneCategoryTask}
+                        x={700 + index * 450}
+                        loaded={loaded}
+                        categoryId={route.params.categoryId}
+                        handleCategoryTaskEdit={handleCategoryTaskEdit}
+                      />
+                    );
+                  }}
+                  keyExtractor={(item) => item.id}
+                  showsVerticalScrollIndicator={false}
+                  style={{ ...styles.scrollStyle }}
+                  contentContainerStyle={{ ...styles.scrollContainer }}
+                />
+              </>
+            ) : null
+          }
+          ListFooterComponent={
+            category[i] !== undefined ? (
+              <>
+                <View style={{ paddingHorizontal: 36 }}>
+                  <Text
+                    style={{ color: "#FFFF", fontFamily: "bold", fontSize: 15 }}
+                  >
+                    Done
+                  </Text>
+                  {category[i].done.length === 0 ? (
+                    category[i].tasks.length === 0 ? (
+                      <Text
+                        style={{
+                          color: "#FFFF",
+                          fontFamily: "light",
+                          fontSize: 12,
+                          marginTop: 10,
+                        }}
+                      >
+                        Nothing completed
+                      </Text>
+                    ) : (
+                      <Text
+                        style={{
+                          color: "#FFFF",
+                          fontFamily: "light",
+                          fontSize: 12,
+                          marginTop: 10,
+                        }}
+                      >
+                        You lazy bastard, do some work!
+                      </Text>
+                    )
+                  ) : null}
+                </View>
+                <FlatList
+                  nestedScrollEnabled={true}
+                  data={category[i].done}
+                  renderItem={({ item, index }) => {
+                    return (
+                      <TaskItem
+                        key={index}
+                        task={item}
+                        categoryName={category[i].categoryName}
+                        color="#6488e4"
+                        addDoneCategoryTask={addDoneCategoryTask}
+                        isCategoryDoneScreen={true}
+                        removeDoneCategoryTask={removeDoneCategoryTask}
+                        x={700 + (index + taskLength) * 450}
+                        loaded={loaded}
+                        categoryId={route.params.categoryId}
+                      />
+                    );
+                  }}
+                  keyExtractor={(item) => item.id}
+                  showsVerticalScrollIndicator={false}
+                  style={{ ...styles.scrollStyle }}
+                  contentContainerStyle={{ ...styles.scrollContainer }}
+                />
+              </>
+            ) : null
+          }
+        />
+      </Animated.View>
+    </>
   );
 };
 

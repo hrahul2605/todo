@@ -12,19 +12,21 @@ import { SCREEN_WIDTH, day, month } from "../../constants";
 
 interface Props {
   goBack(): void;
-  animateDateOpen: () => void;
   setTitle: React.Dispatch<React.SetStateAction<string>>;
   title: string;
   setDate: React.Dispatch<React.SetStateAction<string>>;
   date: string;
+  editScreen?: boolean;
+  setDateAnimate?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const CreateTaskHeader: FunctionComponent<Props> = ({
   goBack,
-  animateDateOpen,
   title,
   setTitle,
   date,
+  editScreen = false,
+  setDateAnimate,
 }) => {
   const datee = new Date();
   return (
@@ -38,7 +40,9 @@ const CreateTaskHeader: FunctionComponent<Props> = ({
         </TouchableOpacity>
       </View>
       <View style={{ ...styles.heading }}>
-        <Text style={{ ...styles.headingText }}>Create new task</Text>
+        <Text style={{ ...styles.headingText }}>
+          {!editScreen ? "Create new task" : "Edit task"}
+        </Text>
       </View>
       <View style={{ ...styles.taskContainer }}>
         <View style={{ ...styles.title }}>
@@ -63,12 +67,16 @@ const CreateTaskHeader: FunctionComponent<Props> = ({
                   month[datee.getMonth()].month
                 }`}
                 style={{ ...styles.dateInput }}
-                value={date}
+                value={date.slice(0, 11)}
               />
             </View>
             <TouchableOpacity
               style={{ ...styles.calenderIcon }}
-              onPress={() => animateDateOpen()}
+              onPress={() => {
+                if (setDateAnimate !== undefined) {
+                  setDateAnimate(true);
+                }
+              }}
             >
               <Calendar color="#000000" />
             </TouchableOpacity>

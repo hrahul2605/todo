@@ -2,10 +2,7 @@ import * as React from "react";
 import * as Font from "expo-font";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import {
-  STATUS_BAR,
-  RootStackParamList,
-} from "../constants";
+import { STATUS_BAR, RootStackParamList } from "../constants";
 import { NavigationContainer } from "@react-navigation/native";
 import {
   createStackNavigator,
@@ -30,16 +27,14 @@ export default function Main() {
     semiBold: require("../assets/fonts/Montserrat-SemiBold.ttf"),
     light: require("../assets/fonts/Montserrat-Light.ttf"),
   });
-  if (!loaded) {
-    return <Loading />;
-  } else {
-    return (
-      <>
-        <StatusBar backgroundColor="#FFCC66" />
-        <SafeAreaProvider
-          style={{ flex: 1, marginTop: STATUS_BAR, backgroundColor: "#282828" }}
-        >
-          <NavigationContainer>
+  return (
+    <>
+      <StatusBar />
+      <SafeAreaProvider style={{ flex: 1, backgroundColor: "#282828" }}>
+        <NavigationContainer>
+          {!loaded ? (
+            <Loading />
+          ) : (
             <Stack.Navigator
               initialRouteName="Home"
               screenOptions={{
@@ -55,9 +50,9 @@ export default function Main() {
               <Stack.Screen name="Calender" component={Calender} />
               <Stack.Screen name="Settings" component={Settings} />
             </Stack.Navigator>
-          </NavigationContainer>
-        </SafeAreaProvider>
-      </>
-    );
-  }
+          )}
+        </NavigationContainer>
+      </SafeAreaProvider>
+    </>
+  );
 }

@@ -104,6 +104,11 @@ const FeedScreen: React.FunctionComponent<Props> = ({
     outputRange: [0, -SCREEN_WIDTH, -SCREEN_WIDTH * 2],
   });
 
+  const handleEdit = ({ task }: { task: task }) => {
+    setPressed(true);
+    navigation.navigate("CreateTask", { editScreen: true, task });
+  };
+
   return (
     <Animated.View
       style={{
@@ -121,7 +126,7 @@ const FeedScreen: React.FunctionComponent<Props> = ({
           zIndex: 20,
           backgroundColor: "#282828",
           width: "100%",
-          paddingTop: 8,
+          paddingTop: 24,
         }}
       >
         <View style={{ ...styles.nav }}>
@@ -167,6 +172,7 @@ const FeedScreen: React.FunctionComponent<Props> = ({
                     x={700 + index * 450}
                     loaded={loaded}
                     color={item.color}
+                    handleEdit={handleEdit}
                   />
                 )}
                 contentContainerStyle={{ paddingTop: 139, paddingBottom: 50 }}
@@ -233,7 +239,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(FeedScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 8,
+    paddingTop: 24,
   },
   nav: {
     height: 56,

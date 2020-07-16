@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,12 +6,21 @@ import {
   StyleSheet,
   TouchableOpacity,
   TouchableWithoutFeedback,
+  Animated,
 } from "react-native";
-import { SCREEN_WIDTH, Category, state, user, colors } from "../../constants";
+import {
+  SCREEN_WIDTH,
+  Category,
+  state,
+  user,
+  colors,
+  SCREEN_HEIGHT,
+  WINDOW_HEIGHT,
+} from "../../constants";
 import Close from "../../assets/icons/close.svg";
 import Correct from "../../assets/icons/correct.svg";
 import { connect } from "react-redux";
-import { updateDetails } from "../../redux/ActionCreator";
+import { updateDetails, editCategory } from "../../redux/ActionCreator";
 
 const mapStateToProps = (state: state) => ({
   user: state.user,
@@ -20,178 +29,264 @@ const mapStateToProps = (state: state) => ({
 const mapDispatchToProps = (dispatch: any) => ({
   updateDetails: ({ userName, userDesc }: user) =>
     dispatch(updateDetails({ userName, userDesc })),
+  editCategory: ({
+    categoryColor,
+    categoryName,
+    id,
+  }: {
+    categoryColor: string;
+    categoryName: string;
+    id: string;
+  }) =>
+    dispatch(
+      editCategory({
+        categoryColor,
+        categoryName,
+        id,
+      })
+    ),
 });
 
 interface Props {
-  close: Function;
   type: string;
   addCategory?: (category: Category) => any;
   setSelectedCategory?: React.Dispatch<React.SetStateAction<string>>;
   user?: user;
   updateDetails?: ({ userName, userDesc }: user) => void;
+  modal: boolean;
+  setModal: React.Dispatch<React.SetStateAction<boolean>>;
+  editCategoryId?: string;
+  editCategoryName?: string;
+  editCategoryColor?: string;
+  editCategory?: ({
+    categoryColor,
+    categoryName,
+    id,
+  }: {
+    categoryColor: string;
+    categoryName: string;
+    id: string;
+  }) => void;
 }
 
 const AddCategory: FunctionComponent<Props> = ({
-  close,
   type,
   addCategory,
   setSelectedCategory,
   user,
   updateDetails,
+  modal,
+  setModal,
+  editCategoryColor,
+  editCategoryId,
+  editCategoryName,
+  editCategory,
 }) => {
-  const [categoryName, setCategoryName] = useState("");
-  const [categoryColor, setCategoryColor] = useState(
-    colors[Math.floor(Math.random() * colors.length)]
+  const [categoryName, setCategoryName] = useState(
+    editCategoryName !== undefined ? editCategoryName : ""
   );
+  const [categoryColor, setCategoryColor] = useState(
+    editCategoryColor !== undefined
+      ? editCategoryColor
+      : colors[Math.floor(Math.random() * colors.length)]
+  );
+
   const [userName, setUserName] = useState(user?.userName);
   const [userDesc, setUserDesc] = useState(user?.userDesc);
   const [id, setId] = useState(JSON.stringify(Date.now()));
 
+  const opacity = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (modal) {
+      Animated.spring(opacity, {
+        toValue: 1,
+        useNativeDriver: true,
+        mass: 0.5,
+      }).start();
+    } else {
+      Animated.spring(opacity, {
+        toValue: 0,
+        useNativeDriver: true,
+        mass: 0.3,
+      }).start(() =>
+        setCategoryColor(
+          editCategoryColor !== undefined
+            ? categoryColor
+            : colors[Math.floor(Math.random() * colors.length)]
+        )
+      );
+    }
+  }, [modal]);
+
+  const scale = opacity.interpolate({
+    inputRange: [0, 0.1, 1],
+    outputRange: [0.7, 0.7, 1],
+  });
+
+  const translateY = opacity.interpolate({
+    inputRange: [0, 0.1, 1],
+    outputRange: [0, -SCREEN_HEIGHT, -SCREEN_HEIGHT],
+  });
+
   return (
-    <View style={{ ...styles.container }}>
-      <View style={{ ...styles.heading }}>
-        <Text style={{ ...styles.headingText }}>{type}</Text>
-        <TouchableOpacity onPress={() => close()}>
-          <Close color="white" />
-        </TouchableOpacity>
-      </View>
-      {type === "Add Category" ? (
-        <View style={{ ...styles.detailsContainer }}>
-          <View style={{ ...styles.nameInputContainer }}>
-            <Text style={{ ...styles.nameText }}>Name</Text>
-            <TextInput
-              placeholder="Category"
-              placeholderTextColor="#FFFF"
-              style={{ ...styles.nameInput }}
-              value={categoryName}
-              onChangeText={(val) => setCategoryName(val)}
-            />
-          </View>
-          <View style={{ ...styles.colorSelectContainer }}>
-            <Text style={{ ...styles.nameText }}>Color</Text>
-          </View>
-          <View style={{ ...styles.colorsContainer }}>
-            {colors.map((item) => (
-              <TouchableWithoutFeedback
-                key={item}
-                onPress={() => setCategoryColor(item)}
-              >
-                <View
-                  style={{
-                    ...styles.color,
-                    backgroundColor: item,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Correct
-                    width={12}
-                    color="white"
-                    style={{ opacity: categoryColor === item ? 1 : 0 }}
-                  />
-                </View>
-              </TouchableWithoutFeedback>
-            ))}
-          </View>
+    <Animated.View
+      style={{
+        position: "absolute",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 10,
+        top: WINDOW_HEIGHT,
+        height: WINDOW_HEIGHT,
+        elevation: 10,
+        opacity,
+        transform: [{ scale, translateY }],
+      }}
+    >
+      <View style={{ ...styles.container }}>
+        <View style={{ ...styles.heading }}>
+          <Text style={{ ...styles.headingText }}>{type}</Text>
+          <TouchableOpacity onPress={() => setModal(false)}>
+            <Close color="white" />
+          </TouchableOpacity>
         </View>
-      ) : type === "Rename" ? (
-        <>
-          <View style={{ ...styles.renameContainer }}>
-            <Text style={{ ...styles.renameItemText }}>Name</Text>
-            <TextInput
-              placeholder={userName}
-              placeholderTextColor="#FFFF"
-              style={{
-                ...styles.nameInput,
-                borderColor: "rgba(255, 255, 255, 0.12)",
-                borderBottomWidth: 1,
-              }}
-              onChangeText={(val) => setUserName(val)}
-              value={userName}
-              onFocus={() => setUserName("")}
-            />
-          </View>
-          <View style={{ height: 24 }} />
-          <View style={{ ...styles.renameContainer }}>
-            <Text style={{ ...styles.renameItemText }}>Designation</Text>
-            <TextInput
-              placeholder={userDesc}
-              placeholderTextColor="#FFFF"
-              style={{
-                ...styles.nameInput,
-                borderColor: "rgba(255, 255, 255, 0.12)",
-                borderBottomWidth: 1,
-              }}
-              onChangeText={(val) => setUserDesc(val)}
-              value={userDesc}
-              onFocus={() => setUserDesc("")}
-            />
-          </View>
-          <View style={{ height: 24 }} />
-        </>
-      ) : null}
-      <View style={{ ...styles.buttonContainer }}>
-        <TouchableOpacity
-          style={{ ...styles.cancelBtn }}
-          onPress={() => {
-            if (type === "Rename") {
-              setUserName(user?.userName);
-              setUserDesc(user?.userDesc);
-            } else {
-              setCategoryName("");
-              setCategoryColor(
-                colors[Math.floor(Math.random() * colors.length)]
-              );
+
+        <View style={{ ...styles.detailsContainer }}>
+          <Text style={{ ...styles.nameText }}>Name</Text>
+          <TextInput
+            placeholder={type !== "Rename" ? "Category" : userName}
+            placeholderTextColor="#FFFF"
+            style={{
+              ...styles.nameInput,
+              borderColor: "rgba(255, 255, 255, 0.12)",
+              borderBottomWidth: 1,
+            }}
+            value={type !== "Rename" ? categoryName : userName}
+            onChangeText={(val) =>
+              type !== "Rename" ? setCategoryName(val) : setUserName(val)
             }
-            close();
-          }}
-        >
-          <Text style={{ ...styles.btnText }}>Cancel</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{ ...styles.doneBtn }}
-          onPress={() => {
-            if (
-              type === "Add Category" &&
-              addCategory !== undefined &&
-              setSelectedCategory !== undefined
-            ) {
-              addCategory({
-                categoryName: categoryName,
-                categoryColor: categoryColor,
-                tasks: [],
-                id: id,
-                done: [],
-              });
-              setSelectedCategory(id);
-              setTimeout(() => {
-                setId(JSON.stringify(Date.now()));
-              }, 100);
-              setCategoryName("");
-              setCategoryColor(
-                colors[Math.floor(Math.random() * colors.length)]
-              );
-            } else if (type === "Rename") {
-              if (
-                userName !== undefined &&
-                userDesc !== undefined &&
-                updateDetails !== undefined
-              ) {
-                updateDetails({ userName, userDesc });
+            onFocus={() => (type === "Rename" ? setUserName("") : null)}
+          />
+          {type !== "Rename" ? (
+            <>
+              <View style={{ ...styles.colorSelectContainer }}>
+                <Text style={{ ...styles.nameText }}>Color</Text>
+              </View>
+              <View style={{ ...styles.colorsContainer }}>
+                {colors.map((item) => (
+                  <TouchableWithoutFeedback
+                    key={item}
+                    onPress={() => setCategoryColor(item)}
+                  >
+                    <View
+                      style={{
+                        ...styles.color,
+                        backgroundColor: item,
+                        width: categoryColor === item ? 32 : 24,
+                        height: categoryColor === item ? 32 : 24,
+                        borderRadius: categoryColor === item ? 32 : 24,
+                      }}
+                    >
+                      <Correct
+                        width={12}
+                        color="white"
+                        style={{ opacity: categoryColor === item ? 1 : 0 }}
+                      />
+                    </View>
+                  </TouchableWithoutFeedback>
+                ))}
+              </View>
+            </>
+          ) : (
+            <>
+              <View style={{ height: 24 }} />
+              <View style={{ ...styles.renameContainer }}>
+                <Text style={{ ...styles.renameItemText }}>Designation</Text>
+                <TextInput
+                  placeholder={userDesc}
+                  placeholderTextColor="#FFFF"
+                  style={{
+                    ...styles.nameInput,
+                    borderColor: "rgba(255, 255, 255, 0.12)",
+                    borderBottomWidth: 1,
+                  }}
+                  onChangeText={(val) => setUserDesc(val)}
+                  value={userDesc}
+                  onFocus={() => setUserDesc("")}
+                />
+              </View>
+              <View style={{ height: 24 }} />
+            </>
+          )}
+        </View>
+        <View style={{ ...styles.buttonContainer }}>
+          <TouchableOpacity
+            style={{ ...styles.cancelBtn }}
+            onPress={() => {
+              if (type === "Rename") {
+                setUserName(user?.userName);
+                setUserDesc(user?.userDesc);
+              } else if (type === "Add Catgegory") {
+                setCategoryName("");
               }
+              setModal(false);
+            }}
+          >
+            <Text style={{ ...styles.btnText }}>Cancel</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{ ...styles.doneBtn }}
+            onPress={() => {
+              if (
+                type === "Add Category" &&
+                addCategory !== undefined &&
+                setSelectedCategory !== undefined
+              ) {
+                addCategory({
+                  categoryName: categoryName,
+                  categoryColor: categoryColor,
+                  tasks: [],
+                  id: id,
+                  done: [],
+                });
+                setSelectedCategory(id);
+                setTimeout(() => {
+                  setId(JSON.stringify(Date.now()));
+                }, 100);
+                setCategoryName("");
+              } else if (type === "Rename") {
+                if (
+                  userName !== undefined &&
+                  userDesc !== undefined &&
+                  updateDetails !== undefined
+                ) {
+                  updateDetails({ userName, userDesc });
+                }
+              } else {
+                if (
+                  editCategory !== undefined &&
+                  editCategoryId !== undefined
+                ) {
+                  editCategory({
+                    categoryColor: categoryColor,
+                    categoryName: categoryName,
+                    id: editCategoryId,
+                  });
+                }
+              }
+              setModal(false);
+            }}
+            disabled={
+              type === "Add Category"
+                ? categoryColor === "" || categoryName === ""
+                : userName === "" || userDesc === ""
             }
-            close();
-          }}
-          disabled={
-            type === "Add Category"
-              ? categoryColor === "" || categoryName === ""
-              : userName === "" || userDesc === ""
-          }
-        >
-          <Text style={{ ...styles.btnText }}>Done</Text>
-        </TouchableOpacity>
+          >
+            <Text style={{ ...styles.btnText }}>Done</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </Animated.View>
   );
 };
 
@@ -260,6 +355,8 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 24,
+    justifyContent: "center",
+    alignItems: "center",
   },
   buttonContainer: {
     flexDirection: "row",

@@ -72,7 +72,7 @@ const Calender: FunctionComponent<Props> = ({ navigation }) => {
     <Animated.View
       style={{
         flex: 1,
-        paddingTop: 8,
+        paddingTop: 32,
         left: SCREEN_WIDTH,
         transform: [{ translateX }],
       }}
@@ -84,8 +84,7 @@ const Calender: FunctionComponent<Props> = ({ navigation }) => {
           position: "absolute",
           top: 0,
           backgroundColor: "#282828",
-
-          paddingTop: 8,
+          paddingTop: 32,
         }}
       >
         <View style={{ ...styles.headerContainer }}>

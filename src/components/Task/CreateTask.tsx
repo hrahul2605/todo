@@ -6,11 +6,11 @@ import {
   View,
   TouchableOpacity,
   Keyboard,
+  BackHandler,
 } from "react-native";
 import {
   SCREEN_WIDTH,
   RootStackParamList,
-  SCREEN_HEIGHT,
   task,
   Category,
   state,
@@ -26,10 +26,23 @@ import {
   addTask,
   addCategory,
   addCategoryTask,
+  editTask,
+  removeTask,
+  editCategroyTask,
+  removeCategoryTask,
 } from "../../redux/ActionCreator";
 import { connect } from "react-redux";
 import { getFormatedDate } from "../DatePicker";
-import { StackActions, RouteProp } from "@react-navigation/native";
+import {
+  StackActions,
+  RouteProp,
+  useFocusEffect,
+} from "@react-navigation/native";
+
+interface det {
+  categoryId: string | undefined;
+  id: string;
+}
 
 interface Props {
   route: RouteProp<RootStackParamList, "CreateTask">;
@@ -38,6 +51,16 @@ interface Props {
   category: Category[];
   addCategory: (category: Category) => any;
   addCategoryTask: (task: { categoryId: string; task: task }) => any;
+  editTask: ({ id, task }: { id: string; task: task }) => void;
+  removeTask: (id: string) => void;
+  editCategroyTask: ({
+    categoryId,
+    task,
+  }: {
+    categoryId: string;
+    task: task;
+  }) => void;
+  removeCategoryTask: (det: det) => void;
 }
 
 const mapStateToProps = (state: state) => ({
@@ -49,6 +72,17 @@ const mapDispatchToProps = (dispatch: any) => ({
   addCategory: (category: Category) => dispatch(addCategory(category)),
   addCategoryTask: (task: { categoryId: string; task: task }) =>
     dispatch(addCategoryTask(task)),
+  editTask: ({ id, task }: { id: string; task: task }) =>
+    dispatch(editTask({ id, task })),
+  removeTask: (id: string) => dispatch(removeTask(id)),
+  editCategroyTask: ({
+    categoryId,
+    task,
+  }: {
+    categoryId: string;
+    task: task;
+  }) => dispatch(editCategroyTask({ categoryId, task })),
+  removeCategoryTask: (det: det) => dispatch(removeCategoryTask(det)),
 });
 
 const CreateTask: FunctionComponent<Props> = ({
@@ -58,9 +92,12 @@ const CreateTask: FunctionComponent<Props> = ({
   addCategory,
   addCategoryTask,
   route,
+  editTask,
+  removeTask,
+  editCategroyTask,
+  removeCategoryTask,
 }) => {
-  const opacity = useRef(new Animated.Value(0)).current;
-  const dateAnimate = useRef(new Animated.Value(0)).current;
+  const [dateAnimate, setDateAnimate] = useState(false);
   const mainViewOpacity = useRef(new Animated.Value(1)).current;
 
   const animateMainViewUp = () => {
@@ -84,68 +121,37 @@ const CreateTask: FunctionComponent<Props> = ({
     outputRange: [0, 1],
   });
 
-  const scale = opacity.interpolate({
-    inputRange: [0, 0.1, 1],
-    outputRange: [0.7, 0.7, 1],
-  });
+  const [modal, setModal] = useState(false);
 
-  const translateY = opacity.interpolate({
-    inputRange: [0, 0.1, 1],
-    outputRange: [0, -SCREEN_HEIGHT, -SCREEN_HEIGHT],
-  });
+  useEffect(() => {
+    if (!modal) {
+      animateMainViewDown();
+    } else {
+      animateMainViewUp();
+    }
+  }, [modal]);
+  useEffect(() => {
+    if (!dateAnimate) {
+      animateMainViewDown();
+    } else {
+      animateMainViewUp();
+    }
+  }, [dateAnimate]);
 
-  const animateModal = () => {
-    animateMainViewUp();
-    Animated.spring(opacity, {
-      toValue: 1,
-      useNativeDriver: true,
-      mass: 0.5,
-    }).start();
-  };
-
-  const closeModal = () => {
-    animateMainViewDown();
-    Animated.spring(opacity, {
-      toValue: 0,
-      useNativeDriver: true,
-      mass: 0.3,
-    }).start();
-  };
-
-  const animateDateOpen = () => {
-    animateMainViewUp();
-    Animated.spring(dateAnimate, {
-      toValue: 1,
-      useNativeDriver: true,
-      mass: 0.5,
-    }).start();
-  };
-
-  const animateDateClose = () => {
-    animateMainViewDown();
-    Animated.spring(dateAnimate, {
-      toValue: 0,
-      useNativeDriver: true,
-      mass: 0.3,
-    }).start();
-  };
-
-  const dateScale = dateAnimate.interpolate({
-    inputRange: [0, 0.1, 1],
-    outputRange: [0, 0.7, 1],
-  });
-
-  const dateY = dateAnimate.interpolate({
-    inputRange: [0, 0.1, 1],
-    outputRange: [0, SCREEN_HEIGHT, SCREEN_HEIGHT],
-  });
-
-  const [title, setTitle] = useState("");
-  const [date, setDate] = useState(getFormatedDate(new Date(), "ddd, DD MMM"));
+  const [title, setTitle] = useState(
+    route.params?.task?.title !== undefined ? route.params.task.title : ""
+  );
+  const [date, setDate] = useState(
+    route.params?.task?.date !== undefined
+      ? route.params.task.date
+      : getFormatedDate(new Date(), "ddd, DD MMM YYYY")
+  );
   const [isCat, setCat] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [pressedOnce, setPressedOnce] = useState(false);
-  const [desc, setDesc] = useState("");
+  const [desc, setDesc] = useState(
+    route.params?.task?.desc !== undefined ? route.params.task.desc : ""
+  );
 
   useEffect(() => {
     if (route.params?.categoryId !== undefined) {
@@ -193,6 +199,41 @@ const CreateTask: FunctionComponent<Props> = ({
     outputRange: [0, -SCREEN_WIDTH],
   });
 
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        if (modal) {
+          setModal(false);
+          return true;
+        } else {
+          return false;
+        }
+      };
+
+      BackHandler.addEventListener("hardwareBackPress", onBackPress);
+
+      return () =>
+        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    }, [modal])
+  );
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        if (dateAnimate) {
+          setDateAnimate(false);
+          return true;
+        } else {
+          return false;
+        }
+      };
+
+      BackHandler.addEventListener("hardwareBackPress", onBackPress);
+
+      return () =>
+        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    }, [dateAnimate])
+  );
+
   return (
     <Animated.View
       style={{
@@ -203,31 +244,19 @@ const CreateTask: FunctionComponent<Props> = ({
         height: WINDOW_HEIGHT,
       }}
     >
-      <Animated.View
-        style={{
-          ...styles.datePickerContainer,
-          opacity: dateAnimate,
-          transform: [{ scale: dateScale, translateY: dateY }],
-        }}
-      >
-        <View style={{ width: 332, height: 332 }}>
-          <DatePick close={animateDateClose} setDate={setDate} />
-        </View>
-      </Animated.View>
-      <Animated.View
-        style={{
-          ...styles.addCategoryContainer,
-          opacity,
-          transform: [{ scale, translateY }],
-        }}
-      >
-        <AddCategory
-          addCategory={addCategory}
-          close={closeModal}
-          type="Add Category"
-          setSelectedCategory={setSelectedCategory}
-        />
-      </Animated.View>
+      <DatePick
+        dateAnimate={dateAnimate}
+        setDateAnimate={setDateAnimate}
+        date={date}
+        setDate={setDate}
+      />
+      <AddCategory
+        addCategory={addCategory}
+        type="Add Category"
+        setSelectedCategory={setSelectedCategory}
+        modal={modal}
+        setModal={setModal}
+      />
       <Animated.View
         style={{
           ...styles.headerContainer,
@@ -236,11 +265,12 @@ const CreateTask: FunctionComponent<Props> = ({
       >
         <CreateTaskHeader
           goBack={navigation.goBack}
-          animateDateOpen={animateDateOpen}
+          setDateAnimate={setDateAnimate}
           title={title}
           setTitle={setTitle}
           date={date}
           setDate={setDate}
+          editScreen={route.params?.editScreen}
         />
       </Animated.View>
       <Animated.ScrollView
@@ -249,7 +279,7 @@ const CreateTask: FunctionComponent<Props> = ({
       >
         <CreateTaskDesc
           categories={category}
-          animateModal={animateModal}
+          setModal={setModal}
           setSelectedCategory={setSelectedCategory}
           selectedCategory={selectedCategory}
           desc={desc}
@@ -263,33 +293,96 @@ const CreateTask: FunctionComponent<Props> = ({
           onPress={() => {
             setPressedOnce(true);
             if (!isCat) {
-              if (desc === "") {
+              if (!route.params?.editScreen) {
                 addTask({
                   date: date,
                   title: title,
                   id: "",
+                  desc: desc === "" ? undefined : desc,
                   color: colors[Math.floor(Math.random() * colors.length)],
                 });
               } else {
-                addTask({
-                  date: date,
-                  title: title,
-                  id: "",
-                  desc: desc,
-                  color: colors[Math.floor(Math.random() * colors.length)],
-                });
+                if (route.params.task !== undefined) {
+                  if (route.params.isCategoryTaskEdit === undefined) {
+                    editTask({
+                      id: route.params.task?.id,
+                      task: {
+                        date: date,
+                        title: title,
+                        id: route.params.task?.id,
+                        color: route.params.task?.color,
+                        desc: desc === "" ? undefined : desc,
+                      },
+                    });
+                  } else {
+                    addTask({
+                      id: route.params.task.id,
+                      title: title,
+                      date: date,
+                      color: colors[Math.floor(Math.random() * colors.length)],
+                      desc: desc === "" ? undefined : desc,
+                    });
+                    removeCategoryTask({
+                      categoryId: route.params.categoryId,
+                      id: route.params.task.id,
+                    });
+                  }
+                }
               }
             } else {
-              if (desc === "") {
-                addCategoryTask({
-                  categoryId: selectedCategory,
-                  task: { date: date, title: title, id: "" },
-                });
+              if (route.params?.isCategoryTaskEdit === undefined) {
+                if (!route.params?.editScreen) {
+                  addCategoryTask({
+                    categoryId: selectedCategory,
+                    task: {
+                      date: date,
+                      title: title,
+                      id: "",
+                      desc: desc === "" ? undefined : desc,
+                    },
+                  });
+                } else {
+                  if (route.params.task !== undefined) {
+                    addCategoryTask({
+                      categoryId: selectedCategory,
+                      task: {
+                        date: date,
+                        title: title,
+                        id: route.params.task?.id,
+                        desc: desc === "" ? undefined : desc,
+                      },
+                    });
+                    removeTask(route.params.task.id);
+                  }
+                }
               } else {
-                addCategoryTask({
-                  categoryId: selectedCategory,
-                  task: { date: date, title: title, id: "", desc: desc },
-                });
+                if (route.params.task !== undefined) {
+                  if (selectedCategory === route.params.categoryId) {
+                    editCategroyTask({
+                      categoryId: selectedCategory,
+                      task: {
+                        id: route.params.task?.id,
+                        title: title,
+                        date: date,
+                        desc: desc === "" ? undefined : desc,
+                      },
+                    });
+                  } else {
+                    addCategoryTask({
+                      categoryId: selectedCategory,
+                      task: {
+                        date: date,
+                        title: title,
+                        id: route.params.task.id,
+                        desc: desc === "" ? undefined : desc,
+                      },
+                    });
+                    removeCategoryTask({
+                      categoryId: route.params.categoryId,
+                      id: route.params.task.id,
+                    });
+                  }
+                }
               }
             }
             navigation.dispatch(StackActions.pop());
@@ -306,7 +399,9 @@ const CreateTask: FunctionComponent<Props> = ({
               borderRadius: 45,
             }}
           >
-            <Text style={{ ...styles.createTaskText }}>Create Task</Text>
+            <Text style={{ ...styles.createTaskText }}>
+              {route.params?.editScreen ? "Save" : "Create Task"}
+            </Text>
           </View>
         </TouchableOpacity>
       </Animated.View>
@@ -327,14 +422,14 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   headerContainer: {
-    height: 323,
+    height: 347,
     backgroundColor: "#FFCC66",
     borderBottomRightRadius: 45,
     borderBottomLeftRadius: 45,
     position: "absolute",
     elevation: 1,
     zIndex: 1,
-    paddingTop: 8,
+    paddingTop: 32,
   },
   createTaskContainer: {
     width: SCREEN_WIDTH - 48,
@@ -347,7 +442,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     zIndex: 10,
-    bottom: 48,
+    bottom: 24,
   },
   createTaskText: {
     fontSize: 14,

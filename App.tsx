@@ -5,7 +5,6 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/es/integration/react";
 
 import Main from "./src/components/Main";
-import Loading from "./src/components/Loading";
 
 const { store, persistor } = ConfigureStore();
 
@@ -20,7 +19,7 @@ export default function App() {
   }, []);
   return (
     <Provider store={store}>
-      <PersistGate loading={<Loading />} persistor={persistor}>
+      <PersistGate persistor={persistor}>
         <Main />
       </PersistGate>
     </Provider>

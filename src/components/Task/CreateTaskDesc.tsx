@@ -12,25 +12,25 @@ import Edit from "../../assets/icons/edit.svg";
 import Plus from "../../assets/icons/plus.svg";
 
 interface Props {
-  animateModal: () => void;
   categories: Category[];
   setSelectedCategory: React.Dispatch<React.SetStateAction<string>>;
   selectedCategory: string;
   desc: string;
   setDesc: React.Dispatch<React.SetStateAction<string>>;
+  setModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const CreateTaskDesc: FunctionComponent<Props> = ({
-  animateModal,
   categories,
   setSelectedCategory,
   selectedCategory,
   desc,
   setDesc,
+  setModal,
 }) => {
   return (
     <>
-      <View style={{ height: 315 }} />
+      <View style={{ height: 339 }} />
       <View style={{ ...styles.timeContainer }}>
         <View style={{ ...styles.container }}>
           <View style={{ ...styles.timeTextContainer }}>
@@ -73,7 +73,7 @@ const CreateTaskDesc: FunctionComponent<Props> = ({
             }}
           >
             <Text style={{ ...styles.timeText }}>Category</Text>
-            <TouchableOpacity onPress={() => animateModal()}>
+            <TouchableOpacity onPress={() => setModal(true)}>
               <Plus color="#FFFF" />
             </TouchableOpacity>
           </View>

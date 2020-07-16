@@ -4,7 +4,7 @@ import Header from "./Header";
 import Feed from "./Feed";
 import Attaglance from "./Attaglance";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList, SCREEN_WIDTH } from "../../constants";
+import { RootStackParamList, SCREEN_WIDTH, STATUS_BAR } from "../../constants";
 
 interface Props {
   navigation: StackNavigationProp<RootStackParamList>;
@@ -76,6 +76,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     zIndex: 1,
+    paddingTop: 24,
   },
   headerContainer: {
     zIndex: 1,

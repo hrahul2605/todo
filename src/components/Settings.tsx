@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState, useRef } from "react";
+import React, { FunctionComponent, useState, useRef, useEffect } from "react";
 import {
   View,
   TouchableOpacity,
@@ -6,11 +6,13 @@ import {
   Switch,
   StyleSheet,
   Animated,
+  BackHandler,
 } from "react-native";
 import Close from "../assets/icons/close.svg";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList, SCREEN_WIDTH, WINDOW_HEIGHT } from "../constants";
 import AddCategory from "./Task/AddCategory";
+import { useFocusEffect } from "@react-navigation/native";
 
 interface Props {
   navigation: StackNavigationProp<RootStackParamList, "Settings">;
@@ -20,8 +22,17 @@ const Settings: FunctionComponent<Props> = ({ navigation }) => {
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
-  const opacity = useRef(new Animated.Value(0)).current;
   const mainViewOpacity = useRef(new Animated.Value(1)).current;
+
+  const [modal, setModal] = useState(false);
+
+  useEffect(() => {
+    if (!modal) {
+      animateMainViewDown();
+    } else {
+      animateMainViewUp();
+    }
+  }, [modal]);
 
   const animateMainViewUp = () => {
     Animated.timing(mainViewOpacity, {
@@ -36,34 +47,6 @@ const Settings: FunctionComponent<Props> = ({ navigation }) => {
       toValue: 1,
       duration: 200,
       useNativeDriver: true,
-    }).start();
-  };
-
-  const scale = opacity.interpolate({
-    inputRange: [0, 0.1, 1],
-    outputRange: [0.7, 0.7, 1],
-  });
-
-  const translateY = opacity.interpolate({
-    inputRange: [0, 0.1, 1],
-    outputRange: [0, -WINDOW_HEIGHT, -WINDOW_HEIGHT],
-  });
-
-  const animateModal = () => {
-    animateMainViewUp();
-    Animated.spring(opacity, {
-      toValue: 1,
-      useNativeDriver: true,
-      mass: 0.5,
-    }).start();
-  };
-
-  const closeModal = () => {
-    animateMainViewDown();
-    Animated.spring(opacity, {
-      toValue: 0,
-      useNativeDriver: true,
-      mass: 0.3,
     }).start();
   };
 
@@ -98,6 +81,24 @@ const Settings: FunctionComponent<Props> = ({ navigation }) => {
     });
   }, [navigation]);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        if (modal) {
+          setModal(false);
+          return true;
+        } else {
+          return false;
+        }
+      };
+
+      BackHandler.addEventListener("hardwareBackPress", onBackPress);
+
+      return () =>
+        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    }, [modal])
+  );
+
   const translateX = transition.interpolate({
     inputRange: [0, 1],
     outputRange: [0, -SCREEN_WIDTH],
@@ -105,15 +106,7 @@ const Settings: FunctionComponent<Props> = ({ navigation }) => {
 
   return (
     <>
-      <Animated.View
-        style={{
-          ...styles.addCategoryContainer,
-          opacity,
-          transform: [{ scale, translateY }],
-        }}
-      >
-        <AddCategory close={closeModal} type="Rename" />
-      </Animated.View>
+      <AddCategory modal={modal} setModal={setModal} type="Rename" />
       <Animated.ScrollView
         style={{
           ...styles.container,
@@ -144,7 +137,7 @@ const Settings: FunctionComponent<Props> = ({ navigation }) => {
           </View>
           <TouchableOpacity
             style={{ ...styles.optionCard }}
-            onPress={() => animateModal()}
+            onPress={() => setModal(true)}
           >
             <Text style={{ ...styles.optionText }}>Edit Profile</Text>
           </TouchableOpacity>
@@ -170,6 +163,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 24,
     paddingVertical: 12,
+    paddingTop: 24,
   },
   nav: {
     height: 56,

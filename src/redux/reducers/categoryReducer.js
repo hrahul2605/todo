@@ -17,6 +17,15 @@ export const categoryReducer = (state = INITIAL_STATE, action) => {
           }
         }),
       };
+    case ActionTypes.EDIT_CATEGORY:
+      return {
+        ...state,
+        category: state.category.map((item) => {
+          if (item.id === action.payload.id) {
+            return { ...item, ...action.payload };
+          } else return { ...item };
+        }),
+      };
     case ActionTypes.ADD_CATEGORY_TASK:
       return {
         ...state,
@@ -37,6 +46,23 @@ export const categoryReducer = (state = INITIAL_STATE, action) => {
             return {
               ...item,
               tasks: item.tasks.filter((x) => x.id !== action.payload.id),
+            };
+          } else return { ...item };
+        }),
+      };
+
+    case ActionTypes.EDIT_CATEGORY_TASK:
+      return {
+        ...state,
+        category: state.category.map((item) => {
+          if (item.id === action.payload.categoryId) {
+            return {
+              ...item,
+              tasks: item.tasks.map((x) => {
+                if (x.id === action.payload.task.id) {
+                  return { ...x, ...action.payload.task };
+                } else return { ...x };
+              }),
             };
           } else return { ...item };
         }),
