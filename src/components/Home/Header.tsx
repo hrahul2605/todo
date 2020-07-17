@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import {
   SCREEN_WIDTH,
   RootStackParamList,
@@ -9,7 +9,6 @@ import {
 import Setting from "../../assets/icons/settings.svg";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { connect } from "react-redux";
-import Ico from "../../assets/bigheads/1.svg";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 interface Props {
@@ -27,9 +26,8 @@ const Header: React.FunctionComponent<Props> = ({
 }) => {
   const [avatarId, setAvatarId] = React.useState(0);
   const changeAvatar = () => {
-    setAvatarId(Math.floor(Math.random() * Avatar.length));
+    setAvatarId(avatarId === Avatar.length - 1 ? 0 : avatarId + 1);
   };
-  const Av = Avatar[avatarId];
   return (
     <>
       <View style={{ ...styles.headerContainer }}>
@@ -38,7 +36,10 @@ const Header: React.FunctionComponent<Props> = ({
             onPress={() => changeAvatar()}
             style={{ ...styles.userImage }}
           >
-            <Av width={100} height={100} />
+            <Image
+              source={Avatar[avatarId]}
+              style={{ width: 80, height: 80 }}
+            />
           </TouchableWithoutFeedback>
           <View style={{ ...styles.userContainer }}>
             <Text style={{ ...styles.userName }}>{userName}</Text>

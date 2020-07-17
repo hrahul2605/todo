@@ -51,14 +51,16 @@ function TaskCard({
         damping: 400,
         useNativeDriver: true,
       }).start(() => {
-        if (onPressed !== undefined) {
-          onPressed(true);
+        if (isCategory) {
+          if (onPressed !== undefined) {
+            onPressed(true);
+          }
+          navigation.navigate("CategoryTask", {
+            taskName: name,
+            bgColor: color,
+            categoryId: categoryId,
+          });
         }
-        navigation.navigate("CategoryTask", {
-          taskName: name,
-          bgColor: color,
-          categoryId: categoryId,
-        });
       });
     });
   };
@@ -68,7 +70,6 @@ function TaskCard({
       onPress={() => {
         handlePressAnimation();
       }}
-      disabled={!isCategory}
     >
       <Animated.View
         style={{
@@ -82,7 +83,7 @@ function TaskCard({
             marginTop: 24,
             justifyContent: "center",
             alignItems: "center",
-            marginBottom: 36,
+            marginBottom: isCategory ? 36 : 24,
           }}
         >
           {isCategory && percentage !== undefined ? (

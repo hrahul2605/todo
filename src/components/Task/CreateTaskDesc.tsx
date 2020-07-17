@@ -8,7 +8,6 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import { SCREEN_WIDTH, Category } from "../../constants";
-import Edit from "../../assets/icons/edit.svg";
 import Plus from "../../assets/icons/plus.svg";
 
 interface Props {
@@ -30,30 +29,10 @@ const CreateTaskDesc: FunctionComponent<Props> = ({
 }) => {
   return (
     <>
-      <View style={{ height: 339 }} />
-      <View style={{ ...styles.timeContainer }}>
-        <View style={{ ...styles.container }}>
-          <View style={{ ...styles.timeTextContainer }}>
-            <Text style={{ ...styles.timeText }}>Start time</Text>
-            <Text style={{ ...styles.hourText }}>4.00</Text>
-          </View>
-          <View style={{ flex: 1 }}>
-            <Text style={{ ...styles.ampmText }}>PM</Text>
-          </View>
-        </View>
-        <View style={{ ...styles.container }}>
-          <View style={{ ...styles.timeTextContainer }}>
-            <Text style={{ ...styles.timeText }}>End time</Text>
-            <Text style={{ ...styles.hourText }}>8.00</Text>
-          </View>
-          <View style={{ flex: 1 }}>
-            <Text style={{ ...styles.ampmText }}>PM</Text>
-          </View>
-        </View>
-      </View>
+      <View style={{ height: 347 }} />
       <View style={{ ...styles.descContainer }}>
         <View style={{ ...styles.descLayer }}>
-          <Text style={{ ...styles.timeText }}>Description</Text>
+          <Text style={{ ...styles.text }}>Description</Text>
           <TextInput
             style={{ ...styles.descInput }}
             placeholder="Lorem ipsum dolor sit amet"
@@ -72,7 +51,7 @@ const CreateTaskDesc: FunctionComponent<Props> = ({
               alignItems: "center",
             }}
           >
-            <Text style={{ ...styles.timeText }}>Category</Text>
+            <Text style={{ ...styles.text }}>Category</Text>
             <TouchableOpacity onPress={() => setModal(true)}>
               <Plus color="#FFFF" />
             </TouchableOpacity>
@@ -109,9 +88,6 @@ const CreateTaskDesc: FunctionComponent<Props> = ({
                   >
                     {item.categoryName}
                   </Text>
-                  <View>
-                    <Edit width={12} color="white" />
-                  </View>
                 </View>
               </TouchableWithoutFeedback>
             ))}
@@ -125,42 +101,10 @@ const CreateTaskDesc: FunctionComponent<Props> = ({
 export default CreateTaskDesc;
 
 const styles = StyleSheet.create({
-  timeContainer: {
-    height: 96,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    justifyContent: "space-between",
-    alignItems: "flex-end",
-    flexDirection: "row",
-  },
-  container: {
-    width: 144,
-    height: 48,
-    flexDirection: "row",
-    borderBottomWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.12)",
-  },
-  timeTextContainer: {
-    justifyContent: "flex-start",
-    alignItems: "flex-start",
-    width: 92,
-  },
-  timeText: {
+  text: {
     fontSize: 12,
     fontFamily: "regular",
     color: "#DDDDDD",
-  },
-  hourText: {
-    fontSize: 16,
-    fontFamily: "medium",
-    color: "#FFFF",
-    marginTop: 8,
-  },
-  ampmText: {
-    top: 22,
-    fontSize: 16,
-    fontFamily: "medium",
-    color: "#FFFF",
   },
   descContainer: {
     height: 106,
@@ -197,23 +141,22 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     alignItems: "baseline",
-    marginHorizontal: 12,
   },
   categoryItem: {
-    width: "auto",
     paddingHorizontal: 8,
-    paddingVertical: 2,
+    paddingVertical: 4,
     flexDirection: "row",
     borderRadius: 50,
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 6,
-    marginRight: 12,
+    marginBottom: 8,
+    marginRight: 8,
+    elevation: 5,
   },
   categoryItemText: {
     fontFamily: "regular",
     fontSize: 12,
-    marginRight: 15,
+    marginRight: 8,
     marginLeft: 7,
     marginVertical: 4,
   },

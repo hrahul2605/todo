@@ -72,20 +72,22 @@ const Feed: React.FunctionComponent<Props> = ({
           transform: [{ translateX: spring({ from: 0, to: -150, config }) }],
         }}
       >
-        <View style={{ ...styles.feedIcon }}>
-          <Clock color="white" />
-        </View>
         <TouchableOpacity
           onPress={() => {
             navigation.navigate("FeedScreen", {
-              screen: "To do",
+              screen: "Task",
               screenSub: "Giddy-up Captain!",
             });
           }}
-          style={{ ...styles.feedDetails }}
+          style={{ flexDirection: "row" }}
         >
-          <Text style={{ ...styles.feedText, fontSize: 16 }}>To do</Text>
-          <Text style={{ ...styles.feedDesc }}>{tasks.length} tasks now</Text>
+          <View style={{ ...styles.feedIcon }}>
+            <Clock color="white" />
+          </View>
+          <View style={{ ...styles.feedDetails }}>
+            <Text style={{ ...styles.feedText, fontSize: 16 }}>Task</Text>
+            <Text style={{ ...styles.feedDesc }}>{tasks.length} tasks now</Text>
+          </View>
         </TouchableOpacity>
       </Animated.View>
       <Animated.View
@@ -95,24 +97,24 @@ const Feed: React.FunctionComponent<Props> = ({
           left: 250,
         }}
       >
-        <View style={{ ...styles.feedIcon, backgroundColor: "#F9BE7C" }}>
-          <Loader color="white" />
-        </View>
         <TouchableOpacity
           onPress={() => {
             navigation.navigate("FeedScreen", {
-              screen: "In progress",
+              screen: "Group",
               screenSub: "Smells good! Something is cooking!",
             });
           }}
-          style={{
-            ...styles.feedDetails,
-          }}
+          style={{ flexDirection: "row" }}
         >
-          <Text style={{ ...styles.feedText, fontSize: 16 }}>In progess</Text>
-          <Text style={{ ...styles.feedDesc }}>
-            {category.length} tasks now
-          </Text>
+          <View style={{ ...styles.feedIcon, backgroundColor: "#F9BE7C" }}>
+            <Loader color="white" />
+          </View>
+          <View style={{ ...styles.feedDetails }}>
+            <Text style={{ ...styles.feedText, fontSize: 16 }}>Group</Text>
+            <Text style={{ ...styles.feedDesc }}>
+              {category.length} tasks now
+            </Text>
+          </View>
         </TouchableOpacity>
       </Animated.View>
       <Animated.View
@@ -122,9 +124,6 @@ const Feed: React.FunctionComponent<Props> = ({
           left: 350,
         }}
       >
-        <View style={{ ...styles.feedIcon, backgroundColor: "#6488E4" }}>
-          <Right color="white" />
-        </View>
         <TouchableOpacity
           onPress={() => {
             navigation.navigate("FeedScreen", {
@@ -132,10 +131,15 @@ const Feed: React.FunctionComponent<Props> = ({
               screenSub: "Feel good about yourself",
             });
           }}
-          style={{ ...styles.feedDetails }}
+          style={{ flexDirection: "row" }}
         >
-          <Text style={{ ...styles.feedText, fontSize: 16 }}>Done</Text>
-          <Text style={{ ...styles.feedDesc }}>{done.length} completed.</Text>
+          <View style={{ ...styles.feedIcon, backgroundColor: "#6488E4" }}>
+            <Right color="white" />
+          </View>
+          <View style={{ ...styles.feedDetails }}>
+            <Text style={{ ...styles.feedText, fontSize: 16 }}>Done</Text>
+            <Text style={{ ...styles.feedDesc }}>{done.length} completed.</Text>
+          </View>
         </TouchableOpacity>
       </Animated.View>
     </View>

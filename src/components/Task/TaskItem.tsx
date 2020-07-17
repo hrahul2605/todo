@@ -106,6 +106,49 @@ const TaskItem: React.FunctionComponent<ItemProps> = ({
 
   useCode(() => [set(itemTransX, spring({ from: 0, to: -x, config }))], []);
 
+  const handleDelete = () => {
+    if (removeCategoryTask !== undefined) {
+      removeCategoryTask({ categoryId: categoryId, id: task.id });
+    } else if (doneScreen === false && removeTask !== undefined) {
+      removeTask(task.id);
+    } else if (removeDoneTask !== undefined) {
+      removeDoneTask(task.id);
+    } else if (removeDoneCategoryTask !== undefined) {
+      removeDoneCategoryTask({
+        categoryId: categoryId,
+        id: task.id,
+      });
+    }
+  };
+
+  const handleEditPress = () => {
+    if (handleEdit !== undefined) {
+      handleEdit({ task: task });
+    } else if (handleCategoryTaskEdit !== undefined) {
+      handleCategoryTaskEdit({ task: task });
+    }
+  };
+
+  const handleCorrectPress = () => {
+    if (addDoneTask !== undefined && removeTask !== undefined) {
+      addDoneTask(task);
+      removeTask(task.id);
+    } else if (
+      addDoneCategoryTask !== undefined &&
+      categoryId !== undefined &&
+      removeCategoryTask !== undefined
+    ) {
+      addDoneCategoryTask({
+        categoryId: categoryId,
+        taskId: task.id,
+      });
+      removeCategoryTask({
+        categoryId: categoryId,
+        id: task.id,
+      });
+    }
+  };
+
   return (
     <Animated.View
       style={{
@@ -120,59 +163,16 @@ const TaskItem: React.FunctionComponent<ItemProps> = ({
             transform: [{ translateX: sub(translateX, -125) }],
           }}
         >
-          <TouchableOpacity
-            onPress={() => {
-              if (removeCategoryTask !== undefined) {
-                removeCategoryTask({ categoryId: categoryId, id: task.id });
-              } else if (doneScreen === false && removeTask !== undefined) {
-                removeTask(task.id);
-              } else if (removeDoneTask !== undefined) {
-                removeDoneTask(task.id);
-              } else if (removeDoneCategoryTask !== undefined) {
-                removeDoneCategoryTask({
-                  categoryId: categoryId,
-                  id: task.id,
-                });
-              }
-            }}
-          >
+          <TouchableOpacity onPress={() => handleDelete()}>
             <Delete color="white" width={16} />
           </TouchableOpacity>
           {!doneScreen && !isCategoryDoneScreen ? (
-            <TouchableOpacity
-              onPress={() => {
-                if (handleEdit !== undefined) {
-                  handleEdit({ task: task });
-                } else if (handleCategoryTaskEdit !== undefined) {
-                  handleCategoryTaskEdit({ task: task });
-                }
-              }}
-            >
+            <TouchableOpacity onPress={() => handleEditPress()}>
               <Edit color="white" width={16} />
             </TouchableOpacity>
           ) : null}
           {!doneScreen && !isCategoryDoneScreen ? (
-            <TouchableOpacity
-              onPress={() => {
-                if (addDoneTask !== undefined && removeTask !== undefined) {
-                  addDoneTask(task);
-                  removeTask(task.id);
-                } else if (
-                  addDoneCategoryTask !== undefined &&
-                  categoryId !== undefined &&
-                  removeCategoryTask !== undefined
-                ) {
-                  addDoneCategoryTask({
-                    categoryId: categoryId,
-                    taskId: task.id,
-                  });
-                  removeCategoryTask({
-                    categoryId: categoryId,
-                    id: task.id,
-                  });
-                }
-              }}
-            >
+            <TouchableOpacity onPress={() => handleCorrectPress()}>
               <Correct color="white" width={16} />
             </TouchableOpacity>
           ) : null}
@@ -184,7 +184,6 @@ const TaskItem: React.FunctionComponent<ItemProps> = ({
             style={{
               ...styles.taskContainer,
               backgroundColor: color,
-              marginHorizontal: 24,
             }}
           >
             <Text style={{ ...styles.taskTitle }}>{task.title}</Text>
@@ -232,6 +231,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     padding: 16,
     marginBottom: 12,
+    marginHorizontal: 24,
   },
   taskTitle: {
     fontFamily: "medium",

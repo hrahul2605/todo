@@ -95,7 +95,7 @@ const DatePick: FunctionComponent<Props> = ({
               textFontSize: 16,
               textSecondaryFontSize: 12,
             }}
-            style={{ borderRadius: 24, position: "absolute" }}
+            style={{ borderRadius: 24, position: "absolute", elevation: 20 }}
             mode="calendar"
             selected={
               date.slice(12, 17) +

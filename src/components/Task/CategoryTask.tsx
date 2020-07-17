@@ -30,6 +30,7 @@ import {
 import { connect } from "react-redux";
 import TaskItem from "./TaskItem";
 import AddCategory from "./AddCategory";
+import { setStatusBarStyle } from "expo-status-bar";
 
 interface det {
   categoryId: string | undefined;
@@ -98,6 +99,7 @@ const CategoryTask: FunctionComponent<Props> = ({
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
+      setStatusBarStyle("light");
       animate(1);
     });
     return unsubscribe;

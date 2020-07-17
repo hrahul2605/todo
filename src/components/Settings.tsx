@@ -13,6 +13,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList, SCREEN_WIDTH, WINDOW_HEIGHT } from "../constants";
 import AddCategory from "./Task/AddCategory";
 import { useFocusEffect } from "@react-navigation/native";
+import { setStatusBarStyle } from "expo-status-bar";
 
 interface Props {
   navigation: StackNavigationProp<RootStackParamList, "Settings">;
@@ -77,6 +78,7 @@ const Settings: FunctionComponent<Props> = ({ navigation }) => {
     });
 
     navigation.addListener("focus", (e) => {
+      setStatusBarStyle("light");
       animateUp();
     });
   }, [navigation]);

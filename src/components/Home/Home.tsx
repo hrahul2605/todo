@@ -5,6 +5,7 @@ import Feed from "./Feed";
 import Attaglance from "./Attaglance";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList, SCREEN_WIDTH, STATUS_BAR } from "../../constants";
+import { setStatusBarStyle } from "expo-status-bar";
 
 interface Props {
   navigation: StackNavigationProp<RootStackParamList>;
@@ -38,6 +39,7 @@ const Home: React.FunctionComponent<Props> = ({ navigation }) => {
     });
 
     navigation.addListener("focus", () => {
+      setStatusBarStyle("dark");
       animateUp();
     });
   }, [navigation]);

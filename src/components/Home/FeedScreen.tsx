@@ -27,6 +27,7 @@ import {
 } from "../../redux/ActionCreator";
 import TaskItem from "../Task/TaskItem";
 import List from "../List";
+import { setStatusBarStyle } from "expo-status-bar";
 
 interface Props {
   route: RouteProp<RootStackParamList, "FeedScreen">;
@@ -77,13 +78,17 @@ const FeedScreen: React.FunctionComponent<Props> = ({
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
+      setStatusBarStyle("light");
       animate(1);
     });
     return unsubscribe;
   }, [navigation]);
 
   React.useEffect(() => {
-    let timer = setTimeout(() => setLoaded(true), 1000);
+    let timer: NodeJS.Timeout;
+    if (route.params.screen !== "Group") {
+      timer = setTimeout(() => setLoaded(true), 1000);
+    }
     return () => clearTimeout(timer);
   }, []);
 
@@ -109,6 +114,10 @@ const FeedScreen: React.FunctionComponent<Props> = ({
     navigation.navigate("CreateTask", { editScreen: true, task });
   };
 
+  tasks.sort((a, b) => {
+    return Date.parse(a.date) - Date.parse(b.date);
+  });
+
   return (
     <Animated.View
       style={{
@@ -118,17 +127,7 @@ const FeedScreen: React.FunctionComponent<Props> = ({
         opacity,
       }}
     >
-      <View
-        style={{
-          position: "absolute",
-          top: 0,
-          elevation: 0.1,
-          zIndex: 20,
-          backgroundColor: "#282828",
-          width: "100%",
-          paddingTop: 24,
-        }}
-      >
+      <View style={{ ...styles.header }}>
         <View style={{ ...styles.nav }}>
           <TouchableOpacity
             onPress={() => {
@@ -158,8 +157,8 @@ const FeedScreen: React.FunctionComponent<Props> = ({
         </View>
       </View>
       <View style={{ height: "auto", paddingVertical: 12 }}>
-        {route.params.screen !== "In progress" ? (
-          route.params.screen === "To do" ? (
+        {route.params.screen !== "Group" ? (
+          route.params.screen === "Task" ? (
             <>
               <FlatList
                 data={tasks}
@@ -175,6 +174,7 @@ const FeedScreen: React.FunctionComponent<Props> = ({
                     handleEdit={handleEdit}
                   />
                 )}
+                showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingTop: 139, paddingBottom: 50 }}
                 numColumns={1}
                 style={{ height: WINDOW_HEIGHT, zIndex: 10 }}
@@ -196,6 +196,7 @@ const FeedScreen: React.FunctionComponent<Props> = ({
                     loaded={loaded}
                   />
                 )}
+                showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingTop: 139, paddingBottom: 50 }}
                 numColumns={1}
                 style={{ height: WINDOW_HEIGHT, zIndex: 10 }}
@@ -264,5 +265,14 @@ const styles = StyleSheet.create({
     color: "rgba(255, 255, 255, 0.75)",
     fontFamily: "medium",
     fontSize: 14,
+  },
+  header: {
+    position: "absolute",
+    top: 0,
+    elevation: 0.1,
+    zIndex: 20,
+    backgroundColor: "#282828",
+    width: "100%",
+    paddingTop: 24,
   },
 });

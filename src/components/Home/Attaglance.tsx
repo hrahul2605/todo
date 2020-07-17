@@ -21,6 +21,25 @@ function Attaglance({ navigation, tasks, category }: Props) {
     return item;
   });
   data = data?.concat(temp !== undefined ? temp : null);
+  data = data?.filter((item) => {
+    if (
+      item.categoryName === undefined ||
+      (item.categoryName !== undefined && item.tasks.length !== 0)
+    ) {
+      if (
+        item.categoryName !== undefined ||
+        (new Date(item.date).getDate() === new Date().getDate() &&
+          new Date(item.date).getMonth() === new Date().getMonth() &&
+          new Date(item.date).getFullYear() === new Date().getFullYear())
+      ) {
+        return item;
+      }
+    }
+  });
+
+  data?.sort(() => {
+    return 0.5 - Math.random();
+  });
   return (
     <View>
       <View style={{ ...styles.headingContainer }}>

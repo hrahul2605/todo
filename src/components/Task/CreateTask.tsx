@@ -38,6 +38,7 @@ import {
   RouteProp,
   useFocusEffect,
 } from "@react-navigation/native";
+import { setStatusBarStyle } from "expo-status-bar";
 
 interface det {
   categoryId: string | undefined;
@@ -171,6 +172,7 @@ const CreateTask: FunctionComponent<Props> = ({
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
+      setStatusBarStyle("dark");
       Animated.spring(translation, {
         toValue: 1,
         mass: 1,
@@ -234,6 +236,109 @@ const CreateTask: FunctionComponent<Props> = ({
     }, [dateAnimate])
   );
 
+  const handleButton = () => {
+    if (Date.now() - 8.64e7 > Date.parse(date)) {
+      console.log("CANT CREATE TASK");
+    } else {
+      setPressedOnce(true);
+      if (!isCat) {
+        if (!route.params?.editScreen) {
+          addTask({
+            date: date,
+            title: title,
+            id: "",
+            desc: desc === "" ? undefined : desc,
+            color: colors[Math.floor(Math.random() * colors.length)],
+          });
+        } else {
+          if (route.params.task !== undefined) {
+            if (route.params.isCategoryTaskEdit === undefined) {
+              editTask({
+                id: route.params.task?.id,
+                task: {
+                  date: date,
+                  title: title,
+                  id: route.params.task?.id,
+                  color: route.params.task?.color,
+                  desc: desc === "" ? undefined : desc,
+                },
+              });
+            } else {
+              addTask({
+                id: route.params.task.id,
+                title: title,
+                date: date,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                desc: desc === "" ? undefined : desc,
+              });
+              removeCategoryTask({
+                categoryId: route.params.categoryId,
+                id: route.params.task.id,
+              });
+            }
+          }
+        }
+      } else {
+        if (route.params?.isCategoryTaskEdit === undefined) {
+          if (!route.params?.editScreen) {
+            addCategoryTask({
+              categoryId: selectedCategory,
+              task: {
+                date: date,
+                title: title,
+                id: "",
+                desc: desc === "" ? undefined : desc,
+              },
+            });
+          } else {
+            if (route.params.task !== undefined) {
+              addCategoryTask({
+                categoryId: selectedCategory,
+                task: {
+                  date: date,
+                  title: title,
+                  id: route.params.task?.id,
+                  desc: desc === "" ? undefined : desc,
+                },
+              });
+              removeTask(route.params.task.id);
+            }
+          }
+        } else {
+          if (route.params.task !== undefined) {
+            if (selectedCategory === route.params.categoryId) {
+              editCategroyTask({
+                categoryId: selectedCategory,
+                task: {
+                  id: route.params.task?.id,
+                  title: title,
+                  date: date,
+                  desc: desc === "" ? undefined : desc,
+                },
+              });
+            } else {
+              addCategoryTask({
+                categoryId: selectedCategory,
+                task: {
+                  date: date,
+                  title: title,
+                  id: route.params.task.id,
+                  desc: desc === "" ? undefined : desc,
+                },
+              });
+              removeCategoryTask({
+                categoryId: route.params.categoryId,
+                id: route.params.task.id,
+              });
+            }
+          }
+        }
+      }
+      navigation.dispatch(StackActions.pop());
+      Keyboard.dismiss();
+    }
+  };
+
   return (
     <Animated.View
       style={{
@@ -290,104 +395,7 @@ const CreateTask: FunctionComponent<Props> = ({
         style={{ opacity: btnOpacity, ...styles.createTaskContainer }}
       >
         <TouchableOpacity
-          onPress={() => {
-            setPressedOnce(true);
-            if (!isCat) {
-              if (!route.params?.editScreen) {
-                addTask({
-                  date: date,
-                  title: title,
-                  id: "",
-                  desc: desc === "" ? undefined : desc,
-                  color: colors[Math.floor(Math.random() * colors.length)],
-                });
-              } else {
-                if (route.params.task !== undefined) {
-                  if (route.params.isCategoryTaskEdit === undefined) {
-                    editTask({
-                      id: route.params.task?.id,
-                      task: {
-                        date: date,
-                        title: title,
-                        id: route.params.task?.id,
-                        color: route.params.task?.color,
-                        desc: desc === "" ? undefined : desc,
-                      },
-                    });
-                  } else {
-                    addTask({
-                      id: route.params.task.id,
-                      title: title,
-                      date: date,
-                      color: colors[Math.floor(Math.random() * colors.length)],
-                      desc: desc === "" ? undefined : desc,
-                    });
-                    removeCategoryTask({
-                      categoryId: route.params.categoryId,
-                      id: route.params.task.id,
-                    });
-                  }
-                }
-              }
-            } else {
-              if (route.params?.isCategoryTaskEdit === undefined) {
-                if (!route.params?.editScreen) {
-                  addCategoryTask({
-                    categoryId: selectedCategory,
-                    task: {
-                      date: date,
-                      title: title,
-                      id: "",
-                      desc: desc === "" ? undefined : desc,
-                    },
-                  });
-                } else {
-                  if (route.params.task !== undefined) {
-                    addCategoryTask({
-                      categoryId: selectedCategory,
-                      task: {
-                        date: date,
-                        title: title,
-                        id: route.params.task?.id,
-                        desc: desc === "" ? undefined : desc,
-                      },
-                    });
-                    removeTask(route.params.task.id);
-                  }
-                }
-              } else {
-                if (route.params.task !== undefined) {
-                  if (selectedCategory === route.params.categoryId) {
-                    editCategroyTask({
-                      categoryId: selectedCategory,
-                      task: {
-                        id: route.params.task?.id,
-                        title: title,
-                        date: date,
-                        desc: desc === "" ? undefined : desc,
-                      },
-                    });
-                  } else {
-                    addCategoryTask({
-                      categoryId: selectedCategory,
-                      task: {
-                        date: date,
-                        title: title,
-                        id: route.params.task.id,
-                        desc: desc === "" ? undefined : desc,
-                      },
-                    });
-                    removeCategoryTask({
-                      categoryId: route.params.categoryId,
-                      id: route.params.task.id,
-                    });
-                  }
-                }
-              }
-            }
-            navigation.dispatch(StackActions.pop());
-            Keyboard.dismiss();
-          }}
+          onPress={() => handleButton()}
           disabled={pressedOnce || title === ""}
         >
           <View
@@ -427,7 +435,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 45,
     borderBottomLeftRadius: 45,
     position: "absolute",
-    elevation: 1,
+    elevation: 10,
     zIndex: 1,
     paddingTop: 32,
   },

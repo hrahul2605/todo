@@ -57,29 +57,52 @@ const CreateTaskHeader: FunctionComponent<Props> = ({
             />
           </View>
         </View>
-        <View style={{ ...styles.title }}>
-          <Text style={{ ...styles.titleText }}>Date</Text>
-          <View style={{ flexDirection: "row" }}>
-            <View pointerEvents="none">
-              <TextInput
-                placeholderTextColor="#000000"
-                placeholder={`${day[datee.getDay()]}, ${datee.getDate()} ${
-                  month[datee.getMonth()].month
-                }`}
-                style={{ ...styles.dateInput }}
-                value={date.slice(0, 11)}
-              />
+        <View style={{ flexDirection: "row" }}>
+          <View style={{ ...styles.detailContainer, marginRight: 12 }}>
+            <View style={{ ...styles.title }}>
+              <Text style={{ ...styles.titleText }}>Date</Text>
+              <View style={{ flexDirection: "row" }}>
+                <View pointerEvents="none">
+                  <TextInput
+                    placeholderTextColor="#000000"
+                    placeholder={`${day[datee.getDay()]}, ${datee.getDate()} ${
+                      month[datee.getMonth()].month
+                    }`}
+                    style={{ ...styles.dateInput }}
+                    value={date.slice(0, 11)}
+                  />
+                </View>
+                <View style={{ ...styles.calenderIcon }}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      if (setDateAnimate !== undefined) {
+                        setDateAnimate(true);
+                      }
+                    }}
+                  >
+                    <Calendar color="#000000" />
+                  </TouchableOpacity>
+                </View>
+              </View>
             </View>
-            <TouchableOpacity
-              style={{ ...styles.calenderIcon }}
-              onPress={() => {
-                if (setDateAnimate !== undefined) {
-                  setDateAnimate(true);
-                }
-              }}
-            >
-              <Calendar color="#000000" />
-            </TouchableOpacity>
+          </View>
+          <View style={{ ...styles.detailContainer, marginLeft: 12 }}>
+            <View style={{ ...styles.title }}>
+              <Text style={{ ...styles.titleText }}>Reminder</Text>
+              <View style={{ flexDirection: "row" }}>
+                <View pointerEvents="none">
+                  <TextInput
+                    defaultValue="4:00 PM"
+                    style={{ ...styles.dateInput }}
+                  />
+                </View>
+                <View style={{ ...styles.calenderIcon }}>
+                  <Text style={{ ...styles.dateInput, color: "#000000" }}>
+                    PM
+                  </Text>
+                </View>
+              </View>
+            </View>
           </View>
         </View>
       </View>
@@ -145,13 +168,16 @@ const styles = StyleSheet.create({
   dateInput: {
     fontFamily: "medium",
     fontSize: 14,
-    width: SCREEN_WIDTH - 48 - 72,
-    borderBottomWidth: 1,
-    borderColor: "rgba(0, 0, 0, 0.12)",
   },
   calenderIcon: {
     flex: 1,
     justifyContent: "center",
     alignItems: "flex-end",
+  },
+  detailContainer: {
+    flex: 1,
+    borderBottomWidth: 1,
+    borderColor: "rgba(0, 0, 0, 0.12)",
+    paddingBottom: 8,
   },
 });

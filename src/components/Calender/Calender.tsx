@@ -103,6 +103,7 @@ const Calender: FunctionComponent<Props> = ({ navigation }) => {
         <ScrollView
           horizontal={true}
           showsHorizontalScrollIndicator={false}
+          scrollEnabled={false}
           style={{
             maxHeight: 88,
           }}
@@ -120,6 +121,7 @@ const Calender: FunctionComponent<Props> = ({ navigation }) => {
           flexDirection: "row",
           paddingTop: 230,
         }}
+        scrollEnabled={false}
       >
         <View style={{ ...styles.scrollViewLeftContainer }}>
           {time.map((item, index) => {

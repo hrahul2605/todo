@@ -19,22 +19,7 @@ const List: FunctionComponent<Props> = ({
 }) => {
   let data1 = data?.filter((item, index) => index % 2 === 0);
   let data2 = data?.filter((item, index) => index % 2 === 1);
-  if (!isProgressScreen) {
-    data1 = data1?.filter((item, index) => {
-      if (item.categoryName !== undefined) {
-        if (item.tasks.length !== 0) {
-          return item;
-        }
-      } else return item;
-    });
-    data2 = data2?.filter((item, index) => {
-      if (item.categoryName !== undefined) {
-        if (item.tasks.length !== 0) {
-          return item;
-        }
-      } else return item;
-    });
-  }
+  
   return (
     <>
       <View
