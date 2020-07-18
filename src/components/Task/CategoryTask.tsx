@@ -197,18 +197,18 @@ const CategoryTask: FunctionComponent<Props> = ({
           <View style={{ flexDirection: "row" }}>
             <TouchableOpacity
               onPress={() => setModal(true)}
-              style={{ paddingRight: 25 }}
+              style={{ paddingRight: 20 }}
             >
-              <Edit color="white" width={20} />
+              <Edit color="white" width={17} />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
                 navigation.goBack();
                 removeCategory(category[i].id);
               }}
-              style={{ marginRight: 15, paddingRight: 10 }}
+              style={{ marginRight: 10, paddingRight: 10 }}
             >
-              <Delete color="white" />
+              <Delete color="white" width={17} />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {

@@ -2,7 +2,7 @@ import * as React from "react";
 import * as Font from "expo-font";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { STATUS_BAR, RootStackParamList } from "../constants";
+import { RootStackParamList } from "../constants";
 import { NavigationContainer } from "@react-navigation/native";
 import {
   createStackNavigator,
@@ -14,8 +14,6 @@ import FeedScreen from "./Home/FeedScreen";
 import CreateTask from "./Task/CreateTask";
 import CategoryTask from "./Task/CategoryTask";
 import Loading from "./Loading";
-import Calender from "./Calender/Calender";
-import Settings from "./Settings";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -47,8 +45,6 @@ export default function Main() {
               <Stack.Screen name="FeedScreen" component={FeedScreen} />
               <Stack.Screen name="CreateTask" component={CreateTask} />
               <Stack.Screen name="CategoryTask" component={CategoryTask} />
-              <Stack.Screen name="Calender" component={Calender} />
-              <Stack.Screen name="Settings" component={Settings} />
             </Stack.Navigator>
           )}
         </NavigationContainer>

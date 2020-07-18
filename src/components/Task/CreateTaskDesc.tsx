@@ -5,10 +5,14 @@ import {
   Text,
   StyleSheet,
   TextInput,
-  TouchableWithoutFeedback,
 } from "react-native";
 import { SCREEN_WIDTH, Category } from "../../constants";
 import Plus from "../../assets/icons/plus.svg";
+import {
+  LongPressGestureHandler,
+  LongPressGestureHandlerStateChangeEvent,
+} from "react-native-gesture-handler";
+import Animated from "react-native-reanimated";
 
 interface Props {
   categories: Category[];
@@ -17,6 +21,10 @@ interface Props {
   desc: string;
   setDesc: React.Dispatch<React.SetStateAction<string>>;
   setModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setEditHold: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectedCategoryName: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedCategoryColor: React.Dispatch<React.SetStateAction<string>>;
+  editHold: boolean;
 }
 
 const CreateTaskDesc: FunctionComponent<Props> = ({
@@ -26,7 +34,37 @@ const CreateTaskDesc: FunctionComponent<Props> = ({
   desc,
   setDesc,
   setModal,
+  setEditHold,
+  setSelectedCategoryColor,
+  setSelectedCategoryName,
+  editHold,
 }) => {
+  const handleEvent = ({
+    item,
+    e,
+  }: {
+    item: Category;
+    e: LongPressGestureHandlerStateChangeEvent;
+  }) => {
+    if (e.nativeEvent.state === 4) {
+      setSelectedCategory(item.id);
+      setSelectedCategoryName(item.categoryName);
+      setSelectedCategoryColor(item.categoryColor);
+      setEditHold(true);
+    }
+    if (e.nativeEvent.state === 1) {
+      if (selectedCategory === item.id) {
+        setSelectedCategory("");
+        setSelectedCategoryName("");
+        setSelectedCategoryColor("");
+      } else {
+        setSelectedCategory(item.id);
+        setSelectedCategoryName(item.categoryName);
+        setSelectedCategoryColor(item.categoryColor);
+      }
+    }
+  };
+
   return (
     <>
       <View style={{ height: 347 }} />
@@ -39,6 +77,8 @@ const CreateTaskDesc: FunctionComponent<Props> = ({
             placeholderTextColor="#FFFF"
             value={desc}
             onChangeText={(e) => setDesc(e)}
+            multiline={true}
+            numberOfLines={3}
           />
         </View>
       </View>
@@ -58,38 +98,35 @@ const CreateTaskDesc: FunctionComponent<Props> = ({
           </View>
           <View style={{ ...styles.categoryItemContainer }}>
             {categories.map((item, index) => (
-              <TouchableWithoutFeedback
+              <LongPressGestureHandler
+                onHandlerStateChange={(e) => handleEvent({ item, e })}
                 key={index}
-                onPress={() => {
-                  if (selectedCategory === item.id) {
-                    setSelectedCategory("");
-                  } else {
-                    setSelectedCategory(item.id);
-                  }
-                }}
+                enabled={!editHold}
               >
-                <View
-                  style={{
-                    ...styles.categoryItem,
-                    backgroundColor:
-                      selectedCategory === item.id
-                        ? item.categoryColor
-                        : "#555555",
-                  }}
-                >
-                  <Text
+                <Animated.View>
+                  <View
                     style={{
-                      ...styles.categoryItemText,
-                      color:
+                      ...styles.categoryItem,
+                      backgroundColor:
                         selectedCategory === item.id
-                          ? "#FFFF"
-                          : "rgba(0, 0, 0, 0.5)",
+                          ? item.categoryColor
+                          : "#555555",
                     }}
                   >
-                    {item.categoryName}
-                  </Text>
-                </View>
-              </TouchableWithoutFeedback>
+                    <Text
+                      style={{
+                        ...styles.categoryItemText,
+                        color:
+                          selectedCategory === item.id
+                            ? "#FFFF"
+                            : "rgba(0, 0, 0, 0.5)",
+                      }}
+                    >
+                      {item.categoryName}
+                    </Text>
+                  </View>
+                </Animated.View>
+              </LongPressGestureHandler>
             ))}
           </View>
         </View>

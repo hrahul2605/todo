@@ -2,7 +2,6 @@ import * as React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { SCREEN_WIDTH, task, RootStackParamList } from "../../constants";
 import Plus from "../../assets/icons/plus.svg";
-import Calendar from "../../assets/icons/calendar.svg";
 import Clock from "../../assets/icons/clock.svg";
 import Right from "../../assets/icons/right.svg";
 import Loader from "../../assets/icons/loader.svg";
@@ -49,12 +48,6 @@ const Feed: React.FunctionComponent<Props> = ({
       <View style={{ ...styles.feedHeadingContainer }}>
         <Text style={{ ...styles.feedText }}>My tasks</Text>
         <View style={{ ...styles.feedEvents }}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("Calender")}
-            style={{ flex: 1 }}
-          >
-            <Calendar color="white" />
-          </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
               navigation.navigate("CreateTask");

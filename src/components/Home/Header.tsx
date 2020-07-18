@@ -1,19 +1,12 @@
 import * as React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
-import {
-  SCREEN_WIDTH,
-  RootStackParamList,
-  state,
-  Avatar,
-} from "../../constants";
-import Setting from "../../assets/icons/settings.svg";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { View, Text, StyleSheet, Image } from "react-native";
+import { SCREEN_WIDTH, state, Avatar } from "../../constants";
 import { connect } from "react-redux";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 interface Props {
-  navigation: StackNavigationProp<RootStackParamList>;
   user: { userName: string; userDesc: string };
+  setModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const mapStateToProps = (state: state) => ({
@@ -21,8 +14,8 @@ const mapStateToProps = (state: state) => ({
 });
 
 const Header: React.FunctionComponent<Props> = ({
-  navigation,
   user: { userName, userDesc },
+  setModal,
 }) => {
   const [avatarId, setAvatarId] = React.useState(0);
   const changeAvatar = () => {
@@ -41,16 +34,13 @@ const Header: React.FunctionComponent<Props> = ({
               style={{ width: 80, height: 80 }}
             />
           </TouchableWithoutFeedback>
-          <View style={{ ...styles.userContainer }}>
-            <Text style={{ ...styles.userName }}>{userName}</Text>
-            <Text style={{ ...styles.userDesc }}>{userDesc}</Text>
-          </View>
+          <TouchableWithoutFeedback onPress={() => setModal(true)}>
+            <View style={{ ...styles.userContainer }}>
+              <Text style={{ ...styles.userName }}>{userName}</Text>
+              <Text style={{ ...styles.userDesc }}>{userDesc}</Text>
+            </View>
+          </TouchableWithoutFeedback>
         </View>
-      </View>
-      <View style={{ ...styles.settingsContainer }}>
-        <TouchableOpacity onPress={() => navigation.navigate("Settings")}>
-          <Setting color="#000000" width={24} />
-        </TouchableOpacity>
       </View>
     </>
   );
@@ -65,7 +55,6 @@ const styles = StyleSheet.create({
     height: 144,
     borderBottomLeftRadius: 45,
     borderBottomRightRadius: 45,
-    position: "absolute",
     top: 0,
     paddingTop: 24,
   },

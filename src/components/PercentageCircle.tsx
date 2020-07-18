@@ -52,7 +52,7 @@ const PercentageCircle: React.FunctionComponent<{
         />
       </Svg>
       <View style={{ position: "absolute" }}>
-        <Text style={{ color: "#FFFF", fontFamily: "bold" }}>
+        <Text style={{ color: "#FFFF", fontFamily: "regular", fontSize: 12 }}>
           {percent[0]}
           {percent[1] !== undefined ? percent[1] : null}
           {percent[2] !== undefined && percent[2] !== "." ? percent[2] : null}%

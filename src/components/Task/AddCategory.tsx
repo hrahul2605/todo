@@ -129,6 +129,15 @@ const AddCategory: FunctionComponent<Props> = ({
     outputRange: [0, -SCREEN_HEIGHT, -SCREEN_HEIGHT],
   });
 
+  useEffect(() => {
+    setCategoryName(editCategoryName !== undefined ? editCategoryName : "");
+    setCategoryColor(
+      editCategoryColor !== undefined
+        ? editCategoryColor
+        : colors[Math.floor(Math.random() * colors.length)]
+    );
+  }, [editCategoryName, editCategoryName, editCategoryId]);
+
   return (
     <Animated.View
       style={{
@@ -201,7 +210,7 @@ const AddCategory: FunctionComponent<Props> = ({
             <>
               <View style={{ height: 24 }} />
               <View style={{ ...styles.renameContainer }}>
-                <Text style={{ ...styles.renameItemText }}>Designation</Text>
+                <Text style={{ ...styles.renameItemText }}>Status</Text>
                 <TextInput
                   placeholder={userDesc}
                   placeholderTextColor="#FFFF"
@@ -277,7 +286,7 @@ const AddCategory: FunctionComponent<Props> = ({
               setModal(false);
             }}
             disabled={
-              type === "Add Category"
+              type === "Add Category" || type === "Edit Category"
                 ? categoryColor === "" || categoryName === ""
                 : userName === "" || userDesc === ""
             }
@@ -300,7 +309,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#282828",
     borderRadius: 24,
     padding: 24,
-    elevation:10
+    elevation: 10,
   },
   heading: {
     height: 56,

@@ -100,6 +100,9 @@ const CreateTask: FunctionComponent<Props> = ({
 }) => {
   const [dateAnimate, setDateAnimate] = useState(false);
   const mainViewOpacity = useRef(new Animated.Value(1)).current;
+  const [editHold, setEditHold] = useState(false);
+  const [categoryName, setSelectedCategoryName] = useState("");
+  const [categoryColor, setSelectedCategoryColor] = useState("");
 
   const animateMainViewUp = () => {
     Animated.timing(mainViewOpacity, {
@@ -138,6 +141,14 @@ const CreateTask: FunctionComponent<Props> = ({
       animateMainViewUp();
     }
   }, [dateAnimate]);
+  useEffect(() => {
+    if (!editHold) {
+      animateMainViewDown();
+    } else {
+      animateMainViewUp();
+    }
+  }, [editHold]);
+
 
   const [title, setTitle] = useState(
     route.params?.task?.title !== undefined ? route.params.task.title : ""
@@ -362,6 +373,14 @@ const CreateTask: FunctionComponent<Props> = ({
         modal={modal}
         setModal={setModal}
       />
+      <AddCategory
+        editCategoryId={selectedCategory}
+        editCategoryName={categoryName}
+        editCategoryColor={categoryColor}
+        type="Edit Category"
+        modal={editHold}
+        setModal={setEditHold}
+      />
       <Animated.View
         style={{
           ...styles.headerContainer,
@@ -389,6 +408,10 @@ const CreateTask: FunctionComponent<Props> = ({
           selectedCategory={selectedCategory}
           desc={desc}
           setDesc={setDesc}
+          setSelectedCategoryName={setSelectedCategoryName}
+          setSelectedCategoryColor={setSelectedCategoryColor}
+          setEditHold={setEditHold}
+          editHold={editHold}
         />
       </Animated.ScrollView>
       <Animated.View

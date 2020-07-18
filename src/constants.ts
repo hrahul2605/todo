@@ -109,8 +109,6 @@ export type RootStackParamList = {
     bgColor: string;
     categoryId: string | undefined;
   };
-  Calender: undefined;
-  Settings: undefined;
 };
 
 export interface user {
