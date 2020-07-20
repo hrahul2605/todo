@@ -31,6 +31,10 @@ import { connect } from "react-redux";
 import TaskItem from "./TaskItem";
 import AddCategory from "./AddCategory";
 import { setStatusBarStyle } from "expo-status-bar";
+import DeleteCategory from "../DeleteCategory";
+import { Value } from "react-native-reanimated";
+import Snackbar from "../Snackbar";
+import { State } from "react-native-gesture-handler";
 
 interface det {
   categoryId: string | undefined;
@@ -148,6 +152,20 @@ const CategoryTask: FunctionComponent<Props> = ({
 
   const [modal, setModal] = useState(false);
 
+  const confirmModalDelete = new Value<0 | 1 | 2>(0);
+
+  const handleCategoryDelete = () => {
+    confirmModalDelete.setValue(2);
+    setTimeout(() => {
+      navigation.goBack();
+      removeCategory(category[i].id);
+    }, 5);
+  };
+
+  const handleDeleteCancel = () => {
+    confirmModalDelete.setValue(2);
+  };
+
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
@@ -158,13 +176,30 @@ const CategoryTask: FunctionComponent<Props> = ({
           return false;
         }
       };
-
       BackHandler.addEventListener("hardwareBackPress", onBackPress);
-
       return () =>
         BackHandler.removeEventListener("hardwareBackPress", onBackPress);
     }, [modal])
   );
+
+  const [snackState, setSnackState] = useState(false);
+  const [snackMessage, setSnackMessage] = useState("");
+  const [snackColor, setSnackColor] = useState("");
+
+  const handleSnackState = ({
+    message,
+    snackColor,
+  }: {
+    message: string;
+    snackColor?: string;
+  }) => {
+    setSnackMessage(message);
+    setSnackColor(message === "Task Completed" ? "#6488e4" : "#444444");
+    if (snackColor !== undefined) {
+      setSnackColor(snackColor);
+    }
+    setSnackState(true);
+  };
   return (
     <>
       {category[i] !== undefined ? (
@@ -177,6 +212,20 @@ const CategoryTask: FunctionComponent<Props> = ({
           setModal={setModal}
         />
       ) : null}
+      <DeleteCategory
+        state={confirmModalDelete}
+        handleDeleteCancel={handleDeleteCancel}
+        handleCategoryDelete={handleCategoryDelete}
+        groupName={category[i].categoryName}
+      />
+      <Snackbar
+        color={snackColor}
+        message={snackMessage}
+        initial={
+          snackState ? new Value(State.ACTIVE) : new Value(State.UNDETERMINED)
+        }
+        setSnackState={setSnackState}
+      />
       <Animated.View
         style={{
           flex: 1,
@@ -202,10 +251,7 @@ const CategoryTask: FunctionComponent<Props> = ({
               <Edit color="white" width={17} />
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => {
-                navigation.goBack();
-                removeCategory(category[i].id);
-              }}
+              onPress={() => confirmModalDelete.setValue(1)}
               style={{ marginRight: 10, paddingRight: 10 }}
             >
               <Delete color="white" width={17} />
@@ -277,6 +323,7 @@ const CategoryTask: FunctionComponent<Props> = ({
                         loaded={loaded}
                         categoryId={route.params.categoryId}
                         handleCategoryTaskEdit={handleCategoryTaskEdit}
+                        handleSnackState={handleSnackState}
                       />
                     );
                   }}

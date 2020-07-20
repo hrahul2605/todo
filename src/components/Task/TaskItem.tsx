@@ -8,6 +8,7 @@ import Animated, {
   set,
   useCode,
   sub,
+  Value,
 } from "react-native-reanimated";
 import {
   snapPoint,
@@ -51,6 +52,13 @@ interface ItemProps {
   categoryId?: string;
   handleEdit?: ({ task }: { task: task }) => void;
   handleCategoryTaskEdit?: ({ task }: { task: task }) => void;
+  handleSnackState?: ({
+    message,
+    snackColor,
+  }: {
+    message: string;
+    snackColor?: string;
+  }) => void;
 }
 
 const TaskItem: React.FunctionComponent<ItemProps> = ({
@@ -70,6 +78,7 @@ const TaskItem: React.FunctionComponent<ItemProps> = ({
   categoryId,
   handleEdit,
   handleCategoryTaskEdit,
+  handleSnackState,
 }) => {
   const {
     gestureHandler,
@@ -107,9 +116,15 @@ const TaskItem: React.FunctionComponent<ItemProps> = ({
   useCode(() => [set(itemTransX, spring({ from: 0, to: -x, config }))], []);
 
   const handleDelete = () => {
-    if (removeCategoryTask !== undefined) {
+    if (removeCategoryTask !== undefined && handleSnackState !== undefined) {
       removeCategoryTask({ categoryId: categoryId, id: task.id });
-    } else if (doneScreen === false && removeTask !== undefined) {
+      handleSnackState({ message: "Task Deleted" });
+    } else if (
+      doneScreen === false &&
+      removeTask !== undefined &&
+      handleSnackState !== undefined
+    ) {
+      handleSnackState({ message: "Task Deleted" });
       removeTask(task.id);
     } else if (removeDoneTask !== undefined) {
       removeDoneTask(task.id);
@@ -130,13 +145,19 @@ const TaskItem: React.FunctionComponent<ItemProps> = ({
   };
 
   const handleCorrectPress = () => {
-    if (addDoneTask !== undefined && removeTask !== undefined) {
+    if (
+      handleSnackState !== undefined &&
+      addDoneTask !== undefined &&
+      removeTask !== undefined
+    ) {
       addDoneTask(task);
+      handleSnackState({ message: "Task Completed" });
       removeTask(task.id);
     } else if (
       addDoneCategoryTask !== undefined &&
       categoryId !== undefined &&
-      removeCategoryTask !== undefined
+      removeCategoryTask !== undefined &&
+      handleSnackState !== undefined
     ) {
       addDoneCategoryTask({
         categoryId: categoryId,
@@ -146,6 +167,7 @@ const TaskItem: React.FunctionComponent<ItemProps> = ({
         categoryId: categoryId,
         id: task.id,
       });
+      handleSnackState({ message: "Task Completed", snackColor: color });
     }
   };
 
