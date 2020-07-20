@@ -28,6 +28,9 @@ import {
 import TaskItem from "../Task/TaskItem";
 import List from "../List";
 import { setStatusBarStyle } from "expo-status-bar";
+import Snackbar from "../Snackbar";
+import { Value } from "react-native-reanimated";
+import { State } from "react-native-gesture-handler";
 
 interface Props {
   route: RouteProp<RootStackParamList, "FeedScreen">;
@@ -94,6 +97,7 @@ const FeedScreen: React.FunctionComponent<Props> = ({
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener("blur", () => {
+      setSnackState(false);
       if (!pressed) {
         animate(0);
       } else {
@@ -118,120 +122,148 @@ const FeedScreen: React.FunctionComponent<Props> = ({
     return Date.parse(a.date) - Date.parse(b.date);
   });
 
+  const [snackState, setSnackState] = React.useState(false);
+  const [snackMessage, setSnackMessage] = React.useState("");
+  const [snackColor, setSnackColor] = React.useState("");
+
+  const handleSnackState = ({
+    message,
+    snackColor,
+  }: {
+    message: string;
+    snackColor?: string;
+  }) => {
+    setSnackMessage(message);
+    setSnackColor(message === "Task Completed" ? "#6488e4" : "#444444");
+    setSnackState(true);
+  };
+
   return (
-    <Animated.View
-      style={{
-        ...styles.container,
-        left: SCREEN_WIDTH,
-        transform: [{ translateX }],
-        opacity,
-      }}
-    >
-      <View style={{ ...styles.header }}>
-        <View style={{ ...styles.nav }}>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.goBack();
-            }}
-          >
-            <Left color="white" />
-          </TouchableOpacity>
-          {route.params.screen !== "Done" ? (
+    <>
+      <Snackbar
+        color={snackColor}
+        message={snackMessage}
+        initial={
+          snackState ? new Value(State.ACTIVE) : new Value(State.UNDETERMINED)
+        }
+        setSnackState={setSnackState}
+      />
+      <Animated.View
+        style={{
+          ...styles.container,
+          left: SCREEN_WIDTH,
+          transform: [{ translateX }],
+          opacity,
+        }}
+      >
+        <View style={{ ...styles.header }}>
+          <View style={{ ...styles.nav }}>
             <TouchableOpacity
               onPress={() => {
-                setPressed(true);
-                navigation.navigate("CreateTask");
+                navigation.goBack();
               }}
             >
-              <Plus color="white" />
+              <Left color="white" />
             </TouchableOpacity>
-          ) : null}
+            {route.params.screen !== "Done" ? (
+              <TouchableOpacity
+                onPress={() => {
+                  setPressed(true);
+                  navigation.navigate("CreateTask");
+                }}
+              >
+                <Plus color="white" />
+              </TouchableOpacity>
+            ) : null}
+          </View>
+          <View style={{ ...styles.headingContainer }}>
+            <Text style={{ ...styles.headingText }}>{route.params.screen}</Text>
+          </View>
+          <View style={{ marginHorizontal: 24, marginBottom: 3 }}>
+            <Text style={{ ...styles.headingMotivate }}>
+              {route.params.screenSub}
+            </Text>
+          </View>
         </View>
-        <View style={{ ...styles.headingContainer }}>
-          <Text style={{ ...styles.headingText }}>{route.params.screen}</Text>
-        </View>
-        <View style={{ marginHorizontal: 24, marginBottom: 3 }}>
-          <Text style={{ ...styles.headingMotivate }}>
-            {route.params.screenSub}
-          </Text>
-        </View>
-      </View>
-      <View style={{ height: "auto", paddingVertical: 12 }}>
-        {route.params.screen !== "Group" ? (
-          route.params.screen === "Task" ? (
-            <>
-              <FlatList
-                data={tasks}
-                renderItem={({ item, index }) => (
-                  <TaskItem
-                    key={index}
-                    task={item}
-                    removeTask={removeTask}
-                    addDoneTask={addDoneTask}
-                    x={700 + index * 450}
-                    loaded={loaded}
-                    color={item.color}
-                    handleEdit={handleEdit}
-                  />
-                )}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ paddingTop: 139, paddingBottom: 50 }}
-                numColumns={1}
-                style={{ height: WINDOW_HEIGHT, zIndex: 10 }}
-              />
-            </>
-          ) : (
-            <>
-              <FlatList
-                data={done}
-                renderItem={({ item, index }) => (
-                  <TaskItem
-                    key={index}
-                    task={item}
-                    removeTask={removeTask}
-                    doneScreen={true}
-                    removeDoneTask={removeDoneTask}
-                    color="#6488e4"
-                    x={700 + index * 450}
-                    loaded={loaded}
-                  />
-                )}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ paddingTop: 139, paddingBottom: 50 }}
-                numColumns={1}
-                style={{ height: WINDOW_HEIGHT, zIndex: 10 }}
-              />
-            </>
-          )
-        ) : (
-          <FlatList
-            showsVerticalScrollIndicator={false}
-            data={undefined}
-            renderItem={undefined}
-            style={{ height: WINDOW_HEIGHT }}
-            ListEmptyComponent={
+        <View style={{ height: "auto", paddingVertical: 12 }}>
+          {route.params.screen !== "Group" ? (
+            route.params.screen === "Task" ? (
               <>
-                <View
-                  style={{
-                    paddingTop: 139,
-                    flexDirection: "row",
-                    flex: 1,
-                  }}
-                >
-                  <List
-                    setPressed={setPressed}
-                    navigation={navigation}
-                    data={category}
-                    isProgressScreen={true}
-                  />
-                </View>
+                <FlatList
+                  data={tasks}
+                  renderItem={({ item, index }) => (
+                    <TaskItem
+                      key={index}
+                      task={item}
+                      removeTask={removeTask}
+                      addDoneTask={addDoneTask}
+                      x={700 + index * 450}
+                      loaded={loaded}
+                      color={item.color}
+                      handleEdit={handleEdit}
+                      handleSnackState={handleSnackState}
+                    />
+                  )}
+                  showsVerticalScrollIndicator={false}
+                  contentContainerStyle={{ paddingTop: 139, paddingBottom: 50 }}
+                  numColumns={1}
+                  style={{ height: WINDOW_HEIGHT, zIndex: 10 }}
+                />
               </>
-            }
-            contentContainerStyle={{ paddingBottom: 50 }}
-          />
-        )}
-      </View>
-    </Animated.View>
+            ) : (
+              <>
+                <FlatList
+                  data={done}
+                  renderItem={({ item, index }) => (
+                    <TaskItem
+                      key={index}
+                      task={item}
+                      removeTask={removeTask}
+                      doneScreen={true}
+                      removeDoneTask={removeDoneTask}
+                      color="#6488e4"
+                      x={700 + index * 450}
+                      loaded={loaded}
+                      handleSnackState={handleSnackState}
+                    />
+                  )}
+                  showsVerticalScrollIndicator={false}
+                  contentContainerStyle={{ paddingTop: 139, paddingBottom: 50 }}
+                  numColumns={1}
+                  style={{ height: WINDOW_HEIGHT, zIndex: 10 }}
+                />
+              </>
+            )
+          ) : (
+            <FlatList
+              showsVerticalScrollIndicator={false}
+              data={undefined}
+              renderItem={undefined}
+              style={{ height: WINDOW_HEIGHT }}
+              ListEmptyComponent={
+                <>
+                  <View
+                    style={{
+                      paddingTop: 139,
+                      flexDirection: "row",
+                      flex: 1,
+                    }}
+                  >
+                    <List
+                      setPressed={setPressed}
+                      navigation={navigation}
+                      data={category}
+                      isProgressScreen={true}
+                    />
+                  </View>
+                </>
+              }
+              contentContainerStyle={{ paddingBottom: 50 }}
+            />
+          )}
+        </View>
+      </Animated.View>
+    </>
   );
 };
 

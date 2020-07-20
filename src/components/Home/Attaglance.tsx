@@ -43,7 +43,7 @@ function Attaglance({ navigation, tasks, category }: Props) {
   return (
     <View>
       <View style={{ ...styles.headingContainer }}>
-        <Text style={{ ...styles.headingText }}>Atta Glance</Text>
+        <Text style={{ ...styles.headingText }}>In the works</Text>
       </View>
 
       <View
