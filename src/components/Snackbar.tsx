@@ -33,6 +33,7 @@ const Snackbar: FunctionComponent<Props> = ({
         set(
           translateY,
           spring({
+            from: translateY,
             to: -78,
             config,
           })
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingLeft: 16,
+    padding: 16,
     bottom: -48,
     elevation: 15,
   },
@@ -87,11 +88,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: "regular",
     color: "#FFFF",
-  },
-  btn: {
-    height: "100%",
-    width: 48,
-    justifyContent: "center",
-    alignItems: "center",
   },
 });

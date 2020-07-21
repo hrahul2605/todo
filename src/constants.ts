@@ -94,7 +94,17 @@ export interface Category {
 
 export type RootStackParamList = {
   Home: undefined;
-  FeedScreen: { screen: string; screenSub: string };
+  FeedScreen: {
+    screen: string;
+    screenSub: string;
+    handleSnackState: ({
+      message,
+      snackColor,
+    }: {
+      message: string;
+      snackColor?: string | undefined;
+    }) => void;
+  };
   CreateTask:
     | undefined
     | {
@@ -103,11 +113,25 @@ export type RootStackParamList = {
         editScreen?: boolean;
         task?: task;
         isCategoryTaskEdit?: boolean | undefined;
+        handleSnackState?: ({
+          message,
+          snackColor,
+        }: {
+          message: string;
+          snackColor?: string | undefined;
+        }) => void;
       };
   CategoryTask: {
     taskName: string;
     bgColor: string;
     categoryId: string | undefined;
+    handleSnackState?: ({
+      message,
+      snackColor,
+    }: {
+      message: string;
+      snackColor?: string | undefined;
+    }) => void;
   };
 };
 

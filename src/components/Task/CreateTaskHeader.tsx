@@ -49,11 +49,14 @@ const CreateTaskHeader: FunctionComponent<Props> = ({
           <Text style={{ ...styles.titleText }}>Title</Text>
           <View style={{ ...styles.inputContainer }}>
             <TextInput
-              placeholder="Task title"
-              placeholderTextColor="#000000"
               style={{ ...styles.titleInput }}
               value={title}
               onChangeText={(text) => setTitle(text)}
+              onFocus={() => {
+                if (editScreen === undefined || editScreen === false) {
+                  setTitle("");
+                }
+              }}
             />
           </View>
         </View>

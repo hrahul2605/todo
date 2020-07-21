@@ -97,37 +97,43 @@ const CreateTaskDesc: FunctionComponent<Props> = ({
             </TouchableOpacity>
           </View>
           <View style={{ ...styles.categoryItemContainer }}>
-            {categories.map((item, index) => (
-              <LongPressGestureHandler
-                onHandlerStateChange={(e) => handleEvent({ item, e })}
-                key={index}
-                enabled={!editHold}
-              >
-                <Animated.View>
-                  <View
-                    style={{
-                      ...styles.categoryItem,
-                      backgroundColor:
-                        selectedCategory === item.id
-                          ? item.categoryColor
-                          : "#555555",
-                    }}
-                  >
-                    <Text
+            {categories.map((item, index) => {
+              if (item.id === selectedCategory) {
+                setSelectedCategoryColor(item.categoryColor);
+                setSelectedCategoryName(item.categoryName);
+              }
+              return (
+                <LongPressGestureHandler
+                  onHandlerStateChange={(e) => handleEvent({ item, e })}
+                  key={index}
+                  enabled={!editHold}
+                >
+                  <Animated.View>
+                    <View
                       style={{
-                        ...styles.categoryItemText,
-                        color:
+                        ...styles.categoryItem,
+                        backgroundColor:
                           selectedCategory === item.id
-                            ? "#FFFF"
-                            : "rgba(0, 0, 0, 0.5)",
+                            ? item.categoryColor
+                            : "#555555",
                       }}
                     >
-                      {item.categoryName}
-                    </Text>
-                  </View>
-                </Animated.View>
-              </LongPressGestureHandler>
-            ))}
+                      <Text
+                        style={{
+                          ...styles.categoryItemText,
+                          color:
+                            selectedCategory === item.id
+                              ? "#FFFF"
+                              : "rgba(0, 0, 0, 0.5)",
+                        }}
+                      >
+                        {item.categoryName}
+                      </Text>
+                    </View>
+                  </Animated.View>
+                </LongPressGestureHandler>
+              );
+            })}
           </View>
         </View>
       </View>

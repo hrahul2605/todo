@@ -158,6 +158,12 @@ const CategoryTask: FunctionComponent<Props> = ({
     confirmModalDelete.setValue(2);
     setTimeout(() => {
       navigation.goBack();
+      if (route.params.handleSnackState !== undefined) {
+        route.params.handleSnackState({
+          message: `${category[i].categoryName} deleted.`,
+          snackColor: category[i].categoryColor,
+        });
+      }
       removeCategory(category[i].id);
     }, 5);
   };
@@ -182,24 +188,6 @@ const CategoryTask: FunctionComponent<Props> = ({
     }, [modal])
   );
 
-  const [snackState, setSnackState] = useState(false);
-  const [snackMessage, setSnackMessage] = useState("");
-  const [snackColor, setSnackColor] = useState("");
-
-  const handleSnackState = ({
-    message,
-    snackColor,
-  }: {
-    message: string;
-    snackColor?: string;
-  }) => {
-    setSnackMessage(message);
-    setSnackColor(message === "Task Completed" ? "#6488e4" : "#444444");
-    if (snackColor !== undefined) {
-      setSnackColor(snackColor);
-    }
-    setSnackState(true);
-  };
   return (
     <>
       {category[i] !== undefined ? (
@@ -210,6 +198,7 @@ const CategoryTask: FunctionComponent<Props> = ({
           type="Edit Category"
           modal={modal}
           setModal={setModal}
+          handleSnackState={route.params.handleSnackState}
         />
       ) : null}
       <DeleteCategory
@@ -217,14 +206,6 @@ const CategoryTask: FunctionComponent<Props> = ({
         handleDeleteCancel={handleDeleteCancel}
         handleCategoryDelete={handleCategoryDelete}
         groupName={category[i] !== undefined ? category[i].categoryName : ""}
-      />
-      <Snackbar
-        color={snackColor}
-        message={snackMessage}
-        initial={
-          snackState ? new Value(State.ACTIVE) : new Value(State.UNDETERMINED)
-        }
-        setSnackState={setSnackState}
       />
       <Animated.View
         style={{
@@ -323,7 +304,7 @@ const CategoryTask: FunctionComponent<Props> = ({
                         loaded={loaded}
                         categoryId={route.params.categoryId}
                         handleCategoryTaskEdit={handleCategoryTaskEdit}
-                        handleSnackState={handleSnackState}
+                        handleSnackState={route.params.handleSnackState}
                       />
                     );
                   }}

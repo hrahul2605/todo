@@ -14,7 +14,14 @@ import FeedScreen from "./Home/FeedScreen";
 import CreateTask from "./Task/CreateTask";
 import CategoryTask from "./Task/CategoryTask";
 import Loading from "./Loading";
+import Snackbar from "./Snackbar";
+import { State } from "react-native-gesture-handler";
+import { Value } from "react-native-reanimated";
+import { YellowBox } from "react-native";
 
+YellowBox.ignoreWarnings([
+  "Non-serializable values were found in the navigation state",
+]);
 const Stack = createStackNavigator<RootStackParamList>();
 
 export default function Main() {
@@ -25,10 +32,36 @@ export default function Main() {
     semiBold: require("../assets/fonts/Montserrat-SemiBold.ttf"),
     light: require("../assets/fonts/Montserrat-Light.ttf"),
   });
+  const [snackState, setSnackState] = React.useState(false);
+  const [snackMessage, setSnackMessage] = React.useState("");
+  const [snackColor, setSnackColor] = React.useState("");
+
+  const handleSnackState = ({
+    message,
+    snackColor,
+  }: {
+    message: string;
+    snackColor?: string;
+  }) => {
+    setSnackMessage(message);
+    setSnackColor(message === "Task Completed" ? "#6488e4" : "#444444");
+    setSnackState(true);
+    if (snackColor !== undefined) {
+      setSnackColor(snackColor);
+    }
+  };
   return (
     <>
       <StatusBar />
       <SafeAreaProvider style={{ flex: 1, backgroundColor: "#282828" }}>
+        <Snackbar
+          color={snackColor}
+          message={snackMessage}
+          initial={
+            snackState ? new Value(State.ACTIVE) : new Value(State.UNDETERMINED)
+          }
+          setSnackState={setSnackState}
+        />
         <NavigationContainer>
           {!loaded ? (
             <Loading />
@@ -42,9 +75,21 @@ export default function Main() {
               }}
             >
               <Stack.Screen name="Home" component={Home} />
-              <Stack.Screen name="FeedScreen" component={FeedScreen} />
-              <Stack.Screen name="CreateTask" component={CreateTask} />
-              <Stack.Screen name="CategoryTask" component={CategoryTask} />
+              <Stack.Screen
+                name="FeedScreen"
+                component={FeedScreen}
+                initialParams={{ handleSnackState }}
+              />
+              <Stack.Screen
+                name="CreateTask"
+                component={CreateTask}
+                initialParams={{ handleSnackState }}
+              />
+              <Stack.Screen
+                name="CategoryTask"
+                component={CategoryTask}
+                initialParams={{ handleSnackState }}
+              />
             </Stack.Navigator>
           )}
         </NavigationContainer>

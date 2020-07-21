@@ -28,9 +28,6 @@ import {
 import TaskItem from "../Task/TaskItem";
 import List from "../List";
 import { setStatusBarStyle } from "expo-status-bar";
-import Snackbar from "../Snackbar";
-import { Value } from "react-native-reanimated";
-import { State } from "react-native-gesture-handler";
 
 interface Props {
   route: RouteProp<RootStackParamList, "FeedScreen">;
@@ -97,7 +94,6 @@ const FeedScreen: React.FunctionComponent<Props> = ({
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener("blur", () => {
-      setSnackState(false);
       if (!pressed) {
         animate(0);
       } else {
@@ -115,39 +111,18 @@ const FeedScreen: React.FunctionComponent<Props> = ({
 
   const handleEdit = ({ task }: { task: task }) => {
     setPressed(true);
-    navigation.navigate("CreateTask", { editScreen: true, task });
+    navigation.navigate("CreateTask", {
+      editScreen: true,
+      task,
+    });
   };
 
   tasks.sort((a, b) => {
     return Date.parse(a.date) - Date.parse(b.date);
   });
 
-  const [snackState, setSnackState] = React.useState(false);
-  const [snackMessage, setSnackMessage] = React.useState("");
-  const [snackColor, setSnackColor] = React.useState("");
-
-  const handleSnackState = ({
-    message,
-    snackColor,
-  }: {
-    message: string;
-    snackColor?: string;
-  }) => {
-    setSnackMessage(message);
-    setSnackColor(message === "Task Completed" ? "#6488e4" : "#444444");
-    setSnackState(true);
-  };
-
   return (
     <>
-      <Snackbar
-        color={snackColor}
-        message={snackMessage}
-        initial={
-          snackState ? new Value(State.ACTIVE) : new Value(State.UNDETERMINED)
-        }
-        setSnackState={setSnackState}
-      />
       <Animated.View
         style={{
           ...styles.container,
@@ -201,7 +176,7 @@ const FeedScreen: React.FunctionComponent<Props> = ({
                       loaded={loaded}
                       color={item.color}
                       handleEdit={handleEdit}
-                      handleSnackState={handleSnackState}
+                      handleSnackState={route.params.handleSnackState}
                     />
                   )}
                   showsVerticalScrollIndicator={false}
@@ -224,7 +199,7 @@ const FeedScreen: React.FunctionComponent<Props> = ({
                       color="#6488e4"
                       x={700 + index * 450}
                       loaded={loaded}
-                      handleSnackState={handleSnackState}
+                      handleSnackState={route.params.handleSnackState}
                     />
                   )}
                   showsVerticalScrollIndicator={false}

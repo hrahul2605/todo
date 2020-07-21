@@ -67,6 +67,13 @@ interface Props {
     categoryName: string;
     id: string;
   }) => void;
+  handleSnackState?: ({
+    message,
+    snackColor,
+  }: {
+    message: string;
+    snackColor?: string | undefined;
+  }) => void;
 }
 
 const AddCategory: FunctionComponent<Props> = ({
@@ -81,6 +88,7 @@ const AddCategory: FunctionComponent<Props> = ({
   editCategoryId,
   editCategoryName,
   editCategory,
+  handleSnackState,
 }) => {
   const [categoryName, setCategoryName] = useState(
     editCategoryName !== undefined ? editCategoryName : ""
@@ -281,6 +289,12 @@ const AddCategory: FunctionComponent<Props> = ({
                     categoryName: categoryName,
                     id: editCategoryId,
                   });
+                  if (handleSnackState !== undefined) {
+                    handleSnackState({
+                      message: `${categoryName} edited.`,
+                      snackColor: categoryColor,
+                    });
+                  }
                 }
               }
               setModal(false);

@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Keyboard,
   BackHandler,
+  ToastAndroid,
 } from "react-native";
 import {
   SCREEN_WIDTH,
@@ -149,9 +150,10 @@ const CreateTask: FunctionComponent<Props> = ({
     }
   }, [editHold]);
 
-
   const [title, setTitle] = useState(
-    route.params?.task?.title !== undefined ? route.params.task.title : ""
+    route.params?.task?.title !== undefined
+      ? route.params.task.title
+      : "Task Title"
   );
   const [date, setDate] = useState(
     route.params?.task?.date !== undefined
@@ -247,19 +249,51 @@ const CreateTask: FunctionComponent<Props> = ({
     }, [dateAnimate])
   );
 
+  const btnTransX = useRef(new Animated.Value(0)).current;
+  const btnTranslateX = btnTransX.interpolate({
+    inputRange: [0, 0.01, 0.25, 0.5, 0.75, 1],
+    outputRange: [0, -2.5, 2.5, -1.5, 1.5, 0],
+  });
+
   const handleButton = () => {
-    if (Date.now() - 8.64e7 > Date.parse(date)) {
-      console.log("CANT CREATE TASK");
+    if (
+      Date.now() - 8.64e7 > Date.parse(date) ||
+      title === "" ||
+      title === "Task Title"
+    ) {
+      Animated.spring(btnTransX, {
+        toValue: 1,
+        stiffness: 1000,
+        useNativeDriver: true,
+      }).start(() => btnTransX.setValue(0));
+      if (route.params?.handleSnackState !== undefined) {
+        route.params?.handleSnackState({
+          message:
+            title === "" || title === "Task Title"
+              ? "Give proper title please"
+              : "The date has passed.",
+          snackColor: "#555555",
+        });
+      }
     } else {
+      const taskColor = colors[Math.floor(Math.random() * colors.length)];
       setPressedOnce(true);
-      if (!isCat) {
+      if (
+        !isCat &&
+        route.params !== undefined &&
+        route.params.handleSnackState !== undefined
+      ) {
         if (!route.params?.editScreen) {
           addTask({
             date: date,
             title: title,
             id: "",
             desc: desc === "" ? undefined : desc,
-            color: colors[Math.floor(Math.random() * colors.length)],
+            color: taskColor,
+          });
+          route.params?.handleSnackState({
+            message: "Task added.",
+            snackColor: taskColor,
           });
         } else {
           if (route.params.task !== undefined) {
@@ -274,23 +308,34 @@ const CreateTask: FunctionComponent<Props> = ({
                   desc: desc === "" ? undefined : desc,
                 },
               });
+              route.params.handleSnackState({
+                message: "Task Edited",
+                snackColor: route.params.task.color,
+              });
             } else {
               addTask({
                 id: route.params.task.id,
                 title: title,
                 date: date,
-                color: colors[Math.floor(Math.random() * colors.length)],
+                color: taskColor,
                 desc: desc === "" ? undefined : desc,
               });
               removeCategoryTask({
                 categoryId: route.params.categoryId,
                 id: route.params.task.id,
               });
+              route.params.handleSnackState({
+                message: "Edited task shifted to Tasks",
+                snackColor: taskColor,
+              });
             }
           }
         }
       } else {
-        if (route.params?.isCategoryTaskEdit === undefined) {
+        if (
+          route.params?.isCategoryTaskEdit === undefined &&
+          route.params?.handleSnackState !== undefined
+        ) {
           if (!route.params?.editScreen) {
             addCategoryTask({
               categoryId: selectedCategory,
@@ -300,6 +345,10 @@ const CreateTask: FunctionComponent<Props> = ({
                 id: "",
                 desc: desc === "" ? undefined : desc,
               },
+            });
+            route.params?.handleSnackState({
+              message: `Task added in ${categoryName}`,
+              snackColor: categoryColor,
             });
           } else {
             if (route.params.task !== undefined) {
@@ -313,10 +362,18 @@ const CreateTask: FunctionComponent<Props> = ({
                 },
               });
               removeTask(route.params.task.id);
+              route.params?.handleSnackState({
+                message: `Task shifted to ${categoryName}`,
+                snackColor: categoryColor,
+              });
             }
           }
         } else {
-          if (route.params.task !== undefined) {
+          if (
+            route.params !== undefined &&
+            route.params.task !== undefined &&
+            route.params.handleSnackState !== undefined
+          ) {
             if (selectedCategory === route.params.categoryId) {
               editCategroyTask({
                 categoryId: selectedCategory,
@@ -326,6 +383,10 @@ const CreateTask: FunctionComponent<Props> = ({
                   date: date,
                   desc: desc === "" ? undefined : desc,
                 },
+              });
+              route.params?.handleSnackState({
+                message: `Task Edited`,
+                snackColor: categoryColor,
               });
             } else {
               addCategoryTask({
@@ -340,6 +401,10 @@ const CreateTask: FunctionComponent<Props> = ({
               removeCategoryTask({
                 categoryId: route.params.categoryId,
                 id: route.params.task.id,
+              });
+              route.params?.handleSnackState({
+                message: `Task shifted to ${categoryName}`,
+                snackColor: categoryColor,
               });
             }
           }
@@ -415,12 +480,13 @@ const CreateTask: FunctionComponent<Props> = ({
         />
       </Animated.ScrollView>
       <Animated.View
-        style={{ opacity: btnOpacity, ...styles.createTaskContainer }}
+        style={{
+          opacity: btnOpacity,
+          ...styles.createTaskContainer,
+          transform: [{ translateX: btnTranslateX }],
+        }}
       >
-        <TouchableOpacity
-          onPress={() => handleButton()}
-          disabled={pressedOnce || title === ""}
-        >
+        <TouchableOpacity onPress={() => handleButton()} disabled={pressedOnce}>
           <View
             style={{
               flex: 1,

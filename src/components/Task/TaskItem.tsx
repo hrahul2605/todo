@@ -116,15 +116,9 @@ const TaskItem: React.FunctionComponent<ItemProps> = ({
   useCode(() => [set(itemTransX, spring({ from: 0, to: -x, config }))], []);
 
   const handleDelete = () => {
-    if (removeCategoryTask !== undefined && handleSnackState !== undefined) {
+    if (removeCategoryTask !== undefined) {
       removeCategoryTask({ categoryId: categoryId, id: task.id });
-      handleSnackState({ message: "Task Deleted" });
-    } else if (
-      doneScreen === false &&
-      removeTask !== undefined &&
-      handleSnackState !== undefined
-    ) {
-      handleSnackState({ message: "Task Deleted" });
+    } else if (doneScreen === false && removeTask !== undefined) {
       removeTask(task.id);
     } else if (removeDoneTask !== undefined) {
       removeDoneTask(task.id);
@@ -133,6 +127,13 @@ const TaskItem: React.FunctionComponent<ItemProps> = ({
         categoryId: categoryId,
         id: task.id,
       });
+    }
+    if (
+      handleSnackState !== undefined &&
+      removeDoneTask === undefined &&
+      removeDoneCategoryTask === undefined
+    ) {
+      handleSnackState({ message: "Task Deleted" });
     }
   };
 
