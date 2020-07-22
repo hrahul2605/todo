@@ -33,8 +33,6 @@ import AddCategory from "./AddCategory";
 import { setStatusBarStyle } from "expo-status-bar";
 import DeleteCategory from "../DeleteCategory";
 import { Value } from "react-native-reanimated";
-import Snackbar from "../Snackbar";
-import { State } from "react-native-gesture-handler";
 
 interface det {
   categoryId: string | undefined;
@@ -360,7 +358,7 @@ const CategoryTask: FunctionComponent<Props> = ({
                         key={index}
                         task={item}
                         categoryName={category[i].categoryName}
-                        color="#6488e4"
+                        color="#444444"
                         addDoneCategoryTask={addDoneCategoryTask}
                         isCategoryDoneScreen={true}
                         removeDoneCategoryTask={removeDoneCategoryTask}

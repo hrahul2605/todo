@@ -74,7 +74,11 @@ export default function Main() {
                 cardStyleInterpolator: CardStyleInterpolators.forNoAnimation,
               }}
             >
-              <Stack.Screen name="Home" component={Home} />
+              <Stack.Screen
+                name="Home"
+                component={Home}
+                initialParams={{ handleSnackState }}
+              />
               <Stack.Screen
                 name="FeedScreen"
                 component={FeedScreen}

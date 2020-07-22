@@ -34,7 +34,7 @@ const Snackbar: FunctionComponent<Props> = ({
           translateY,
           spring({
             from: translateY,
-            to: -78,
+            to: -56,
             config,
           })
         ),
@@ -45,7 +45,7 @@ const Snackbar: FunctionComponent<Props> = ({
           translateY,
           spring({
             from: translateY,
-            to: 78,
+            to: 56,
             config,
           })
         ),
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
   container: {
     position: "absolute",
     height: 48,
-    width: 0.9 * SCREEN_WIDTH,
+    width: SCREEN_WIDTH - 16,
     borderRadius: 12,
     alignSelf: "center",
     flexDirection: "row",

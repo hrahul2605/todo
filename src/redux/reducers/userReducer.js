@@ -1,7 +1,7 @@
 import * as ActionTypes from "../ActionTypes";
 
 const INITIAL_STATE = {
-  userName: "your name here",
+  userName: "Your name here",
   userDesc: "Tap here to change",
 };
 

@@ -25,6 +25,7 @@ interface Props {
   setSelectedCategoryName: React.Dispatch<React.SetStateAction<string>>;
   setSelectedCategoryColor: React.Dispatch<React.SetStateAction<string>>;
   editHold: boolean;
+  modal: boolean;
 }
 
 const CreateTaskDesc: FunctionComponent<Props> = ({
@@ -38,6 +39,7 @@ const CreateTaskDesc: FunctionComponent<Props> = ({
   setSelectedCategoryColor,
   setSelectedCategoryName,
   editHold,
+  modal,
 }) => {
   const handleEvent = ({
     item,
@@ -74,7 +76,7 @@ const CreateTaskDesc: FunctionComponent<Props> = ({
           <TextInput
             style={{ ...styles.descInput }}
             placeholder="Lorem ipsum dolor sit amet"
-            placeholderTextColor="#FFFF"
+            placeholderTextColor="rgba(255,255,255,0.10)"
             value={desc}
             onChangeText={(e) => setDesc(e)}
             multiline={true}
@@ -106,7 +108,7 @@ const CreateTaskDesc: FunctionComponent<Props> = ({
                 <LongPressGestureHandler
                   onHandlerStateChange={(e) => handleEvent({ item, e })}
                   key={index}
-                  enabled={!editHold}
+                  enabled={!editHold && !modal}
                 >
                   <Animated.View>
                     <View

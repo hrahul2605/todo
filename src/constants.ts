@@ -93,7 +93,17 @@ export interface Category {
 }
 
 export type RootStackParamList = {
-  Home: undefined;
+  Home:
+    | undefined
+    | {
+        handleSnackState?: ({
+          message,
+          snackColor,
+        }: {
+          message: string;
+          snackColor?: string | undefined;
+        }) => void;
+      };
   FeedScreen: {
     screen: string;
     screenSub: string;

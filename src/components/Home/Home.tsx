@@ -13,13 +13,14 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList, SCREEN_WIDTH } from "../../constants";
 import { setStatusBarStyle } from "expo-status-bar";
 import AddCategory from "../Task/AddCategory";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, RouteProp } from "@react-navigation/native";
 
 interface Props {
   navigation: StackNavigationProp<RootStackParamList>;
+  route: RouteProp<RootStackParamList, "Home">;
 }
 
-const Home: React.FunctionComponent<Props> = ({ navigation }) => {
+const Home: React.FunctionComponent<Props> = ({ navigation, route }) => {
   const opacity = React.useRef(new Animated.Value(1)).current;
 
   React.useEffect(() => {
@@ -87,7 +88,12 @@ const Home: React.FunctionComponent<Props> = ({ navigation }) => {
 
   return (
     <>
-      <AddCategory modal={modal} setModal={setModal} type="Rename" />
+      <AddCategory
+        modal={modal}
+        setModal={setModal}
+        type="Rename"
+        handleSnackState={route.params?.handleSnackState}
+      />
       <Animated.View
         style={{ ...styles.container, transform: [{ translateX }], opacity }}
       >

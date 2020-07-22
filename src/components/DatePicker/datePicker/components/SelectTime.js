@@ -258,7 +258,7 @@ const styles = theme =>
       paddingVertical: 10,
       paddingHorizontal: 25,
       borderRadius: 8,
-      backgroundColor: theme.mainColor,
+      backgroundColor: "#444444",
       margin: 8,
     },
     btnText: {

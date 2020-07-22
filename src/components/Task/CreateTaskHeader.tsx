@@ -52,6 +52,8 @@ const CreateTaskHeader: FunctionComponent<Props> = ({
               style={{ ...styles.titleInput }}
               value={title}
               onChangeText={(text) => setTitle(text)}
+              placeholder="Task Title"
+              placeholderTextColor="rgba(0,0,0,0.3)"
               onFocus={() => {
                 if (editScreen === undefined || editScreen === false) {
                   setTitle("");

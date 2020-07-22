@@ -146,13 +146,19 @@ const AddCategory: FunctionComponent<Props> = ({
     );
   }, [editCategoryName, editCategoryName, editCategoryId]);
 
+  const btnTransX = useRef(new Animated.Value(0)).current;
+  const btnTranslateX = btnTransX.interpolate({
+    inputRange: [0, 0.01, 0.25, 0.5, 0.75, 1],
+    outputRange: [0, -2.5, 2.5, -1.5, 1.5, 0],
+  });
+
   return (
     <Animated.View
       style={{
         position: "absolute",
         justifyContent: "center",
         alignItems: "center",
-        zIndex: 10,
+        zIndex: 20,
         top: WINDOW_HEIGHT,
         height: WINDOW_HEIGHT,
         elevation: 10,
@@ -172,7 +178,7 @@ const AddCategory: FunctionComponent<Props> = ({
           <Text style={{ ...styles.nameText }}>Name</Text>
           <TextInput
             placeholder={type !== "Rename" ? "Category" : userName}
-            placeholderTextColor="#FFFF"
+            placeholderTextColor="rgba(255, 255, 255, 0.22)"
             style={{
               ...styles.nameInput,
               borderColor: "rgba(255, 255, 255, 0.12)",
@@ -183,6 +189,7 @@ const AddCategory: FunctionComponent<Props> = ({
               type !== "Rename" ? setCategoryName(val) : setUserName(val)
             }
             onFocus={() => (type === "Rename" ? setUserName("") : null)}
+            maxLength={15}
           />
           {type !== "Rename" ? (
             <>
@@ -230,6 +237,7 @@ const AddCategory: FunctionComponent<Props> = ({
                   onChangeText={(val) => setUserDesc(val)}
                   value={userDesc}
                   onFocus={() => setUserDesc("")}
+                  maxLength={15}
                 />
               </View>
               <View style={{ height: 24 }} />
@@ -251,62 +259,80 @@ const AddCategory: FunctionComponent<Props> = ({
           >
             <Text style={{ ...styles.btnText }}>Cancel</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={{ ...styles.doneBtn }}
-            onPress={() => {
-              if (
-                type === "Add Category" &&
-                addCategory !== undefined &&
-                setSelectedCategory !== undefined
-              ) {
-                addCategory({
-                  categoryName: categoryName,
-                  categoryColor: categoryColor,
-                  tasks: [],
-                  id: id,
-                  done: [],
-                });
-                setSelectedCategory(id);
-                setTimeout(() => {
-                  setId(JSON.stringify(Date.now()));
-                }, 100);
-                setCategoryName("");
-              } else if (type === "Rename") {
+          <Animated.View style={{ transform: [{ translateX: btnTranslateX }] }}>
+            <TouchableOpacity
+              style={{ ...styles.doneBtn }}
+              onPress={() => {
                 if (
-                  userName !== undefined &&
-                  userDesc !== undefined &&
-                  updateDetails !== undefined
+                  type === "Add Category" || type === "Edit Category"
+                    ? categoryColor === "" || categoryName === ""
+                    : userName === "" || userDesc === ""
                 ) {
-                  updateDetails({ userName, userDesc });
-                }
-              } else {
-                if (
-                  editCategory !== undefined &&
-                  editCategoryId !== undefined
-                ) {
-                  editCategory({
-                    categoryColor: categoryColor,
-                    categoryName: categoryName,
-                    id: editCategoryId,
-                  });
+                  Animated.spring(btnTransX, {
+                    toValue: 1,
+                    stiffness: 1000,
+                    useNativeDriver: true,
+                  }).start(() => btnTransX.setValue(0));
                   if (handleSnackState !== undefined) {
                     handleSnackState({
-                      message: `${categoryName} edited.`,
-                      snackColor: categoryColor,
+                      message:
+                        type === "Add Category" || type === "Edit Category"
+                          ? "Enter Category Title"
+                          : "Enter something",
+                      snackColor: "#555555",
                     });
                   }
+                } else {
+                  if (
+                    type === "Add Category" &&
+                    addCategory !== undefined &&
+                    setSelectedCategory !== undefined
+                  ) {
+                    addCategory({
+                      categoryName: categoryName,
+                      categoryColor: categoryColor,
+                      tasks: [],
+                      id: id,
+                      done: [],
+                    });
+                    setSelectedCategory(id);
+                    setTimeout(() => {
+                      setId(JSON.stringify(Date.now()));
+                    }, 100);
+                    setCategoryName("");
+                  } else if (type === "Rename") {
+                    if (
+                      userName !== undefined &&
+                      userDesc !== undefined &&
+                      updateDetails !== undefined
+                    ) {
+                      updateDetails({ userName, userDesc });
+                    }
+                  } else {
+                    if (
+                      editCategory !== undefined &&
+                      editCategoryId !== undefined
+                    ) {
+                      editCategory({
+                        categoryColor: categoryColor,
+                        categoryName: categoryName,
+                        id: editCategoryId,
+                      });
+                      if (handleSnackState !== undefined) {
+                        handleSnackState({
+                          message: `${categoryName} edited.`,
+                          snackColor: categoryColor,
+                        });
+                      }
+                    }
+                  }
+                  setModal(false);
                 }
-              }
-              setModal(false);
-            }}
-            disabled={
-              type === "Add Category" || type === "Edit Category"
-                ? categoryColor === "" || categoryName === ""
-                : userName === "" || userDesc === ""
-            }
-          >
-            <Text style={{ ...styles.btnText }}>Done</Text>
-          </TouchableOpacity>
+              }}
+            >
+              <Text style={{ ...styles.btnText }}>Done</Text>
+            </TouchableOpacity>
+          </Animated.View>
         </View>
       </View>
     </Animated.View>

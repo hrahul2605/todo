@@ -3,11 +3,9 @@ import {
   Text,
   StyleSheet,
   Animated,
-  View,
   TouchableOpacity,
   Keyboard,
   BackHandler,
-  ToastAndroid,
 } from "react-native";
 import {
   SCREEN_WIDTH,
@@ -17,6 +15,7 @@ import {
   state,
   WINDOW_HEIGHT,
   colors,
+  SCREEN_HEIGHT,
 } from "../../constants";
 import { StackNavigationProp } from "@react-navigation/stack";
 import AddCategory from "./AddCategory";
@@ -151,9 +150,7 @@ const CreateTask: FunctionComponent<Props> = ({
   }, [editHold]);
 
   const [title, setTitle] = useState(
-    route.params?.task?.title !== undefined
-      ? route.params.task.title
-      : "Task Title"
+    route.params?.task?.title !== undefined ? route.params.task.title : ""
   );
   const [date, setDate] = useState(
     route.params?.task?.date !== undefined
@@ -270,7 +267,7 @@ const CreateTask: FunctionComponent<Props> = ({
         route.params?.handleSnackState({
           message:
             title === "" || title === "Task Title"
-              ? "Give proper title please"
+              ? "Enter title."
               : "The date has passed.",
           snackColor: "#555555",
         });
@@ -309,7 +306,7 @@ const CreateTask: FunctionComponent<Props> = ({
                 },
               });
               route.params.handleSnackState({
-                message: "Task Edited",
+                message: "Task Updated",
                 snackColor: route.params.task.color,
               });
             } else {
@@ -325,7 +322,7 @@ const CreateTask: FunctionComponent<Props> = ({
                 id: route.params.task.id,
               });
               route.params.handleSnackState({
-                message: "Edited task shifted to Tasks",
+                message: "Moved to Tasks",
                 snackColor: taskColor,
               });
             }
@@ -385,7 +382,7 @@ const CreateTask: FunctionComponent<Props> = ({
                 },
               });
               route.params?.handleSnackState({
-                message: `Task Edited`,
+                message: `Task Updated`,
                 snackColor: categoryColor,
               });
             } else {
@@ -422,7 +419,7 @@ const CreateTask: FunctionComponent<Props> = ({
         transform: [{ translateX: transX }],
         left: SCREEN_WIDTH,
         paddingTop: 8,
-        height: WINDOW_HEIGHT,
+        height: SCREEN_HEIGHT,
       }}
     >
       <DatePick
@@ -437,6 +434,7 @@ const CreateTask: FunctionComponent<Props> = ({
         setSelectedCategory={setSelectedCategory}
         modal={modal}
         setModal={setModal}
+        handleSnackState={route.params?.handleSnackState}
       />
       <AddCategory
         editCategoryId={selectedCategory}
@@ -445,6 +443,7 @@ const CreateTask: FunctionComponent<Props> = ({
         type="Edit Category"
         modal={editHold}
         setModal={setEditHold}
+        handleSnackState={route.params?.handleSnackState}
       />
       <Animated.View
         style={{
@@ -477,6 +476,7 @@ const CreateTask: FunctionComponent<Props> = ({
           setSelectedCategoryColor={setSelectedCategoryColor}
           setEditHold={setEditHold}
           editHold={editHold}
+          modal={modal}
         />
       </Animated.ScrollView>
       <Animated.View
@@ -486,20 +486,21 @@ const CreateTask: FunctionComponent<Props> = ({
           transform: [{ translateX: btnTranslateX }],
         }}
       >
-        <TouchableOpacity onPress={() => handleButton()} disabled={pressedOnce}>
-          <View
-            style={{
-              flex: 1,
-              width: SCREEN_WIDTH - 48,
-              justifyContent: "center",
-              alignItems: "center",
-              borderRadius: 45,
-            }}
-          >
-            <Text style={{ ...styles.createTaskText }}>
-              {route.params?.editScreen ? "Save" : "Create Task"}
-            </Text>
-          </View>
+        <TouchableOpacity
+          style={{
+            flex: 1,
+            width: SCREEN_WIDTH - 48,
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: 45,
+            backgroundColor: "#6488e4",
+          }}
+          onPress={() => handleButton()}
+          disabled={pressedOnce || modal}
+        >
+          <Text style={{ ...styles.createTaskText }}>
+            {route.params?.editScreen ? "Save" : "Create Task"}
+          </Text>
         </TouchableOpacity>
       </Animated.View>
     </Animated.View>
@@ -532,10 +533,9 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH - 48,
     height: 48,
     position: "absolute",
-    backgroundColor: "#6488e4",
     borderRadius: 45,
     marginHorizontal: 24,
-    elevation: 10,
+    elevation: 1,
     justifyContent: "center",
     alignItems: "center",
     zIndex: 10,
