@@ -70,7 +70,7 @@ const CreateTaskDesc: FunctionComponent<Props> = ({
   return (
     <>
       <View style={{ height: 347 }} />
-      <View style={{ ...styles.descContainer }}>
+      <View style={{ ...styles.descContainer, opacity: desc === "" ? 0.4 : 1 }}>
         <View style={{ ...styles.descLayer }}>
           <Text style={{ ...styles.text }}>Description</Text>
           <TextInput
@@ -84,7 +84,11 @@ const CreateTaskDesc: FunctionComponent<Props> = ({
           />
         </View>
       </View>
-      <View style={{ ...styles.categoryContainer }}>
+      <View
+        style={{
+          ...styles.categoryContainer,
+        }}
+      >
         <View style={{ height: "auto" }}>
           <View
             style={{
@@ -93,7 +97,14 @@ const CreateTaskDesc: FunctionComponent<Props> = ({
               alignItems: "center",
             }}
           >
-            <Text style={{ ...styles.text }}>Category</Text>
+            <Text
+              style={{
+                ...styles.text,
+                opacity: selectedCategory === "" ? 0.4 : 1,
+              }}
+            >
+              Category
+            </Text>
             <TouchableOpacity onPress={() => setModal(true)}>
               <Plus color="#FFFF" />
             </TouchableOpacity>
@@ -118,6 +129,7 @@ const CreateTaskDesc: FunctionComponent<Props> = ({
                           selectedCategory === item.id
                             ? item.categoryColor
                             : "#555555",
+                        opacity: selectedCategory === item.id ? 1 : 0.4,
                       }}
                     >
                       <Text
@@ -196,7 +208,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 8,
     marginRight: 8,
-    elevation: 5,
+    elevation: 1,
   },
   categoryItemText: {
     fontFamily: "regular",

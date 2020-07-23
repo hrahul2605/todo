@@ -15,7 +15,6 @@ import {
   state,
   WINDOW_HEIGHT,
   colors,
-  SCREEN_HEIGHT,
 } from "../../constants";
 import { StackNavigationProp } from "@react-navigation/stack";
 import AddCategory from "./AddCategory";
@@ -39,6 +38,7 @@ import {
   useFocusEffect,
 } from "@react-navigation/native";
 import { setStatusBarStyle } from "expo-status-bar";
+import TimePick from "../Calender/TimePick";
 
 interface det {
   categoryId: string | undefined;
@@ -99,6 +99,7 @@ const CreateTask: FunctionComponent<Props> = ({
   removeCategoryTask,
 }) => {
   const [dateAnimate, setDateAnimate] = useState(false);
+  const [timeAnimate, setTimeAnimate] = useState(false);
   const mainViewOpacity = useRef(new Animated.Value(1)).current;
   const [editHold, setEditHold] = useState(false);
   const [categoryName, setSelectedCategoryName] = useState("");
@@ -142,6 +143,13 @@ const CreateTask: FunctionComponent<Props> = ({
     }
   }, [dateAnimate]);
   useEffect(() => {
+    if (!timeAnimate) {
+      animateMainViewDown();
+    } else {
+      animateMainViewUp();
+    }
+  }, [timeAnimate]);
+  useEffect(() => {
     if (!editHold) {
       animateMainViewDown();
     } else {
@@ -157,6 +165,7 @@ const CreateTask: FunctionComponent<Props> = ({
       ? route.params.task.date
       : getFormatedDate(new Date(), "ddd, DD MMM YYYY")
   );
+  const [reminder, setReminder] = useState("none");
   const [isCat, setCat] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [pressedOnce, setPressedOnce] = useState(false);
@@ -256,7 +265,9 @@ const CreateTask: FunctionComponent<Props> = ({
     if (
       Date.now() - 8.64e7 > Date.parse(date) ||
       title === "" ||
-      title === "Task Title"
+      title === "Task Title" ||
+      (reminder !== "none" &&
+        Date.now() > new Date(date + " " + reminder + ":00").getTime())
     ) {
       Animated.spring(btnTransX, {
         toValue: 1,
@@ -268,7 +279,9 @@ const CreateTask: FunctionComponent<Props> = ({
           message:
             title === "" || title === "Task Title"
               ? "Enter title."
-              : "The date has passed.",
+              : Date.now() - 8.64e7 > Date.parse(date)
+              ? "The date has passed."
+              : "The time has passed.",
           snackColor: "#555555",
         });
       }
@@ -287,6 +300,7 @@ const CreateTask: FunctionComponent<Props> = ({
             id: "",
             desc: desc === "" ? undefined : desc,
             color: taskColor,
+            reminder: reminder === "none" ? undefined : reminder,
           });
           route.params?.handleSnackState({
             message: "Task added.",
@@ -303,6 +317,7 @@ const CreateTask: FunctionComponent<Props> = ({
                   id: route.params.task?.id,
                   color: route.params.task?.color,
                   desc: desc === "" ? undefined : desc,
+                  reminder: reminder === "none" ? undefined : reminder,
                 },
               });
               route.params.handleSnackState({
@@ -316,6 +331,7 @@ const CreateTask: FunctionComponent<Props> = ({
                 date: date,
                 color: taskColor,
                 desc: desc === "" ? undefined : desc,
+                reminder: reminder === "none" ? undefined : reminder,
               });
               removeCategoryTask({
                 categoryId: route.params.categoryId,
@@ -341,6 +357,7 @@ const CreateTask: FunctionComponent<Props> = ({
                 title: title,
                 id: "",
                 desc: desc === "" ? undefined : desc,
+                reminder: reminder === "none" ? undefined : reminder,
               },
             });
             route.params?.handleSnackState({
@@ -356,6 +373,7 @@ const CreateTask: FunctionComponent<Props> = ({
                   title: title,
                   id: route.params.task?.id,
                   desc: desc === "" ? undefined : desc,
+                  reminder: reminder === "none" ? undefined : reminder,
                 },
               });
               removeTask(route.params.task.id);
@@ -379,6 +397,7 @@ const CreateTask: FunctionComponent<Props> = ({
                   title: title,
                   date: date,
                   desc: desc === "" ? undefined : desc,
+                  reminder: reminder === "none" ? undefined : reminder,
                 },
               });
               route.params?.handleSnackState({
@@ -393,6 +412,7 @@ const CreateTask: FunctionComponent<Props> = ({
                   title: title,
                   id: route.params.task.id,
                   desc: desc === "" ? undefined : desc,
+                  reminder: reminder === "none" ? undefined : reminder,
                 },
               });
               removeCategoryTask({
@@ -412,6 +432,22 @@ const CreateTask: FunctionComponent<Props> = ({
     }
   };
 
+  const [keyboadrOpen, setKeyboardOpen] = useState(false);
+  useEffect(() => {
+    Keyboard.addListener("keyboardDidShow", _keyboardDidShow);
+    Keyboard.addListener("keyboardDidHide", _keyboardDidHide);
+    return () => {
+      Keyboard.removeListener("keyboardDidShow", _keyboardDidShow);
+      Keyboard.removeListener("keyboardDidHide", _keyboardDidHide);
+    };
+  }, []);
+  const _keyboardDidShow = () => {
+    setKeyboardOpen(true);
+  };
+  const _keyboardDidHide = () => {
+    setKeyboardOpen(false);
+  };
+
   return (
     <Animated.View
       style={{
@@ -419,7 +455,7 @@ const CreateTask: FunctionComponent<Props> = ({
         transform: [{ translateX: transX }],
         left: SCREEN_WIDTH,
         paddingTop: 8,
-        height: SCREEN_HEIGHT,
+        flex: 1,
       }}
     >
       <DatePick
@@ -427,6 +463,12 @@ const CreateTask: FunctionComponent<Props> = ({
         setDateAnimate={setDateAnimate}
         date={date}
         setDate={setDate}
+      />
+      <TimePick
+        dateAnimate={timeAnimate}
+        setDateAnimate={setTimeAnimate}
+        reminder={reminder}
+        setReminder={setReminder}
       />
       <AddCategory
         addCategory={addCategory}
@@ -459,6 +501,8 @@ const CreateTask: FunctionComponent<Props> = ({
           date={date}
           setDate={setDate}
           editScreen={route.params?.editScreen}
+          setTimeAnimate={setTimeAnimate}
+          reminder={reminder}
         />
       </Animated.View>
       <Animated.ScrollView
@@ -481,7 +525,7 @@ const CreateTask: FunctionComponent<Props> = ({
       </Animated.ScrollView>
       <Animated.View
         style={{
-          opacity: btnOpacity,
+          opacity: keyboadrOpen ? 0 : btnOpacity,
           ...styles.createTaskContainer,
           transform: [{ translateX: btnTranslateX }],
         }}
@@ -496,7 +540,7 @@ const CreateTask: FunctionComponent<Props> = ({
             backgroundColor: "#6488e4",
           }}
           onPress={() => handleButton()}
-          disabled={pressedOnce || modal}
+          disabled={pressedOnce || modal || keyboadrOpen}
         >
           <Text style={{ ...styles.createTaskText }}>
             {route.params?.editScreen ? "Save" : "Create Task"}

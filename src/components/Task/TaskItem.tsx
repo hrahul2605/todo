@@ -8,7 +8,6 @@ import Animated, {
   set,
   useCode,
   sub,
-  Value,
 } from "react-native-reanimated";
 import {
   snapPoint,
@@ -217,6 +216,7 @@ const TaskItem: React.FunctionComponent<ItemProps> = ({
             ) : null}
             <Text style={{ ...styles.taskDesc, fontSize: 10 }}>
               {task.date.slice(0, 11)}
+              {task.reminder !== undefined ?", "+task.reminder : null}
             </Text>
           </View>
         </Animated.View>

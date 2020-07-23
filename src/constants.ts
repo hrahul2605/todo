@@ -78,8 +78,7 @@ export interface task {
   title: string;
   date: string;
   desc?: string;
-  startTime?: string;
-  endTime?: string;
+  reminder?: string;
   id: string;
 }
 

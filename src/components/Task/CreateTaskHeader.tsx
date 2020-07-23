@@ -9,6 +9,7 @@ import {
 import Calendar from "../../assets/icons/calendar.svg";
 import Left from "../../assets/icons/left.svg";
 import { SCREEN_WIDTH, day, month } from "../../constants";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 interface Props {
   goBack(): void;
@@ -18,6 +19,8 @@ interface Props {
   date: string;
   editScreen?: boolean;
   setDateAnimate?: React.Dispatch<React.SetStateAction<boolean>>;
+  setTimeAnimate?: React.Dispatch<React.SetStateAction<boolean>>;
+  reminder: string;
 }
 
 const CreateTaskHeader: FunctionComponent<Props> = ({
@@ -27,6 +30,8 @@ const CreateTaskHeader: FunctionComponent<Props> = ({
   date,
   editScreen = false,
   setDateAnimate,
+  setTimeAnimate,
+  reminder,
 }) => {
   const datee = new Date();
   return (
@@ -92,22 +97,17 @@ const CreateTaskHeader: FunctionComponent<Props> = ({
             </View>
           </View>
           <View style={{ ...styles.detailContainer, marginLeft: 12 }}>
-            <View style={{ ...styles.title }}>
+            <TouchableWithoutFeedback
+              style={{ ...styles.title }}
+              onPress={() => {
+                if (setTimeAnimate !== undefined) {
+                  setTimeAnimate(true);
+                }
+              }}
+            >
               <Text style={{ ...styles.titleText }}>Reminder</Text>
-              <View style={{ flexDirection: "row" }}>
-                <View pointerEvents="none">
-                  <TextInput
-                    defaultValue="4:00 PM"
-                    style={{ ...styles.dateInput }}
-                  />
-                </View>
-                <View style={{ ...styles.calenderIcon }}>
-                  <Text style={{ ...styles.dateInput, color: "#000000" }}>
-                    PM
-                  </Text>
-                </View>
-              </View>
-            </View>
+              <Text style={{ ...styles.dateInput }}>{reminder}</Text>
+            </TouchableWithoutFeedback>
           </View>
         </View>
       </View>
