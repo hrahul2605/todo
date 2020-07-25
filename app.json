@@ -5,9 +5,7 @@
     "name": "todo",
     "slug": "todo",
     "version": "1.0.0",
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "packagerOpts": {
       "config": "metro.config.js",
       "sourceExts": [
@@ -23,6 +21,14 @@
         "wasm",
         "svg"
       ]
+    },
+    "android": {
+      "useNextNotificationsApi": true,
+      "icon":"./src/assets/icons/app-icon.png"
+    },
+    "notification":{
+      "icon":"./src/assets/icons/ic_notification.png",
+      "androidMode":"collapse"
     }
   }
 }

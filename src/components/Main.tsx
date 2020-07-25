@@ -18,6 +18,7 @@ import Snackbar from "./Snackbar";
 import { State } from "react-native-gesture-handler";
 import { Value } from "react-native-reanimated";
 import { YellowBox } from "react-native";
+import * as Notifications from "expo-notifications";
 
 YellowBox.ignoreWarnings([
   "Non-serializable values were found in the navigation state",
@@ -35,6 +36,16 @@ export default function Main() {
   const [snackState, setSnackState] = React.useState(false);
   const [snackMessage, setSnackMessage] = React.useState("");
   const [snackColor, setSnackColor] = React.useState("");
+
+  React.useEffect(() => {
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: false,
+        shouldSetBadge: false,
+      }),
+    });
+  }, []);
 
   const handleSnackState = ({
     message,
@@ -54,14 +65,18 @@ export default function Main() {
     <>
       <StatusBar />
       <SafeAreaProvider style={{ flex: 1, backgroundColor: "#282828" }}>
-        <Snackbar
-          color={snackColor}
-          message={snackMessage}
-          initial={
-            snackState ? new Value(State.ACTIVE) : new Value(State.UNDETERMINED)
-          }
-          setSnackState={setSnackState}
-        />
+        {!loaded ? null : (
+          <Snackbar
+            color={snackColor}
+            message={snackMessage}
+            initial={
+              snackState
+                ? new Value(State.ACTIVE)
+                : new Value(State.UNDETERMINED)
+            }
+            setSnackState={setSnackState}
+          />
+        )}
         <NavigationContainer>
           {!loaded ? (
             <Loading />

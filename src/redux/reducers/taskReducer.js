@@ -1,5 +1,5 @@
 import * as ActionTypes from "../ActionTypes";
-import PushNotification from "react-native-push-notification";
+import * as Notifications from "expo-notifications";
 
 const INITIAL_STATE = {
   tasks: [],
@@ -13,24 +13,14 @@ export const taskReducer = (state = INITIAL_STATE, action) => {
       }
       if (action.payload.reminder !== undefined) {
         const z = action.payload.date + " " + action.payload.reminder + ":00";
-        const remindTime = new Date(z);
-        console.log("NOTIFY");
-        PushNotification.localNotificationSchedule({
-          id: action.payload.id.slice(3, 12),
-          showWhen: true,
-          autoCancel: true,
-          largeIcon: "ic_launcher",
-          smallIcon: "ic_notification",
-          color: "#282828",
-          vibrate: true,
-          vibration: 300,
-          priority: "high",
-          visibility: "private",
-          title: action.payload.title,
-          message: "You have a task to do now.",
-          actions: '["Done"]',
-          invokeApp: false,
-          date: remindTime,
+        const trigger = new Date(z);
+        Notifications.scheduleNotificationAsync({
+          content: {
+            title: action.payload.title,
+            body: "Task Pending.",
+          },
+          trigger,
+          identifier: action.payload.id,
         });
       }
       return { ...state, tasks: state.tasks.concat(action.payload) };
