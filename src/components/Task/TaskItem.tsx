@@ -185,16 +185,25 @@ const TaskItem: React.FunctionComponent<ItemProps> = ({
             transform: [{ translateX: sub(translateX, -125) }],
           }}
         >
-          <TouchableOpacity onPress={() => handleDelete()}>
+          <TouchableOpacity
+            style={{ ...styles.btnStyle }}
+            onPress={() => handleDelete()}
+          >
             <Delete color="white" width={16} />
           </TouchableOpacity>
           {!doneScreen && !isCategoryDoneScreen ? (
-            <TouchableOpacity onPress={() => handleEditPress()}>
+            <TouchableOpacity
+              style={{ ...styles.btnStyle }}
+              onPress={() => handleEditPress()}
+            >
               <Edit color="white" width={16} />
             </TouchableOpacity>
           ) : null}
           {!doneScreen && !isCategoryDoneScreen ? (
-            <TouchableOpacity onPress={() => handleCorrectPress()}>
+            <TouchableOpacity
+              style={{ ...styles.btnStyle }}
+              onPress={() => handleCorrectPress()}
+            >
               <Correct color="white" width={16} />
             </TouchableOpacity>
           ) : null}
@@ -216,7 +225,7 @@ const TaskItem: React.FunctionComponent<ItemProps> = ({
             ) : null}
             <Text style={{ ...styles.taskDesc, fontSize: 10 }}>
               {task.date.slice(0, 11)}
-              {task.reminder !== undefined ?", "+task.reminder : null}
+              {task.reminder !== undefined ? ", " + task.reminder : null}
             </Text>
           </View>
         </Animated.View>
@@ -240,6 +249,11 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     paddingRight: 24,
     elevation: 3,
+  },
+  btnStyle: {
+    width: 30,
+    justifyContent: "center",
+    alignItems: "center",
   },
   btn: {
     height: "100%",

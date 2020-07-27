@@ -165,7 +165,11 @@ const CreateTask: FunctionComponent<Props> = ({
       ? route.params.task.date
       : getFormatedDate(new Date(), "ddd, DD MMM YYYY")
   );
-  const [reminder, setReminder] = useState("none");
+  const [reminder, setReminder] = useState(
+    route.params?.task?.reminder !== undefined
+      ? route.params.task.reminder
+      : "none"
+  );
   const [isCat, setCat] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [pressedOnce, setPressedOnce] = useState(false);
@@ -432,22 +436,6 @@ const CreateTask: FunctionComponent<Props> = ({
     }
   };
 
-  const [keyboadrOpen, setKeyboardOpen] = useState(false);
-  useEffect(() => {
-    Keyboard.addListener("keyboardDidShow", _keyboardDidShow);
-    Keyboard.addListener("keyboardDidHide", _keyboardDidHide);
-    return () => {
-      Keyboard.removeListener("keyboardDidShow", _keyboardDidShow);
-      Keyboard.removeListener("keyboardDidHide", _keyboardDidHide);
-    };
-  }, []);
-  const _keyboardDidShow = () => {
-    setKeyboardOpen(true);
-  };
-  const _keyboardDidHide = () => {
-    setKeyboardOpen(false);
-  };
-
   return (
     <Animated.View
       style={{
@@ -455,7 +443,8 @@ const CreateTask: FunctionComponent<Props> = ({
         transform: [{ translateX: transX }],
         left: SCREEN_WIDTH,
         paddingTop: 8,
-        flex: 1,
+        height: WINDOW_HEIGHT,
+        bottom: 0,
       }}
     >
       <DatePick
@@ -525,7 +514,7 @@ const CreateTask: FunctionComponent<Props> = ({
       </Animated.ScrollView>
       <Animated.View
         style={{
-          opacity: keyboadrOpen ? 0 : btnOpacity,
+          opacity: btnOpacity,
           ...styles.createTaskContainer,
           transform: [{ translateX: btnTranslateX }],
         }}
@@ -540,7 +529,7 @@ const CreateTask: FunctionComponent<Props> = ({
             backgroundColor: "#6488e4",
           }}
           onPress={() => handleButton()}
-          disabled={pressedOnce || modal || keyboadrOpen}
+          disabled={pressedOnce || modal}
         >
           <Text style={{ ...styles.createTaskText }}>
             {route.params?.editScreen ? "Save" : "Create Task"}

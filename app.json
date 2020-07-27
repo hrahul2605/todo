@@ -23,12 +23,7 @@
       ]
     },
     "android": {
-      "useNextNotificationsApi": true,
-      "icon":"./src/assets/icons/app-icon.png"
-    },
-    "notification":{
-      "icon":"./src/assets/icons/ic_notification.png",
-      "androidMode":"collapse"
+      "useNextNotificationsApi": true
     }
   }
 }

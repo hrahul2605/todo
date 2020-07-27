@@ -1,5 +1,8 @@
 import * as ActionTypes from "../ActionTypes";
-import * as Notifications from "expo-notifications";
+import {
+  addNotification,
+  removeNotification,
+} from "../../components/NotificationHandler";
 
 const INITIAL_STATE = {
   tasks: [],
@@ -12,16 +15,7 @@ export const taskReducer = (state = INITIAL_STATE, action) => {
         action.payload.id = JSON.stringify(Date.now());
       }
       if (action.payload.reminder !== undefined) {
-        const z = action.payload.date + " " + action.payload.reminder + ":00";
-        const trigger = new Date(z);
-        Notifications.scheduleNotificationAsync({
-          content: {
-            title: action.payload.title,
-            body: "Task Pending.",
-          },
-          trigger,
-          identifier: action.payload.id,
-        });
+        addNotification({ task: action.payload });
       }
       return { ...state, tasks: state.tasks.concat(action.payload) };
     case ActionTypes.REMOVE_TASK:
@@ -30,6 +24,10 @@ export const taskReducer = (state = INITIAL_STATE, action) => {
         tasks: state.tasks.filter((item) => {
           if (item.id !== action.payload) {
             return item;
+          } else {
+            if (item.reminder !== undefined) {
+              removeNotification({ id: action.payload });
+            }
           }
         }),
       };
@@ -39,7 +37,13 @@ export const taskReducer = (state = INITIAL_STATE, action) => {
         tasks: state.tasks.map((item) => {
           let newTask = { ...item };
           if (item.id === action.payload.id) {
+            if (item.reminder !== undefined) {
+              removeNotification({ id: item.id });
+            }
             newTask = { ...item, ...action.payload.task };
+            if (newTask.reminder !== undefined) {
+              addNotification({ task: newTask });
+            }
           }
           return newTask;
         }),

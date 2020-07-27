@@ -1,4 +1,8 @@
 import * as ActionTypes from "../ActionTypes";
+import {
+  addNotification,
+  removeNotification,
+} from "../../components/NotificationHandler";
 
 const INITIAL_STATE = {
   category: [],
@@ -34,6 +38,9 @@ export const categoryReducer = (state = INITIAL_STATE, action) => {
           if (item.id === action.payload.categoryId) {
             action.payload.task.id = JSON.stringify(Date.now());
             newItem = { ...item, tasks: [...item.tasks, action.payload.task] };
+            if (action.payload.task.reminder !== undefined) {
+              addNotification({ task: action.payload.task });
+            }
           } else newItem = { ...item };
           return newItem;
         }),
@@ -45,7 +52,15 @@ export const categoryReducer = (state = INITIAL_STATE, action) => {
           if (item.id === action.payload.categoryId) {
             return {
               ...item,
-              tasks: item.tasks.filter((x) => x.id !== action.payload.id),
+              tasks: item.tasks.filter((x) => {
+                if (x.id !== action.payload.id) {
+                  return x;
+                } else {
+                  if (x.reminder !== undefined) {
+                    removeNotification({ id: x.id });
+                  }
+                }
+              }),
             };
           } else return { ...item };
         }),
@@ -60,6 +75,14 @@ export const categoryReducer = (state = INITIAL_STATE, action) => {
               ...item,
               tasks: item.tasks.map((x) => {
                 if (x.id === action.payload.task.id) {
+                  console.log(x)
+                  if (x.reminder !== undefined) {
+                    removeNotification({ id: x.id });
+                  }
+                  let newTask = { ...x, ...action.payload.task };
+                  if (newTask.reminder !== undefined) {
+                    addNotification({ task: newTask });
+                  }
                   return { ...x, ...action.payload.task };
                 } else return { ...x };
               }),
