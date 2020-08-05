@@ -1,4 +1,4 @@
-package com.todo;
+package com.todo.shortcut;
 
 import android.os.Bundle;
 

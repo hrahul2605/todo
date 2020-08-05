@@ -257,9 +257,6 @@ const CategoryTask: FunctionComponent<Props> = ({
             </Text>
           ) : null}
         </View>
-        <View style={{ ...styles.motivateTextContainer }}>
-          <Text style={{ ...styles.motivateText }}>Giddy-up Captain!</Text>
-        </View>
         <FlatList
           data={null}
           renderItem={null}
@@ -333,7 +330,7 @@ const CategoryTask: FunctionComponent<Props> = ({
                           marginTop: 10,
                         }}
                       >
-                        Nothing completed
+                        You currently have 0 tasks.
                       </Text>
                     ) : (
                       <Text
@@ -344,7 +341,7 @@ const CategoryTask: FunctionComponent<Props> = ({
                           marginTop: 10,
                         }}
                       >
-                        You lazy bastard, do some work!
+                        You currently have not completed a single task.
                       </Text>
                     )
                   ) : null}

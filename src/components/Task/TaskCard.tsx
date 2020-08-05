@@ -38,7 +38,7 @@ function TaskCard({
 
   const handlePressAnimation = () => {
     Animated.spring(scale, {
-      toValue: 0.9,
+      toValue: 0.95,
       mass: 1,
       stiffness: 40000,
       damping: 400,
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     borderRadius: 45,
     marginBottom: 24,
     paddingHorizontal: 12,
-    elevation: 10,
+    elevation: 2,
     zIndex: 10,
   },
   percentage: {

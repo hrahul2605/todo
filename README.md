@@ -16,8 +16,8 @@ To get started with this project,
 - Make sure you have android-sdk and its tool properly setup in your PC or laptop or simply install android studio. Next,  
    ( i ) Connect your android device to your laptop or PC **OR**
   use an android emulator and then and run `adb devices` to confirm that your device is properly connected & ready.  
-  ( ii ) Now simply run `yarn start` or `npm start` to launch the application on the device.
-
+  ( ii ) Now simply run `yarn start` or `npm start` in one terminal.  
+  ( iii ) and `yarn run android` in another to launch the application on the device.
 
 **Tech Stack**
 
@@ -46,6 +46,9 @@ To get started with this project,
     * Calender
     * Share your categories/groups to other users.
     * Use of online database replacing local storage.
+    * Web & iOS Support
 
-**Credit:**  
-_this project uses [react-native-modern-datepicker](https://github.com/HosseinShabani/react-native-modern-datepicker) in *src/components/DatePicker* for more customisation of the calender_
+**Credits**
+
+- Designed by **_Anshudweep Show_**
+- _this project uses [react-native-modern-datepicker](https://github.com/HosseinShabani/react-native-modern-datepicker) in *src/components/DatePicker* for more customisation of the calender_

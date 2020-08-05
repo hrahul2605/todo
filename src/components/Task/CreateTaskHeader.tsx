@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import Calendar from "../../assets/icons/calendar.svg";
 import Left from "../../assets/icons/left.svg";
+import Close from "../../assets/icons/close.svg";
 import { SCREEN_WIDTH, day, month } from "../../constants";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
@@ -21,6 +22,7 @@ interface Props {
   setDateAnimate?: React.Dispatch<React.SetStateAction<boolean>>;
   setTimeAnimate?: React.Dispatch<React.SetStateAction<boolean>>;
   reminder: string;
+  setReminder: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const CreateTaskHeader: FunctionComponent<Props> = ({
@@ -32,6 +34,7 @@ const CreateTaskHeader: FunctionComponent<Props> = ({
   setDateAnimate,
   setTimeAnimate,
   reminder,
+  setReminder,
 }) => {
   const datee = new Date();
   return (
@@ -97,17 +100,35 @@ const CreateTaskHeader: FunctionComponent<Props> = ({
             </View>
           </View>
           <View style={{ ...styles.detailContainer, marginLeft: 12 }}>
-            <TouchableWithoutFeedback
-              style={{ ...styles.title }}
-              onPress={() => {
-                if (setTimeAnimate !== undefined) {
-                  setTimeAnimate(true);
-                }
-              }}
-            >
-              <Text style={{ ...styles.titleText }}>Reminder</Text>
-              <Text style={{ ...styles.dateInput }}>{reminder}</Text>
-            </TouchableWithoutFeedback>
+            <View style={{ flexDirection: "row" }}>
+              <TouchableWithoutFeedback
+                style={{
+                  ...styles.title,
+                  width: "200%",
+                }}
+                onPress={() => {
+                  if (setTimeAnimate !== undefined) {
+                    setTimeAnimate(true);
+                  }
+                }}
+              >
+                <Text style={{ ...styles.titleText }}>Reminder</Text>
+                <Text style={{ ...styles.dateInput }}>{reminder}</Text>
+              </TouchableWithoutFeedback>
+              {reminder !== "none" ? (
+                <View
+                  style={{
+                    right: 0,
+                    bottom: 0,
+                    position: "absolute",
+                  }}
+                >
+                  <TouchableOpacity onPress={() => setReminder("none")}>
+                    <Close color="#000000" width={24} />
+                  </TouchableOpacity>
+                </View>
+              ) : null}
+            </View>
           </View>
         </View>
       </View>

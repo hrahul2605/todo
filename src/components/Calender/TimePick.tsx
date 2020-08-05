@@ -1,8 +1,14 @@
 import React, { FunctionComponent, useRef, useEffect } from "react";
 import DatePicker from "../DatePicker/index.js";
 import { View, StyleSheet } from "react-native";
-import { SCREEN_WIDTH, WINDOW_HEIGHT, SCREEN_HEIGHT } from "../../constants";
+import {
+  SCREEN_WIDTH,
+  WINDOW_HEIGHT,
+  SCREEN_HEIGHT,
+  STATUS_BAR,
+} from "../../constants";
 import Animated from "react-native-reanimated";
+import { TapGestureHandler } from "react-native-gesture-handler";
 
 interface Props {
   dateAnimate: boolean;
@@ -62,7 +68,9 @@ const TimePick: FunctionComponent<Props> = ({
         zIndex: 20,
         alignItems: "center",
         justifyContent: "center",
-        top: -WINDOW_HEIGHT,
+        top: WINDOW_HEIGHT === SCREEN_HEIGHT
+        ? -WINDOW_HEIGHT
+        : -SCREEN_HEIGHT + STATUS_BAR,
         opacity,
         transform: [{ scale, translateY }],
       }}
@@ -85,18 +93,25 @@ const TimePick: FunctionComponent<Props> = ({
               textFontSize: 16,
               textSecondaryFontSize: 12,
             }}
-            style={{ borderRadius: 24, position: "absolute", elevation: 20 }}
+            style={{ borderRadius: 24, position: "absolute", elevation: 24 }}
             mode="time"
             minuteInterval={10}
             onTimeChange={(e) => {
-              if (e === reminder) {
-                setReminder("none");
-              } else {
-                setReminder(e);
-              }
+              setReminder(e);
               setDateAnimate(false);
             }}
           />
+          <TapGestureHandler onHandlerStateChange={() => setDateAnimate(false)}>
+            <Animated.View
+              style={{
+                width: SCREEN_WIDTH,
+                height: WINDOW_HEIGHT,
+                zIndex: -1,
+                elevation: -1,
+                position: "absolute",
+              }}
+            />
+          </TapGestureHandler>
         </View>
       </View>
     </Animated.View>

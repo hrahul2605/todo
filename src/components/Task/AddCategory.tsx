@@ -16,6 +16,7 @@ import {
   colors,
   SCREEN_HEIGHT,
   WINDOW_HEIGHT,
+  STATUS_BAR,
 } from "../../constants";
 import Close from "../../assets/icons/close.svg";
 import Correct from "../../assets/icons/correct.svg";
@@ -159,7 +160,9 @@ const AddCategory: FunctionComponent<Props> = ({
         justifyContent: "center",
         alignItems: "center",
         zIndex: 20,
-        top: WINDOW_HEIGHT,
+        top: WINDOW_HEIGHT === SCREEN_HEIGHT
+        ? WINDOW_HEIGHT
+        : SCREEN_HEIGHT + STATUS_BAR,
         height: WINDOW_HEIGHT,
         elevation: 10,
         opacity,

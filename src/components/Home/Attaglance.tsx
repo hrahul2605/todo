@@ -45,16 +45,29 @@ function Attaglance({ navigation, tasks, category }: Props) {
       <View style={{ ...styles.headingContainer }}>
         <Text style={{ ...styles.headingText }}>In the works</Text>
       </View>
-
-      <View
-        style={{
-          flex: 1,
-          flexDirection: "row",
-          height: "auto",
-        }}
-      >
-        <List navigation={navigation} data={data} />
-      </View>
+      {data?.length === 0 ? (
+        <View style={{ marginHorizontal: 24 }}>
+          <Text
+            style={{
+              color: "rgba(255,255,255,0.5)",
+              fontSize: 12,
+              fontFamily: "regular",
+            }}
+          >
+            You don't have any tasks today.
+          </Text>
+        </View>
+      ) : (
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            height: "auto",
+          }}
+        >
+          <List navigation={navigation} data={data} />
+        </View>
+      )}
     </View>
   );
 }

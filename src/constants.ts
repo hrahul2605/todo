@@ -105,8 +105,7 @@ export type RootStackParamList = {
       };
   FeedScreen: {
     screen: string;
-    screenSub: string;
-    handleSnackState: ({
+    handleSnackState?: ({
       message,
       snackColor,
     }: {

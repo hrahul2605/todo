@@ -1,4 +1,4 @@
-package com.todo.generated;
+package com.todo.shortcut.generated;
 
 import java.util.Arrays;
 import java.util.List;

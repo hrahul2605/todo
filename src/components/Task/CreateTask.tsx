@@ -15,6 +15,8 @@ import {
   state,
   WINDOW_HEIGHT,
   colors,
+  SCREEN_HEIGHT,
+  STATUS_BAR,
 } from "../../constants";
 import { StackNavigationProp } from "@react-navigation/stack";
 import AddCategory from "./AddCategory";
@@ -443,8 +445,10 @@ const CreateTask: FunctionComponent<Props> = ({
         transform: [{ translateX: transX }],
         left: SCREEN_WIDTH,
         paddingTop: 8,
-        height: WINDOW_HEIGHT,
-        bottom: 0,
+        height:
+          WINDOW_HEIGHT === SCREEN_HEIGHT
+            ? WINDOW_HEIGHT
+            : WINDOW_HEIGHT + STATUS_BAR,
       }}
     >
       <DatePick
@@ -492,6 +496,7 @@ const CreateTask: FunctionComponent<Props> = ({
           editScreen={route.params?.editScreen}
           setTimeAnimate={setTimeAnimate}
           reminder={reminder}
+          setReminder={setReminder}
         />
       </Animated.View>
       <Animated.ScrollView
@@ -558,7 +563,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 45,
     borderBottomLeftRadius: 45,
     position: "absolute",
-    elevation: 10,
+    elevation: 4,
     zIndex: 1,
     paddingTop: 32,
   },
@@ -568,7 +573,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     borderRadius: 45,
     marginHorizontal: 24,
-    elevation: 1,
+    elevation: 2,
     justifyContent: "center",
     alignItems: "center",
     zIndex: 10,

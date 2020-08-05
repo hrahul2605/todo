@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderRadius: 24,
     paddingRight: 24,
-    elevation: 3,
+    elevation: 2,
   },
   btnStyle: {
     width: 30,

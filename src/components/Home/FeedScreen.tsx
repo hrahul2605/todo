@@ -154,11 +154,17 @@ const FeedScreen: React.FunctionComponent<Props> = ({
           <View style={{ ...styles.headingContainer }}>
             <Text style={{ ...styles.headingText }}>{route.params.screen}</Text>
           </View>
-          <View style={{ marginHorizontal: 24, marginBottom: 3 }}>
+          {/* <View style={{ marginHorizontal: 24, marginBottom: 3 }}>
             <Text style={{ ...styles.headingMotivate }}>
-              {route.params.screenSub}
+              {new Date().getHours() < 12
+                ? "Good Morning."
+                : new Date().getHours() < 17
+                ? "Good Afternoon."
+                : new Date().getHours() < 22
+                ? "Good Evening."
+                : "Good night."}
             </Text>
-          </View>
+          </View> */}
         </View>
         <View style={{ height: "auto", paddingVertical: 12 }}>
           {route.params.screen !== "Group" ? (
@@ -180,7 +186,7 @@ const FeedScreen: React.FunctionComponent<Props> = ({
                     />
                   )}
                   showsVerticalScrollIndicator={false}
-                  contentContainerStyle={{ paddingTop: 139, paddingBottom: 50 }}
+                  contentContainerStyle={{ paddingTop: 105, paddingBottom: 50 }}
                   numColumns={1}
                   style={{ height: WINDOW_HEIGHT, zIndex: 10 }}
                 />
@@ -203,7 +209,7 @@ const FeedScreen: React.FunctionComponent<Props> = ({
                     />
                   )}
                   showsVerticalScrollIndicator={false}
-                  contentContainerStyle={{ paddingTop: 139, paddingBottom: 50 }}
+                  contentContainerStyle={{ paddingTop: 105, paddingBottom: 50 }}
                   numColumns={1}
                   style={{ height: WINDOW_HEIGHT, zIndex: 10 }}
                 />
@@ -219,7 +225,7 @@ const FeedScreen: React.FunctionComponent<Props> = ({
                 <>
                   <View
                     style={{
-                      paddingTop: 139,
+                      paddingTop: 105,
                       flexDirection: "row",
                       flex: 1,
                     }}

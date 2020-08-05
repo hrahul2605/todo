@@ -131,7 +131,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.todo"
+        applicationId "com.todo.shortcut"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -154,9 +154,9 @@ android {
         }
         release {
             storeFile file('todo.keystore')
-            storePassword 'todo1234'
+            storePassword 'dummy password' 
             keyAlias 'todo.todo'
-            keyPassword 'todo1234'
+            keyPassword 'dummy password'
         }
     }
     buildTypes {

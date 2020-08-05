@@ -69,7 +69,6 @@ const Feed: React.FunctionComponent<Props> = ({
           onPress={() => {
             navigation.navigate("FeedScreen", {
               screen: "Task",
-              screenSub: "Giddy-up Captain!",
             });
           }}
           style={{ flexDirection: "row" }}
@@ -94,7 +93,6 @@ const Feed: React.FunctionComponent<Props> = ({
           onPress={() => {
             navigation.navigate("FeedScreen", {
               screen: "Group",
-              screenSub: "Smells good! Something is cooking!",
             });
           }}
           style={{ flexDirection: "row" }}
@@ -121,7 +119,6 @@ const Feed: React.FunctionComponent<Props> = ({
           onPress={() => {
             navigation.navigate("FeedScreen", {
               screen: "Done",
-              screenSub: "Feel good about yourself",
             });
           }}
           style={{ flexDirection: "row" }}
@@ -131,7 +128,7 @@ const Feed: React.FunctionComponent<Props> = ({
           </View>
           <View style={{ ...styles.feedDetails }}>
             <Text style={{ ...styles.feedText, fontSize: 16 }}>Done</Text>
-            <Text style={{ ...styles.feedDesc }}>{done.length} completed.</Text>
+            <Text style={{ ...styles.feedDesc }}>{done.length} completed</Text>
           </View>
         </TouchableOpacity>
       </Animated.View>

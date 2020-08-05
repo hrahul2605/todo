@@ -6,6 +6,7 @@ import {
   WINDOW_HEIGHT,
   getMonth,
   SCREEN_HEIGHT,
+  STATUS_BAR,
 } from "../../constants";
 import { TapGestureHandler } from "react-native-gesture-handler";
 import Animated from "react-native-reanimated";
@@ -72,7 +73,9 @@ const DatePick: FunctionComponent<Props> = ({
         zIndex: 20,
         alignItems: "center",
         justifyContent: "center",
-        top: -WINDOW_HEIGHT,
+        top: WINDOW_HEIGHT === SCREEN_HEIGHT
+        ? -WINDOW_HEIGHT
+        : -SCREEN_HEIGHT + STATUS_BAR,
         opacity,
         transform: [{ scale, translateY }],
       }}
@@ -84,7 +87,7 @@ const DatePick: FunctionComponent<Props> = ({
               backgroundColor: "#282828",
               borderColor: "#282828",
               textDefaultColor: "white",
-              textHeaderFontSize: 20,
+              textHeaderFontSize: 18,
               headerFont: "bold",
               textHeaderColor: "white",
               textSecondaryColor: "rgba(255, 255, 255, 0.75)",
@@ -92,10 +95,10 @@ const DatePick: FunctionComponent<Props> = ({
               selectedTextColor: "#f9be7c",
               mainColor: "#888",
               textSecondaryFont: "regular",
-              textFontSize: 16,
+              textFontSize: 12,
               textSecondaryFontSize: 12,
             }}
-            style={{ borderRadius: 24, position: "absolute", elevation: 20 }}
+            style={{ borderRadius: 24, position: "absolute", elevation: 24 }}
             mode="calendar"
             selected={
               date.slice(12, 17) +

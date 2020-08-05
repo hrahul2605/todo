@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 16,
     bottom: -48,
-    elevation: 15,
+    elevation: 8,
   },
   message: {
     fontSize: 14,

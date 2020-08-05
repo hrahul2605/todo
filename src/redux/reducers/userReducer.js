@@ -2,7 +2,7 @@ import * as ActionTypes from "../ActionTypes";
 
 const INITIAL_STATE = {
   userName: "Your name here",
-  userDesc: "Tap here to change",
+  userDesc: "Tap here",
 };
 
 export const userReducer = (state = INITIAL_STATE, action) => {

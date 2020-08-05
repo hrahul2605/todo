@@ -57,6 +57,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 45,
     top: 0,
     paddingTop: 24,
+    elevation: 4,
   },
   detailContainer: {
     height: 110,
