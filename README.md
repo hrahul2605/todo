@@ -1,14 +1,16 @@
 ![logo](./src/assets/icons/app-icon.png)
 
+<p><a href="https://www.producthunt.com/posts/todo-5?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-todo-5" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=229260&theme=dark" alt="Todo - "A simple all-in-one todo list app for tasks and projects." | Product Hunt Embed" style="width: 250px; height: 54px;" width="250px" height="54px" /></a></p>
+
 ##### No more jumping around between apps like Google Keep for tasks, Trello for projects, Calenders for weekly planning. Todo does it all - Faster, Easier, Simpler
 
 ### Description
 
 A simple all-in-one todo list app for tasks and projects.  
 This application is developed using **_react-native_** with help of **_EXPO SDK_**.  
-This is a personal project and the app is listed on Google Play Store at https://play.google.com/store/apps/details?id=com.todo.shortcut 
+This is a personal project and the app is listed on Google Play Store at https://play.google.com/store/apps/details?id=com.todo.shortcut  
 This app currenlty uses local storage of the device to store all the data.  
-**NOTE:** This project is currently made for only **_android devices_**
+**NOTE:** This project is currently made for only **_android devices_**  
 
 ### Get Started
 
