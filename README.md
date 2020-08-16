@@ -26,6 +26,7 @@ To get started with this project,
 - You can also skip the last step, and use expo to launch the app in development mode. By,  
     ( I ) Run `expo start` in the terminal. A QR Code will appear.  
     ( II ) Download the expo client from Google Play Store in your android device, and scan the QR Code.
+- Make sure to give `INTERNET` & `SYSTEM_ALERT_WINDOW` permission in `AndroidManifest.xml` file to enable debugging.  
 -  Happy hacking !!!
 
 **Tech Stack**
