@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" package="com.todo.shortcut">
-  <uses-permission tools:node="remove" android:name="android.permission.INTERNET"/>
-  <!-- <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/> -->
+  <uses-permission android:name="android.permission.INTERNET"/>
+  <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
   <!-- <uses-permission android:name="android.permission.MANAGE_DOCUMENTS"/> -->
   <!-- <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE"/> -->
   <uses-permission tools:node="remove" android:name="android.permission.READ_PHONE_STATE"/>

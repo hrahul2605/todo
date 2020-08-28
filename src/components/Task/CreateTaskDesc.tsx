@@ -75,7 +75,7 @@ const CreateTaskDesc: FunctionComponent<Props> = ({
           <Text style={{ ...styles.text }}>Description</Text>
           <TextInput
             style={{ ...styles.descInput }}
-            placeholder="Lorem ipsum dolor sit amet"
+            placeholder="optional"
             placeholderTextColor="rgba(255,255,255,0.10)"
             value={desc}
             onChangeText={(e) => setDesc(e)}
